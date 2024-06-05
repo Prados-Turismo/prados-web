@@ -1,0 +1,47 @@
+.adesa-btn-another-collaborator-mobile {
+  display: none !important;
+}
+
+.swal2-container {
+  z-index: 10000 !important;
+}
+
+@media (max-width: 600px) {
+  .adesao-modal-body {
+    padding: 0 !important;
+  }
+
+  .adesao-modal-flex {
+    width: 95% !important;
+  }
+
+  .adesa-btn-another-collaborator-desktop {
+    display: none !important;
+  }
+
+  .adesa-btn-another-collaborator-mobile {
+    display: block !important;
+    font-size: 15px !important;
+  }
+
+  .adesa-btn-new-dependent {
+    left: 37px !important;
+  }
+
+  .adesao-modal-content {
+    padding: 10px 10px 70px 10px !important;
+    width: 95% !important;
+  }
+
+  .adesao-legendas {
+    display: none !important;
+  }
+
+  .adesao-box-upload {
+    width: 100% !important;
+  }
+
+  .adesao-accordion-panel {
+    padding: 5px !important;
+  }
+}

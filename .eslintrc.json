@@ -1,0 +1,100 @@
+{
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "es6": true,
+    "jest": true,
+    "node": true
+  },
+  "globals": {
+    "Atomics": "readonly",
+    "SharedArrayBuffer": "readonly",
+    "window": true,
+    "document": true,
+    "localStorage": true,
+    "FormData": true,
+    "FileReader": true,
+    "Blob": true,
+    "navigator": true,
+    "Headers": true,
+    "Request": true,
+    "fetch": true,
+    "google": true
+  },
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "ecmaVersion": "latest",
+    "sourceType": "module"
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:react/jsx-runtime",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:prettier/recommended",
+    "prettier"
+  ],
+  "plugins": [
+    "no-loops",
+    "prettier",
+    "react",
+    "react-hooks"
+  ],
+  "rules": {
+    "arrow-body-style": "off",
+    "prefer-arrow-callback": "off",
+    "prettier/prettier": "off",
+    "no-undef": "off",
+    "no-console": "error",
+    "no-loops/no-loops": 2,
+    "react/jsx-uses-vars": "error",
+    "@typescript-eslint/no-explicit-any": "warn",
+    "react/forbid-elements": [
+      2,
+      {
+        "forbid": []
+      }
+    ],
+    "react/forbid-dom-props": [
+      2,
+      {
+        "forbid": []
+      }
+    ],
+    "react-hooks/exhaustive-deps": "warn",
+    "react/prop-types": "off",
+    "react/react-in-jsx-scope": "off",
+    "@typescript-eslint/no-var-requires": "error",
+    "@typescript-eslint/consistent-generic-constructors": "warn",
+    "@typescript-eslint/no-use-before-define": [
+      "error"
+    ],
+    "@typescript-eslint/consistent-type-definitions": [
+      "error",
+      "interface"
+    ],
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "caughtErrorsIgnorePattern": "^_",
+        "ignoreRestSiblings": true,
+        "destructuredArrayIgnorePattern": "[A-Z]",
+        "caughtErrors": "none"
+      }
+    ],
+    "@typescript-eslint/explicit-module-boundary-types": "off",
+    "@typescript-eslint/ban-ts-comment": "warn"
+  }
+}

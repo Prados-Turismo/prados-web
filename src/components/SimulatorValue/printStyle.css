@@ -1,0 +1,50 @@
+.print {
+  display: none !important;
+}
+
+@media print {
+  .print {
+    display: flex !important;
+  }
+
+  .print-disabled {
+    display: none !important;
+  }
+
+  .print-overflow-disabled div {
+    max-height: unset !important;
+    overflow: unset !important;
+    padding: unset !important;
+  }
+
+  /* .marginPrint {
+    margin-top: 30px;
+  } */
+
+  @page {
+    margin: 1cm;
+    margin-top: 20px;
+    margin-bottom: 15px;
+  }
+
+  .cabecalho {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 170px;
+    height: 42px;
+    background-repeat: no-repeat;
+    background-position: 0 0;
+    text-indent: -99999px;
+  }
+  /* Rodapé */
+  .rodape {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    justify-content: flex-end;
+    align-items: flex-end;
+    font-weight: bold;
+  }
+}

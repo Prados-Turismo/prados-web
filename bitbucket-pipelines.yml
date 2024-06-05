@@ -1,0 +1,133 @@
+definitions:
+  services:
+    docker:
+      memory: 2048
+
+  steps:
+    - step: &secrets-scan
+        name: Scan for Secrets
+        script:
+          - pipe: atlassian/git-secrets-scan:1.5.1
+
+    - step: &sonarqube-scan
+        name: SonarQube analysis
+        script:
+          - pipe: sonarsource/sonarqube-scan:2.0.1
+            variables:
+              SONAR_HOST_URL: https://sonarqube.fiibo.digital/
+              SONAR_TOKEN: ${SONAR_TOKEN}
+              EXTRA_ARGS: -Dsonar.projectKey=${BITBUCKET_REPO_SLUG}
+
+    - step: &build
+        name: "Build"
+        image: node:18.12.0
+        size: 2x
+        caches:
+          - node
+        script:
+          - npm ci
+          - npm run test
+          - npm run build
+
+    - step: &deploy-fake
+        name: "Deploy"
+        trigger: manual
+        script:
+          - echo "Fake deployment ${BITBUCKET_BUILD_NUMBER}"
+
+    - step: &deploy-automatic
+        name: "Deploy"
+        image: node:18.12.0
+        size: 2x
+        caches:
+          - node
+        script:
+          - npm ci
+          - npm run build
+          - pipe: atlassian/aws-s3-deploy:1.4.0
+            variables:
+              S3_BUCKET: $AWS_S3_BUCKET
+              LOCAL_PATH: dist
+          - pipe: atlassian/aws-cloudfront-invalidate:0.9.0
+            variables:
+              DISTRIBUTION_ID: ${DISTRIBUTION_ID}
+
+    - step: &deploy-manual
+        name: "Deploy"
+        image: node:18.12.0
+        trigger: manual
+        size: 2x
+        caches:
+          - node
+        script:
+          - npm ci
+          - npm run build
+          - pipe: atlassian/aws-s3-deploy:1.4.0
+            variables:
+              S3_BUCKET: $AWS_S3_BUCKET
+              LOCAL_PATH: dist
+          - pipe: atlassian/aws-cloudfront-invalidate:0.9.0
+            variables:
+              DISTRIBUTION_ID: ${DISTRIBUTION_ID}
+
+    - step: &tagging
+        name: "Tagging"
+        script:
+          - VERSION=$(echo $BITBUCKET_BRANCH | sed -n 's/.*release\/\([0-9.]*\).*/\1/p')
+          - echo "Tagging version v${VERSION}"
+          - git tag -a beta-${VERSION} -m "release beta-${VERSION}"
+          - git push origin beta-${VERSION}
+
+pipelines:
+  branches:
+    feat/*:
+      - step:
+          <<: *build
+          name: Automatic Unit Tests and Build
+
+    development:
+      - step:
+          <<: *build
+          name: Automatic Unit Tests and Build
+      - step:
+          <<: *deploy-manual
+          name: Build and Deploy to S3 in Alfa
+          deployment: alfa
+
+    master:
+      - parallel:
+          - step: *secrets-scan
+          - step: *sonarqube-scan
+      - step:
+          <<: *build
+          name: Automatic Unit Tests and Build
+
+    release/*:
+      - step:
+          name: Prepare Release
+          script:
+            - VERSION=$(echo $BITBUCKET_BRANCH | sed -n 's/.*release\/\([0-9.]*\).*/\1/p')
+            - echo "The version your application is going to be released is ${VERSION}"
+
+      - step:
+          <<: *deploy-manual
+          name: Build and Deploy to S3 in PROD
+          deployment: prod
+      - step:
+          <<: *tagging
+          name: Tagging
+
+    hotfix/*:
+      - step:
+          <<: *build
+          name: Automatic Unit Tests and Build
+
+    fix/*:
+      - step:
+          <<: *build
+          name: Automatic Unit Tests and Build
+
+    bugfix/*:
+      - step:
+          <<: *build
+          name: Automatic Unit Tests and Build

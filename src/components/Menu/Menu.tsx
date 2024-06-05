@@ -14,7 +14,6 @@ import { MdOutlineMenu } from "react-icons/md";
 
 // Components
 import MenuDropDown from "./components/MenuDropDown";
-import MenuCompanies from "./components/MenuCompanies";
 import LinksMenu from "./components/LinksMenu";
 
 // Contexts
@@ -41,7 +40,7 @@ const Menu = ({
   const theme = useTheme();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { company, companies, changeCompany, user, isUseTerm } = useGlobal();
+  const { company, user, isUseTerm } = useGlobal();
 
   return (
     <>
@@ -97,14 +96,6 @@ const Menu = ({
               <LinksMenu onClose={() => null} />
             </MenuMain>
           )}
-
-        {!!company && companies.length > 1 && (
-          <MenuCompanies
-            company={company}
-            companies={companies}
-            onChange={changeCompany}
-          />
-        )}
       </MenuWithLogo>
 
       <MenuDropDown onBoardingCompleted={onBoardingCompleted} />

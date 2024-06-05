@@ -1,17 +1,10 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
-import { Box, Button, Tooltip, useMediaQuery } from "@chakra-ui/react";
-// import Notification from "../../../Notification"
-
-// Context
-import { useGlobal } from "../../../../contexts/UserContext";
+import { Box, Button, Menu, MenuButton, Tooltip, useMediaQuery } from "@chakra-ui/react";
 
 // Icons
 import { TfiHeadphoneAlt } from "react-icons/tfi";
-
-// Styles
-import { Links } from "./styled";
 
 // Types
 import { ILinksMenu } from "./types";
@@ -19,41 +12,85 @@ import { ILinksMenu } from "./types";
 import Bell from "../../../Bell";
 // import Bell from "../../../Bell"
 
+import {
+  Links,
+  MenuItem,
+  MenuList,
+  Text,
+  ButtonStyled
+} from "./styled";
+import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
+
+
 const LinksMenu = ({ onClose }: ILinksMenu) => {
-  const { permissions, isIssuer } = useGlobal();
   const [activeLink] = useState(window.location.href.split("/")[3]);
   const [break1280] = useMediaQuery("(max-width: 1279px)");
 
   return (
     <Links>
-      <Link
-        to="/"
-        onClick={onClose}
-        className={activeLink === "" ? "active-link" : ""}
-      >
-        Início
-      </Link>
-      {!isIssuer && permissions.collaborator && (
-        <Link
-          to="/pessoas"
-          onClick={onClose}
-          className={activeLink === "pessoas" ? "active-link" : ""}
-        >
-          Reservas
-        </Link>
-      )}
-      {!isIssuer && permissions.product && (
-        <Link
-          to="/produtos"
-          onClick={onClose}
-          className={activeLink === "produtos" ? "active-link" : ""}
-        >
-          Atividades
-        </Link>
-      )}
+      <Menu>
+        {({ isOpen }) => (
+          <Box style={{ zIndex: "3" }}>
+            <MenuButton
+              isActive={isOpen}
+              name="perfilMenuDropDown"
+              as={ButtonStyled}
+              rightIcon={
+                isOpen ? (
+                  <MdKeyboardArrowUp size={18} />
+                ) : (
+                  <MdKeyboardArrowDown size={18} />
+                )
+              }
+            >
+              <Text>Reservas</Text>
+            </MenuButton>
+
+            <MenuList>
+              <MenuItem>
+                <Link to="/pessoas">Listar Reservas</Link>
+              </MenuItem>
+              <MenuItem>
+                <Link to="/pessoas">Fichas de Clientes</Link>
+              </MenuItem>
+            </MenuList>
+          </Box>
+        )}
+      </Menu>
+      <Menu>
+        {({ isOpen }) => (
+          <Box style={{ zIndex: "3" }}>
+            <MenuButton
+              isActive={isOpen}
+              name="perfilMenuDropDown"
+              as={ButtonStyled}
+              rightIcon={
+                isOpen ? (
+                  <MdKeyboardArrowUp size={18} />
+                ) : (
+                  <MdKeyboardArrowDown size={18} />
+                )
+              }
+            >
+              <Text>Atividades</Text>
+            </MenuButton>
+
+            <MenuList>
+              <MenuItem>
+                <Link to="/produtos">Atividades</Link>
+              </MenuItem>
+              <MenuItem>
+                <Link to="/produtos">Produtos</Link>
+              </MenuItem>
+            </MenuList>
+          </Box>
+        )}
+      </Menu>
+
       <Box display="flex" width="100%" flex="1">
         {/* break900 && company && <Notification /> */}
       </Box>
+
       {break1280 ? (
         <Link
           to="/central-de-ajuda"

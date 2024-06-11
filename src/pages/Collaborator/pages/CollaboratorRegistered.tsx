@@ -121,12 +121,11 @@ const CollaboratorList = () => {
                 <TableContainer marginBottom="10px">
                   <Table>
                     <THead padding="0 30px 0 30px">
-                      <TD style={{ flex: "0 0 10%" }}>Status do cadastro</TD>
-                      <TD style={{ flex: "0 0 30%" }}>Colaborador</TD>
-                      <TD>CPF</TD>
-                      <TD>Categoria</TD>
-                      <TD>Subcategoria</TD>
-                      <TD style={{ flex: "0 0 10%", minWidth: "100px" }}>
+                      <TD alignItems={"center"}>Nome</TD>
+                      <TD alignItems={"center"}>Estoque</TD>
+                      <TD>Status</TD>
+                      <TD>Fornecedor</TD>
+                      <TD>
                         &nbsp;
                       </TD>
                     </THead>
@@ -134,12 +133,12 @@ const CollaboratorList = () => {
                     <TBody>
                       {data.map((item) => (
                         <TR key={item.id}>
-                          <TD style={{ flex: "0 0 10%" }}>
+                          <TD alignItems={"center"}>
                             {item?.beneficiaryStatus === "A"
                               ? "Completo"
                               : "Incompleto"}
                           </TD>
-                          <TD style={{ flex: "0 0 30%" }}>
+                          <TD alignItems={"center"}>
                             <TooltipSubstring
                               name={capitalize(item.person?.name) || "-"}
                               length={25}
@@ -156,13 +155,7 @@ const CollaboratorList = () => {
                               length={18}
                             />
                           </TD>
-                          <TD>
-                            <TooltipSubstring
-                              name={item.position?.name || "-"}
-                              length={18}
-                            />
-                          </TD>
-                          <TD style={{ flex: "0 0 10%" }}>
+                          <TD alignItems={"center"}>
                             <IconGroupCollaborator
                               item={item}
                               filter={

@@ -5,7 +5,6 @@ import PageWithMenu from "../../Layouts/PageWithMenu";
 import Menu from "../../components/Menu";
 
 import Section from "./components/Section";
-import SideBar from "./components/Sidebar";
 
 import { IStatus } from "../../models/sidebar.model";
 import { theme } from "../../theme";
@@ -16,12 +15,12 @@ const Collaborator = () => {
   const menuBack =
     parseInt(window.location.href?.split("menu=")[1]?.split("?")[0]) || null;
   const [status, setStatus] = useState<IStatus>({
-    title: "Reservas",
+    title: "Pacotes",
     menu: menuBack || 1,
   });
 
   useEffect(() => {
-    document.title = `${theme.content.project} - Reservas`;
+    document.title = `${theme.content.project} - Pacotes`;
 
     const menuPath = parseInt(
       location.search?.split("menu=")[1]?.split("?")[0],
@@ -29,7 +28,7 @@ const Collaborator = () => {
 
     if (location?.search) {
       setStatus({
-        title: "Reservas",
+        title: "Pacotes",
         menu: menuPath,
       });
     }
@@ -38,7 +37,7 @@ const Collaborator = () => {
   return (
     <Dashboard menu={<Menu />}>
       <PageWithMenu
-        aside={<SideBar status={status} onStatus={setStatus} />}
+        // aside={<SideBar status={status} onStatus={setStatus} />}
         section={<Section menu={status.menu} />}
       />
     </Dashboard>

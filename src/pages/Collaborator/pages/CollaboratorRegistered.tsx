@@ -51,14 +51,14 @@ const CollaboratorList = () => {
             setModalRecordCollaborator(true);
           }}
         >
-          Cadastrar titular
+          Cadastrar pacote
         </Button>
       </SectionTop>
 
       <Content className="contentMain">
         <Flex width="100%" gap="15px" alignItems="flex-end" flexWrap="wrap">
           <div className="searchWrap">
-            <span>Buscar titular</span>
+            <span>Buscar pacote</span>
             <FieldSearch
               placeholder="Nome ou CPF"
               handleSearch={(value) => {
@@ -189,14 +189,14 @@ const CollaboratorList = () => {
             )}
 
             {data.length === 0 && (
-              <AlertNoDataFound title="Nenhum titular encontrado" />
+              <AlertNoDataFound title="Nenhum pacote encontrado" />
             )}
           </>
         )}
       </Content>
 
       <SimpleModal
-        title="Pré-cadastro"
+        title="Pacote"
         size="xl"
         isOpen={modalRecordCollaborator}
         handleModal={setModalRecordCollaborator}

@@ -85,7 +85,7 @@ const Home = () => {
       icon: <FiUserPlus size={20} />,
       title: "Cadastro de Pessoas",
       text: "Cadastre titulares e dependentes para garantir acesso a todos os produtos disponíveis.",
-      link: "/pessoas",
+      link: "/pacotes",
       isUrl: false,
       visible: isApproved && !isIssuer,
       isDisabled: !permissions?.collaborator,

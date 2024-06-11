@@ -87,8 +87,8 @@ export const AppRoutes = () => {
         <Route path="/politica-privacidade" element={<PrivacyPolicy />} />
 
         <Route element={<ProtectedRoute isAuth={permissions?.collaborator} />}>
-          <Route path="/pessoas" element={<Collaborator />} />
-          <Route path="/pessoas/:id" element={<CollaboratorDetails />} />
+          <Route path="/pacotes" element={<Collaborator />} />
+          <Route path="/pacotes/:id" element={<CollaboratorDetails />} />
         </Route>
 
         <Route element={<ProtectedRoute isAuth={permissions?.product} />}>

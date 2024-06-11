@@ -37,7 +37,7 @@ const Top = () => {
       </div>
 
       <div className="right">
-        <Link to={`/pessoas?menu=${linkReturnId}`}>
+        <Link to={`/pacotes?menu=${linkReturnId}`}>
           <Button variant="outline">Voltar</Button>
         </Link>
       </div>

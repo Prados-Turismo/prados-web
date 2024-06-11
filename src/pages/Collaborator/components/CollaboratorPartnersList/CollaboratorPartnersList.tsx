@@ -106,7 +106,7 @@ const CollabotatorPartnersList = ({
                       <TD style={{ flex: "0 0 10%" }}>
                         <IconsGroup>
                           <Link
-                            to={`/pessoas/${item.id}?menu=1&sidebar=1&companyId=${partnerId}&submenu=${submenu}`}
+                            to={`/pacotes/${item.id}?menu=1&sidebar=1&companyId=${partnerId}&submenu=${submenu}`}
                           >
                             <ButtonIcon tooltip="Dados Pessoais">
                               <FiUserCheck size={20} />

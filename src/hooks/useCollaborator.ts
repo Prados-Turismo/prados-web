@@ -394,7 +394,7 @@ const createCollaborator = (
           });
 
           if (flCadastroCompleto && isAddProduct) {
-            navigate(`/pessoas/${res?.data?.message?.id}?menu=1?sidebar=3`);
+            navigate(`/pacotes/${res?.data?.message?.id}?menu=1?sidebar=3`);
           }
         });
       } catch (error: any) {
@@ -1244,7 +1244,7 @@ const activedPedingCollaborator = (handleClose: (e: boolean) => void) => {
               description: "Pré cadastro autorizado!",
             });
 
-            navigate(`/pessoas/${res.data?.message?.id}?menu=3?sidebar=1`);
+            navigate(`/pacotes/${res.data?.message?.id}?menu=3?sidebar=1`);
           });
       } catch (error: any) {
         throw new Warning(error.response.data.message, error?.response?.status);

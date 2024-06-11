@@ -19,7 +19,7 @@ const IconGroupCollaborator = ({
     <>
       <IconsGroup minW="100px">
         <Link
-          to={`/pessoas/${item.id}?menu=${menu}?sidebar=1`}
+          to={`/pacotes/${item.id}?menu=${menu}?sidebar=1`}
           id={filter === "incomplete" ? "completeRegistration" : "personalData"}
         >
           <ButtonIcon
@@ -36,7 +36,7 @@ const IconGroupCollaborator = ({
         </Link>
 
         <Link
-          to={isPre ? "" : `/pessoas/${item.id}?menu=${menu}?sidebar=2`}
+          to={isPre ? "" : `/pacotes/${item.id}?menu=${menu}?sidebar=2`}
           id="dependentData"
           onClick={() => {
             if (isPre) {
@@ -51,7 +51,7 @@ const IconGroupCollaborator = ({
 
         <Link
           id="productManagement"
-          to={isPre ? "" : `/pessoas/${item.id}?menu=${menu}?sidebar=3`}
+          to={isPre ? "" : `/pacotes/${item.id}?menu=${menu}?sidebar=3`}
           onClick={() => {
             if (isPre) {
               onOpen();

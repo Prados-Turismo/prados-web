@@ -284,7 +284,7 @@ const NOTIFICATION_CATEGORY: IGenericObjectWithPath = {
   },
   ["collaborator"]: {
     label: "Pessoas",
-    path: "/pessoas",
+    path: "/pacotes",
   },
   ["product"]: {
     label: "Produto",

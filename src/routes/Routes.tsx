@@ -36,6 +36,7 @@ import PrivacyPolicy from "../pages/PrivacyPolicy";
 import Register from "../pages/Register";
 import ResetToken from "../pages/ResetToken";
 import Notifications from "../pages/Notifications";
+import Products from "../pages/Products";
 
 export const AppRoutes = () => {
   const location = useLocation();
@@ -83,6 +84,7 @@ export const AppRoutes = () => {
         <Route path="/" element={homeElement} />
         <Route path="/index.htm" element={homeElement} />
         <Route path="/index.html" element={homeElement} />
+        <Route path="/produtos2" element={<Products />} />
 
         <Route path="/politica-privacidade" element={<PrivacyPolicy />} />
 

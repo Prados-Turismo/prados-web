@@ -5,23 +5,22 @@ import PageWithMenu from "../../Layouts/PageWithMenu";
 import Menu from "../../components/Menu";
 
 import Section from "./components/Section";
-import SideBar from "./components/Sidebar";
 
 import { IStatus } from "../../models/sidebar.model";
 import { theme } from "../../theme";
 import { useLocation } from "react-router-dom";
 
-const Collaborator = () => {
+const ProductsList = () => {
   const location = useLocation();
   const menuBack =
     parseInt(window.location.href?.split("menu=")[1]?.split("?")[0]) || null;
   const [status, setStatus] = useState<IStatus>({
-    title: "Reservas",
+    title: "Produtos",
     menu: menuBack || 1,
   });
 
   useEffect(() => {
-    document.title = `${theme.content.project} - Reservas`;
+    document.title = `${theme.content.project} - Produtos`;
 
     const menuPath = parseInt(
       location.search?.split("menu=")[1]?.split("?")[0],
@@ -29,7 +28,7 @@ const Collaborator = () => {
 
     if (location?.search) {
       setStatus({
-        title: "Reservas",
+        title: "Produtos",
         menu: menuPath,
       });
     }
@@ -38,11 +37,11 @@ const Collaborator = () => {
   return (
     <Dashboard menu={<Menu />}>
       <PageWithMenu
-        aside={<SideBar status={status} onStatus={setStatus} />}
+        // aside={<SideBar status={status} onStatus={setStatus} />}
         section={<Section menu={status.menu} />}
       />
     </Dashboard>
   );
 };
 
-export default Collaborator;
+export default ProductsList;

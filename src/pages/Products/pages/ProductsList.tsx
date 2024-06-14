@@ -17,12 +17,11 @@ import useCollaborator from "../../../hooks/useCollaborator";
 import { ISelect } from "../../../models/generics.model";
 import { cpfHidden, cpfMask } from "../../../utils";
 import { capitalize } from "../../../utils/capitalize";
-import IconGroupCollaborator from "../components/IconGroupCollaborator";
-import ModalRecordCollaborator from "../components/ModalRecordCollaborator";
+import ModalRecordCollaborator from "../components/ModalRegisterProduct";
 import TooltipSubstring from "../../../components/TooltipSubstring/TooltipSubstring";
 import AlertNoDataFound from "../../../components/AlertNoDataFound";
 
-const CollaboratorList = () => {
+const Products = () => {
   const { getCollaborators } = useCollaborator();
   const { company } = useGlobal();
   const [statusSelected, setStatusSelected] = useState<ISelect | null>();
@@ -51,14 +50,14 @@ const CollaboratorList = () => {
             setModalRecordCollaborator(true);
           }}
         >
-          Cadastrar titular
+          Cadastrar produto
         </Button>
       </SectionTop>
 
       <Content className="contentMain">
         <Flex width="100%" gap="15px" alignItems="flex-end" flexWrap="wrap">
           <div className="searchWrap">
-            <span>Buscar titular</span>
+            <span>Buscar produto</span>
             <FieldSearch
               placeholder="Nome ou CPF"
               handleSearch={(value) => {
@@ -121,12 +120,11 @@ const CollaboratorList = () => {
                 <TableContainer marginBottom="10px">
                   <Table>
                     <THead padding="0 30px 0 30px">
-                      <TD style={{ flex: "0 0 10%" }}>Status do cadastro</TD>
-                      <TD style={{ flex: "0 0 30%" }}>Colaborador</TD>
-                      <TD>CPF</TD>
-                      <TD>Categoria</TD>
-                      <TD>Subcategoria</TD>
-                      <TD style={{ flex: "0 0 10%", minWidth: "100px" }}>
+                      <TD alignItems={"center"}>Nome</TD>
+                      <TD alignItems={"center"}>Estoque</TD>
+                      <TD>Status</TD>
+                      <TD>Fornecedor</TD>
+                      <TD>
                         &nbsp;
                       </TD>
                     </THead>
@@ -134,12 +132,12 @@ const CollaboratorList = () => {
                     <TBody>
                       {data.map((item) => (
                         <TR key={item.id}>
-                          <TD style={{ flex: "0 0 10%" }}>
+                          <TD alignItems={"center"}>
                             {item?.beneficiaryStatus === "A"
                               ? "Completo"
                               : "Incompleto"}
                           </TD>
-                          <TD style={{ flex: "0 0 30%" }}>
+                          <TD alignItems={"center"}>
                             <TooltipSubstring
                               name={capitalize(item.person?.name) || "-"}
                               length={25}
@@ -156,22 +154,7 @@ const CollaboratorList = () => {
                               length={18}
                             />
                           </TD>
-                          <TD>
-                            <TooltipSubstring
-                              name={item.position?.name || "-"}
-                              length={18}
-                            />
-                          </TD>
-                          <TD style={{ flex: "0 0 10%" }}>
-                            <IconGroupCollaborator
-                              item={item}
-                              filter={
-                                item?.beneficiaryStatus === "A"
-                                  ? "complete"
-                                  : "incomplete"
-                              }
-                              menu={1}
-                            />
+                          <TD alignItems={"center"}>
                           </TD>
                         </TR>
                       ))}
@@ -189,14 +172,14 @@ const CollaboratorList = () => {
             )}
 
             {data.length === 0 && (
-              <AlertNoDataFound title="Nenhum titular encontrado" />
+              <AlertNoDataFound title="Nenhum produto encontrado" />
             )}
           </>
         )}
       </Content>
 
       <SimpleModal
-        title="Pré-cadastro"
+        title="Produto"
         size="xl"
         isOpen={modalRecordCollaborator}
         handleModal={setModalRecordCollaborator}
@@ -210,4 +193,4 @@ const CollaboratorList = () => {
   );
 };
 
-export default CollaboratorList;
+export default Products;

@@ -9,25 +9,20 @@ import Asterisk from "../../../../components/Asterisk";
 import ModalSector from "../../../../components/ModalSector";
 
 // Hooks
-import useCollaborator from "../../../../hooks/useCollaborator";
+import useProduct from "../../../../hooks/useProducts";
 
 import {
-  fieldRequired,
-  maxContent,
-  minContent,
+  fieldRequired
 } from "../../../../utils/messagesError";
 
 import { FieldWrap } from "./styled";
+import ReactSelect from "react-select";
+import useFornecedor from "../../../../hooks/useFornecedor";
+import { useGlobal } from "../../../../contexts/UserContext";
 
 const handleSubmitRegisterSchema = z.object({
-  name: z
+  nome: z
     .string()
-    .min(7, {
-      message: `O nome ${minContent(7)}`,
-    })
-    .max(120, {
-      message: `O nome ${maxContent(120)}`,
-    })
     .min(1, {
       message: fieldRequired("nome"),
     }),
@@ -36,6 +31,11 @@ const handleSubmitRegisterSchema = z.object({
     .number()
     .min(0, {
       message: fieldRequired("estoque"),
+    }),
+  codigoFornecedor: z
+    .string()
+    .min(1, {
+      message: fieldRequired("fornecedor"),
     })
 });
 
@@ -49,9 +49,12 @@ interface IModalRecordCollaborator {
 const ModalRegisterProduct = ({
   handleClose,
 }: IModalRecordCollaborator) => {
-  const { createCollaborator } = useCollaborator();
+  const { user } = useGlobal();
+  const { createProduct } = useProduct();
+  const { getAllFornecedores } = useFornecedor();
 
   const {
+    setValue,
     reset,
     register,
     handleSubmit,
@@ -59,15 +62,20 @@ const ModalRegisterProduct = ({
   } = useForm<IhandleSubmitRegister>({
     resolver: zodResolver(handleSubmitRegisterSchema),
   });
-  const { mutate: _, isLoading } = createCollaborator(reset, handleClose);
-
+  const { mutate, isLoading } = createProduct(reset, handleClose);
+  const { data: dataFornecedores, isLoading: loadingFornecedores } = getAllFornecedores();
 
   const [modalState, setModalState] = useState({
-    sector: false,
+    fornecedor: false,
     occupation: false,
   });
 
-  const handleSubmitRegister = (_data: IhandleSubmitRegister) => {
+  const handleSubmitRegister = (data: IhandleSubmitRegister) => {
+    mutate({
+      ...data,
+      ativo: true,
+      usuarioCadastro: "a9d4b484-23c5-4ad5-986a-24ab544ef7e7" || user?.id
+    })
   };
 
   const isEmpty = (value: string | null | undefined) => {
@@ -92,11 +100,11 @@ const ModalRegisterProduct = ({
 
             <Input
               placeholder="Digite o nome"
-              id="name"
+              id="nome"
               type="text"
-              {...register("name")}
+              {...register("nome")}
             />
-            {errors.name && <p className="error">{errors.name.message}</p>}
+            {errors.nome && <p className="error">{errors.nome.message}</p>}
           </FieldWrap>
 
           <FieldWrap>
@@ -112,6 +120,33 @@ const ModalRegisterProduct = ({
               min={0}
             />
             {errors.estoque && <p className="error">{errors.estoque.message}</p>}
+          </FieldWrap>
+
+          <FieldWrap>
+            <span>Fornecedor</span>
+
+            <Box display="flex" gap="10px">
+              <ReactSelect
+                isLoading={loadingFornecedores}
+                className="select-fields large"
+                classNamePrefix="select"
+                closeMenuOnSelect={true}
+                {...register?.("codigoFornecedor")}
+                isSearchable={true}
+                placeholder="Selecione"
+                noOptionsMessage={() => "Não há fornecedor cadastrado"}
+                options={dataFornecedores
+                  ?.map((fornecedor) => ({
+                    label: fornecedor?.nome,
+                    value: fornecedor?.id,
+                  }))}
+                name="codigoFornecedor"
+                id="codigoFornecedor"
+                onChange={(option) => {
+                  setValue("codigoFornecedor", option?.value.toString() || "");
+                }}
+              />
+            </Box>
           </FieldWrap>
 
           <Flex justifyContent="flex-end" gap="15px">
@@ -132,10 +167,10 @@ const ModalRegisterProduct = ({
         handleOpen={(arg) => {
           setModalState({
             ...modalState,
-            sector: arg,
+            fornecedor: arg,
           });
         }}
-        isOpen={modalState.sector}
+        isOpen={modalState.fornecedor}
       />
     </>
   );

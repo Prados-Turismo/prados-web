@@ -1,6 +1,8 @@
 import { queryClient, generateQueryClient } from "./queryClient";
 
 const keys = {
+  products: "products",
+  fornecedores: "fornecedores",
   home: "home",
   company: "company",
   collaborator: "collaborator",

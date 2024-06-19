@@ -13,16 +13,13 @@ import { Content, SectionTop } from "./styled";
 import ReactSelect from "react-select";
 import SimpleModal from "../../../components/SimpleModal";
 import { useGlobal } from "../../../contexts/UserContext";
-import useCollaborator from "../../../hooks/useCollaborator";
 import { ISelect } from "../../../models/generics.model";
-import { cpfHidden, cpfMask } from "../../../utils";
-import { capitalize } from "../../../utils/capitalize";
 import ModalRecordCollaborator from "../components/ModalRegisterProduct";
-import TooltipSubstring from "../../../components/TooltipSubstring/TooltipSubstring";
 import AlertNoDataFound from "../../../components/AlertNoDataFound";
+import useProduct from "../../../hooks/useProducts";
 
 const Products = () => {
-  const { getCollaborators } = useCollaborator();
+  const { getProducts } = useProduct();
   const { company } = useGlobal();
   const [statusSelected, setStatusSelected] = useState<ISelect | null>();
   const [resetFilter, setResetFilter] = useState(false);
@@ -30,15 +27,9 @@ const Products = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const registerPerPage = 10;
 
-  const { data, count, isLoading, setFieldSearch } = getCollaborators({
+  const { data, count, isLoading } = getProducts({
     size: registerPerPage,
-    page: currentPage,
-    companyId: company!.externalCompanyId,
-    status: statusSelected
-      ? statusSelected?.value === 1
-        ? true
-        : false
-      : null,
+    page: currentPage
   });
 
   return (
@@ -60,9 +51,8 @@ const Products = () => {
             <span>Buscar produto</span>
             <FieldSearch
               placeholder="Nome ou CPF"
-              handleSearch={(value) => {
+              handleSearch={() => {
                 setResetFilter(false);
-                setFieldSearch(value);
                 setCurrentPage(1);
               }}
               reset={resetFilter}
@@ -98,7 +88,6 @@ const Products = () => {
             borderRadius="5px"
             variant="outline"
             onClick={() => {
-              setFieldSearch(null);
               setResetFilter(true);
               setStatusSelected(null);
             }}
@@ -133,26 +122,16 @@ const Products = () => {
                       {data.map((item) => (
                         <TR key={item.id}>
                           <TD alignItems={"center"}>
-                            {item?.beneficiaryStatus === "A"
-                              ? "Completo"
-                              : "Incompleto"}
+                            {item.nome}
                           </TD>
                           <TD alignItems={"center"}>
-                            <TooltipSubstring
-                              name={capitalize(item.person?.name) || "-"}
-                              length={25}
-                            />
+                            {item.estoque}
                           </TD>
                           <TD>
-                            {item.person?.cpf
-                              ? cpfHidden(cpfMask(item.person?.cpf))
-                              : "-"}
+                            {item.nome}
                           </TD>
                           <TD>
-                            <TooltipSubstring
-                              name={item.sector?.name || "-"}
-                              length={18}
-                            />
+                            {item.ativo ? "Ativo" : "Inativo"}
                           </TD>
                           <TD alignItems={"center"}>
                           </TD>

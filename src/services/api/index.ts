@@ -1,6 +1,10 @@
 import axios from "axios"
 import { getToken } from "../../cookies"
 
+const apiPrados = axios.create({
+  baseURL: import.meta.env.VITE_REACT_APP_PRADOS
+})
+
 const apiPermissionNoAuth = axios.create({
   baseURL: import.meta.env.VITE_REACT_APP_API_URL_PERMISSION
 })
@@ -50,6 +54,15 @@ const apiReporting = axios.create({
 })
 
 // Interceptors
+apiPrados.interceptors.request.use((config) => {
+  const accessToken = getToken()
+
+  if (accessToken) {
+    config.headers.Authorization = `Bearer ${accessToken}`
+  }
+  return config
+})
+
 apiRecord.interceptors.request.use((config) => {
   const accessToken = getToken()
 
@@ -135,6 +148,7 @@ apiReporting.interceptors.request.use((config) => {
 })
 
 export {
+  apiPrados,
   apiPermissionNoAuth,
   apiRecord,
   apiInvoicing,

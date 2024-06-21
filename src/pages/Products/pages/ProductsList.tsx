@@ -111,8 +111,8 @@ const Products = () => {
                     <THead padding="0 30px 0 30px">
                       <TD alignItems={"center"}>Nome</TD>
                       <TD alignItems={"center"}>Estoque</TD>
-                      <TD>Status</TD>
                       <TD>Fornecedor</TD>
+                      <TD>Status</TD>
                       <TD>
                         &nbsp;
                       </TD>
@@ -128,7 +128,7 @@ const Products = () => {
                             {item.estoque}
                           </TD>
                           <TD>
-                            {item.nome}
+                            {item.Fornecedor.nome}
                           </TD>
                           <TD>
                             {item.ativo ? "Ativo" : "Inativo"}

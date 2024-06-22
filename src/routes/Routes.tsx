@@ -25,7 +25,6 @@ import SelectRole from "../pages/SelectRole";
 import UserManagements from "../pages/UserManagements";
 
 // Pages No Auth
-import { useEffect, useState } from "react";
 import CommonQuestions from "../pages/CommonQuestions";
 import CompleteRegistration from "../pages/CompleteRegistration";
 import FirstAccess from "../pages/FirstAccess";
@@ -43,22 +42,12 @@ export const AppRoutes = () => {
   const { user, role, roles, permissions, companyStatus, isBroker, company } =
     useGlobal();
 
-  const [hasTermsOfPrivacy, setHasTermsOfPrivacy] = useState(
-    user?.termsOfPrivacy,
-  );
-
   const isNotApproved =
     (companyStatus &&
       companyStatus?.status !== "approved" &&
       company &&
       !isBroker) ||
     false;
-
-  useEffect(() => {
-    if (user) {
-      setHasTermsOfPrivacy(user?.termsOfPrivacy);
-    }
-  }, [user]);
 
   ReactGA.initialize("G-HMJ7F7DKB5");
   ReactGA.send({
@@ -67,16 +56,7 @@ export const AppRoutes = () => {
     title: location.pathname,
   });
 
-  const homeElement =
-    user && !hasTermsOfPrivacy ? (
-      <PrivacyPolicy />
-    ) : !role ? (
-      <SelectRole />
-    ) : !company ? (
-      <SelectCompany />
-    ) : (
-      <Home />
-    );
+  const homeElement = <Home />;
   return (
     <Routes>
       {/* Rotas para todos os perfis autenticados */}

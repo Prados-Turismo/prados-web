@@ -5,12 +5,10 @@ import {
   ReactNode,
   SetStateAction,
   useContext,
-  useEffect,
   useState,
 } from "react";
 
 import { useTheme } from "@chakra-ui/react";
-import { destroyCookie } from "nookies";
 import { useNavigate } from "react-router-dom";
 
 import Favicon from "../components/Favicon";
@@ -28,20 +26,17 @@ import {
 } from "../cookies";
 
 import { useToastStandalone } from "../hooks/useToastStandalone";
-import { apiPermission, apiPermissionNoAuth } from "../services/api";
+import { apiPrados } from "../services/api";
 import { queryClient } from "../services/query";
 
 import { Warning } from "../errors";
-import useAuth from "../hooks/useAuth";
 import useError from "../hooks/useError";
 
 import { ICompanyAssociatedStatus } from "../models/companies-associated";
 import { ICompanyInfo } from "../models/company.model";
-import { IPermissionsData } from "../models/permissions";
 import { IRole } from "../models/role.model";
-import { IUser, IUserCognitoData, IUserCompany } from "../models/user.model";
+import { IUser, IUserCompany } from "../models/user.model";
 import { INotificationsData } from "../models/notifications";
-import { notificationNavigate } from "../components/BellNotification/BellNotification";
 
 interface ISignInCredentials {
   username: string;
@@ -121,7 +116,6 @@ const GlobalContext = createContext({} as IGlobalContext);
 
 const GlobalProvider = ({ children }: IGlobalProvider) => {
   const navigate = useNavigate();
-  const { refreshToken } = useAuth();
   const { errorHandler } = useError();
 
   const theme = useTheme();
@@ -160,58 +154,14 @@ const GlobalProvider = ({ children }: IGlobalProvider) => {
     firstAccess: false,
   });
 
-  useEffect(() => {
-    if (user && role && company) {
-      (async () => {
-        const { data } = await apiPermission.get<IPermissionsData[]>(
-          `/user/${user.id}/company/${company.id}/profile/${role.id}/permissions`,
-        );
-
-        const result = data.map((e: IPermissionsData) => e.domain);
-
-        const permissionsData = {
-          collaborator: result.includes("COLABORADORES"),
-          product: result.includes("PRODUTOS"),
-          partner: result.includes("PJ`S"),
-          financialArea: result.includes("ÁREA FINANCEIRA"),
-          companyData: result.includes("DADOS DA EMPRESA"),
-          userManagement: result.includes("GESTÃO DE USUÁRIOS"),
-          healthVoucherManagement: result.includes("GESTÃO PROMOÇÃO A SAÚDE"),
-          reports: result.includes("MOVIMENTAÇÕES"),
-          adhesion: result.includes("ADESÃO"),
-          productSettings: result.includes("CONFIGURAÇÕES DE PRODUTOS"),
-          notifications: true,
-        };
-
-        setPermissions(permissionsData);
-        setDataCookie({
-          key: "@fiibo.permissions",
-          value: JSON.stringify(permissionsData),
-        });
-        if (notificationNavigateData) {
-          notificationNavigate(notificationNavigateData, navigate);
-          setnotificationNavigateData(null);
-        }
-      })();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, role, company]);
-
   const finishSession = ({
     hasLoginRedirect,
   }: {
     hasLoginRedirect: boolean;
   }) => {
     queryClient.removeQueries();
-    localStorage.removeItem("@comparatorSelected");
     removeAllCookies();
     setUser(null);
-    setRole(null);
-    setRoles([]);
-    setCompany(null);
-    setCompanies([]);
-    setnotificationNavigateData(null);
-    setPermissions(defaultPermissions);
 
     if (hasLoginRedirect) {
       navigate("/login");
@@ -219,39 +169,9 @@ const GlobalProvider = ({ children }: IGlobalProvider) => {
   };
 
   const changeProfile = () => {
-    queryClient.removeQueries();
-
-    setRole(null);
-    destroyCookie(null, "@fiibo.role");
-
-    setCompany(null);
-    destroyCookie(null, "@fiibo.company");
-
-    setIsUseTerm(false);
-    destroyCookie(null, "@fiibo.term");
-
-    setCompanies([]);
-    destroyCookie(null, "@fiibo.companies");
-
-    setPermissions(defaultPermissions);
-    destroyCookie(null, "@fiibo.permissions");
   };
 
-  const changeCompany = (userCompany: { value: string }) => {
-    queryClient.removeQueries();
-
-    const companySelected = companies.find(
-      (companyData) =>
-        companyData.company.externalCompanyId === userCompany.value,
-    );
-
-    setPermissions(defaultPermissions);
-    setCompany(companySelected!.company);
-
-    setDataCookie({
-      key: "@fiibo.company",
-      value: JSON.stringify(companySelected!.company),
-    });
+  const changeCompany = () => {
   };
 
   const signOut = ({
@@ -270,80 +190,30 @@ const GlobalProvider = ({ children }: IGlobalProvider) => {
     password,
   }: ISignInCredentials): Promise<void> => {
     try {
-      const cognitoResponse = await apiPermissionNoAuth.post<{
-        tokenType: string;
-        accessToken: string;
-        refreshToken: string;
-        user: IUserCognitoData;
-        firstAccess?: boolean;
-      }>("/auth/login", {
+      const loginResponse = await apiPrados.post<{
+        userId: string
+        token: string
+      }>("/usuarios/auth", {
         username,
         password,
       });
 
-      if (cognitoResponse.data.firstAccess)
-        return setUserAccess({
-          userEmail: username,
-          firstAccess: true,
-        });
-
       setDataCookie({
         key: "@fiibo.token",
-        value: cognitoResponse.data.accessToken,
+        value: loginResponse.data.token
       });
+
+      const userResponse = await apiPrados.get<IUser>(`usuarios/find/${loginResponse.data.userId}`);
+
+      setUser(userResponse.data);
 
       setDataCookie({
-        key: "@fiibo.refreshToken",
-        value: cognitoResponse.data.refreshToken,
+        key: "@fiibo.user",
+        value: JSON.stringify(userResponse.data),
       });
 
-      const { data } = await apiPermission.get<IUser>("user/me");
+      navigate("/produtos2");
 
-      const isCanAccess = !data.profiles.every(
-        (role) => role.name === "ADMIN" || role.name === "BENEFICIARIO",
-      );
-
-      if (isCanAccess) {
-        const roles = data.profiles.filter(
-          (role) => role.name !== "ADMIN" && role.name !== "BENEFICIARIO",
-        );
-
-        setDataCookie({
-          key: "@fiibo.user",
-          value: JSON.stringify(data),
-        });
-
-        setDataCookie({
-          key: "@fiibo.roles",
-          value: JSON.stringify(roles),
-        });
-
-        setUser(data);
-        setRoles(roles);
-
-        if (roles.length === 1) {
-          setDataCookie({
-            key: "@fiibo.role",
-            value: JSON.stringify(roles[0]),
-          });
-
-          setRole(roles[0]);
-
-          navigate("/selecione-empresa");
-        } else {
-          navigate("/selecione-perfil");
-        }
-      }
-
-      if (!isCanAccess) {
-        finishSession({ hasLoginRedirect: true });
-
-        useToastStandalone({
-          title: "O(a) usuário(a) não tem permissão para acessar o portal",
-          status: "warning",
-          duration: 3000,
-        });
-      }
     } catch (error: any) {
       if (error?.code === "ERR_NETWORK") {
         return useToastStandalone({
@@ -367,22 +237,16 @@ const GlobalProvider = ({ children }: IGlobalProvider) => {
     queries: {
       onError: async (error: any) => {
         if (error instanceof Warning && error.code === 401) {
-          try {
-            queryClient.resetQueries();
+          queryClient.resetQueries();
 
-            await refreshToken();
-            setUser(getUser());
-          } catch (error: any) {
-            if (error.response.status === 401) {
-              finishSession({ hasLoginRedirect: true });
-              useToastStandalone({
-                title: "Token expirado!",
-                description: "Seu token expirou, faça login novamente",
-                status: "info",
-                duration: 10000,
-              });
-            }
-          }
+          finishSession({ hasLoginRedirect: true });
+
+          useToastStandalone({
+            title: "Token expirado!",
+            description: "Seu token expirou, faça login novamente",
+            status: "info",
+            duration: 10000,
+          });
         } else {
           errorHandler(error);
         }

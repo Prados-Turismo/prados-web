@@ -12,7 +12,6 @@ import { Content, SectionTop } from "./styled";
 // Hooks and utils
 import ReactSelect from "react-select";
 import SimpleModal from "../../../components/SimpleModal";
-import { useGlobal } from "../../../contexts/UserContext";
 import { ISelect } from "../../../models/generics.model";
 import ModalRecordCollaborator from "../components/ModalRegisterProduct";
 import AlertNoDataFound from "../../../components/AlertNoDataFound";
@@ -20,7 +19,6 @@ import useProduct from "../../../hooks/useProducts";
 
 const Products = () => {
   const { getProducts } = useProduct();
-  const { company } = useGlobal();
   const [statusSelected, setStatusSelected] = useState<ISelect | null>();
   const [resetFilter, setResetFilter] = useState(false);
   const [modalRecordCollaborator, setModalRecordCollaborator] = useState(false);
@@ -164,7 +162,6 @@ const Products = () => {
         handleModal={setModalRecordCollaborator}
       >
         <ModalRecordCollaborator
-          companyId={company!.externalCompanyId}
           handleClose={() => setModalRecordCollaborator(false)}
         />
       </SimpleModal>

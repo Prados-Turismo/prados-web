@@ -40,7 +40,7 @@ const Menu = ({
   const theme = useTheme();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { company, user, isUseTerm } = useGlobal();
+  const { company, user } = useGlobal();
 
   return (
     <>
@@ -87,15 +87,11 @@ const Menu = ({
           </Logo>
         </Link>
 
-        {user &&
-          user?.termsOfPrivacy &&
-          company &&
-          isUseTerm &&
-          onBoardingCompleted && (
-            <MenuMain>
-              <LinksMenu onClose={() => null} />
-            </MenuMain>
-          )}
+        {user && (
+          <MenuMain>
+            <LinksMenu onClose={() => null} />
+          </MenuMain>
+        )}
       </MenuWithLogo>
 
       <MenuDropDown onBoardingCompleted={onBoardingCompleted} />

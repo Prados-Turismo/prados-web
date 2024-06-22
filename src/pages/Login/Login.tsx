@@ -13,20 +13,15 @@ import Centralized from "../../Layouts/Centralized";
 import { FieldWrap, Logo, Form } from "./styled";
 
 // Funções de utilidade
-import { emailValidation } from "../../utils/regexExpressions";
-import { emailInvalid, minContent } from "../../utils/messagesError";
+import { minContent } from "../../utils/messagesError";
 import RequestPasswordChange from "../../components/RequestPasswordChange/RequestPasswordChange";
 
 const handleSubmitRegisterSchema = z.object({
   username: z
     .string()
     .min(3, {
-      message: `O e-mail ${minContent(3)}`,
-    })
-    .regex(emailValidation, {
-      message: emailInvalid,
-    })
-    .transform((email) => email.trim().toLocaleLowerCase()),
+      message: `O usuário ${minContent(3)}`,
+    }),
   password: z.string().min(3, {
     message: `A senha ${minContent(3)}`,
   }),
@@ -94,7 +89,7 @@ const Login = () => {
             <div className="field">
               <Input
                 height={50}
-                placeholder="E-mail"
+                placeholder="Usuário"
                 type="text"
                 {...register("username")}
               />

@@ -42,7 +42,6 @@ const handleSubmitRegisterSchema = z.object({
 type IhandleSubmitRegister = z.infer<typeof handleSubmitRegisterSchema>;
 
 interface IModalRecordCollaborator {
-  companyId: string;
   handleClose: () => void;
 }
 

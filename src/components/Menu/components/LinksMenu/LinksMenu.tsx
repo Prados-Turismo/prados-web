@@ -9,9 +9,6 @@ import { TfiHeadphoneAlt } from "react-icons/tfi";
 // Types
 import { ILinksMenu } from "./types";
 
-import Bell from "../../../Bell";
-// import Bell from "../../../Bell"
-
 import {
   Links,
   MenuItem,
@@ -123,7 +120,7 @@ const LinksMenu = ({ onClose }: ILinksMenu) => {
           Notificações
         </Link>
       )}
-      {!break1280 && <Bell />}
+      {/* {!break1280 && <Bell />} */}
     </Links>
   );
 };

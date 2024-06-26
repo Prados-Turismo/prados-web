@@ -13,15 +13,20 @@ import { Content, SectionTop } from "./styled";
 import ReactSelect from "react-select";
 import SimpleModal from "../../../components/SimpleModal";
 import { ISelect } from "../../../models/generics.model";
-import ModalRecordCollaborator from "../components/ModalRegisterProduct";
+import ModalRecordProduct from "../components/ModalRegisterProduct";
 import AlertNoDataFound from "../../../components/AlertNoDataFound";
 import useProduct from "../../../hooks/useProducts";
+import { MdEdit } from "react-icons/md";
+import ModalUpdateProduct from "../components/ModalUpdateProduct";
+import { IDataProduct } from "../../../models/product2.model";
 
 const Products = () => {
   const { getProducts } = useProduct();
   const [statusSelected, setStatusSelected] = useState<ISelect | null>();
   const [resetFilter, setResetFilter] = useState(false);
-  const [modalRecordCollaborator, setModalRecordCollaborator] = useState(false);
+  const [modalRecordProduct, setModalRecordProduct] = useState(false);
+  const [modalUpdateProduct, setModalUpdateProduct] = useState(false);
+  const [productData, setProductData] = useState<IDataProduct | undefined>();
   const [currentPage, setCurrentPage] = useState(1);
   const registerPerPage = 10;
 
@@ -36,7 +41,7 @@ const Products = () => {
         <Button
           leftIcon={<IoIosAdd />}
           onClick={() => {
-            setModalRecordCollaborator(true);
+            setModalRecordProduct(true);
           }}
         >
           Cadastrar produto
@@ -107,22 +112,20 @@ const Products = () => {
                 <TableContainer marginBottom="10px">
                   <Table>
                     <THead padding="0 30px 0 30px">
-                      <TD alignItems={"center"}>Nome</TD>
-                      <TD alignItems={"center"}>Estoque</TD>
+                      <TD>Nome</TD>
+                      <TD>Estoque</TD>
                       <TD>Fornecedor</TD>
                       <TD>Status</TD>
-                      <TD>
-                        &nbsp;
-                      </TD>
+                      <TD></TD>
                     </THead>
 
                     <TBody>
                       {data.map((item) => (
                         <TR key={item.id}>
-                          <TD alignItems={"center"}>
+                          <TD>
                             {item.nome}
                           </TD>
-                          <TD alignItems={"center"}>
+                          <TD>
                             {item.estoque}
                           </TD>
                           <TD>
@@ -131,7 +134,16 @@ const Products = () => {
                           <TD>
                             {item.ativo ? "Ativo" : "Inativo"}
                           </TD>
-                          <TD alignItems={"center"}>
+                          <TD>
+                            <MdEdit
+                              size={20}
+                              // color={customTheme.colors.brandSecond.first}
+                              cursor="pointer"
+                              onClick={() => {
+                                setProductData(item)
+                                setModalUpdateProduct(true)
+                              }}
+                            />
                           </TD>
                         </TR>
                       ))}
@@ -158,13 +170,27 @@ const Products = () => {
       <SimpleModal
         title="Produto"
         size="xl"
-        isOpen={modalRecordCollaborator}
-        handleModal={setModalRecordCollaborator}
+        isOpen={modalRecordProduct}
+        handleModal={setModalRecordProduct}
       >
-        <ModalRecordCollaborator
-          handleClose={() => setModalRecordCollaborator(false)}
+        <ModalRecordProduct
+          handleClose={() => setModalRecordProduct(false)}
         />
       </SimpleModal>
+
+      {productData && (
+        <SimpleModal
+          title="Produto"
+          size="xl"
+          isOpen={modalUpdateProduct}
+          handleModal={setModalUpdateProduct}
+        >
+          <ModalUpdateProduct
+            handleClose={() => setModalUpdateProduct(false)}
+            data={productData}
+          />
+        </SimpleModal>
+      )}
     </>
   );
 };

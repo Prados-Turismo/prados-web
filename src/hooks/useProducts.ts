@@ -11,7 +11,9 @@ import {
   IProductArgs,
   IProductResponse,
   ICreateProductArgs,
-  ICreateProductResponse
+  ICreateProductResponse,
+  IUpdateProductArgs,
+  IUpdateProductResponse
 } from "../models/product2.model";
 
 // Keys
@@ -83,11 +85,41 @@ const createProduct = (
   };
 };
 
+const updateProduct = (
+  reset: () => void,
+  handleClose: () => void,
+): IUpdateProductResponse => {
+  const { isLoading, mutate } = useMutation(
+    async (data: IUpdateProductArgs) => {
+      const urlPath = `produtos/update/${data.id}`;
 
+      try {
+        await apiPrados.put(urlPath, data).then(() => {
+          reset();
+          handleClose();
+          queryClient.invalidateQueries([keys.products]);
+
+          useToastStandalone({
+            title: "Atualizado com sucesso!",
+            status: "success",
+          });
+        });
+      } catch (error: any) {
+        throw new Warning(error.response.data.message, error?.response?.status);
+      }
+    },
+  );
+
+  return {
+    isLoading,
+    mutate,
+  };
+};
 
 export default function useProduct() {
   return {
     getProducts,
     createProduct,
+    updateProduct
   };
 }

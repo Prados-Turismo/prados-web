@@ -17,6 +17,7 @@ import { FieldWrap } from "./styled";
 import ReactSelect from "react-select";
 import useFornecedor from "../../../../hooks/useFornecedor";
 import { useGlobal } from "../../../../contexts/UserContext";
+import { IDataProduct } from "../../../../models/product2.model";
 
 const handleSubmitRegisterSchema = z.object({
   nome: z
@@ -40,14 +41,16 @@ const handleSubmitRegisterSchema = z.object({
 type IhandleSubmitRegister = z.infer<typeof handleSubmitRegisterSchema>;
 
 interface IModalRecordCollaborator {
-  handleClose: () => void;
+  handleClose: () => void
+  data: IDataProduct
 }
 
-const ModalRegisterProduct = ({
+const ModalUpdateProduct = ({
   handleClose,
+  data
 }: IModalRecordCollaborator) => {
   const { user } = useGlobal();
-  const { createProduct } = useProduct();
+  const { updateProduct } = useProduct();
   const { getAllFornecedores } = useFornecedor();
 
   const {
@@ -58,13 +61,19 @@ const ModalRegisterProduct = ({
     formState: { errors },
   } = useForm<IhandleSubmitRegister>({
     resolver: zodResolver(handleSubmitRegisterSchema),
+    defaultValues: {
+      nome: data.nome,
+      estoque: data.estoque,
+      codigoFornecedor: data.codigoFornecedor
+    }
   });
-  const { mutate, isLoading } = createProduct(reset, handleClose);
+  const { mutate, isLoading } = updateProduct(reset, handleClose);
   const { data: dataFornecedores, isLoading: loadingFornecedores } = getAllFornecedores();
 
-  const handleSubmitRegister = (data: IhandleSubmitRegister) => {
+  const handleSubmitRegister = (submitData: IhandleSubmitRegister) => {
     mutate({
-      ...data,
+      ...submitData,
+      id: data.id,
       ativo: true,
       usuarioCadastro: user?.id
     })
@@ -136,6 +145,10 @@ const ModalRegisterProduct = ({
               onChange={(option) => {
                 setValue("codigoFornecedor", option?.value.toString() || "");
               }}
+              defaultValue={{
+                label: data.Fornecedor?.nome,
+                value: data.Fornecedor?.id
+              }}
             />
           </Box>
         </FieldWrap>
@@ -156,4 +169,4 @@ const ModalRegisterProduct = ({
   );
 };
 
-export default ModalRegisterProduct;
+export default ModalUpdateProduct;

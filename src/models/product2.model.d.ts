@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 export interface IProductArgs {
   page: number;
   size: number;
@@ -46,7 +44,16 @@ export interface ICreateProductArgs {
   usuarioCadastro: string
 }
 
+export interface IUpdateProductArgs extends ICreateProductArgs {
+  id: string
+}
+
 export interface ICreateProductResponse {
   isLoading: boolean;
   mutate: UseMutateFunction<void, unknown, ICreateProductArgs, unknown>;
+}
+
+export interface IUpdateProductResponse {
+  isLoading: boolean;
+  mutate: UseMutateFunction<void, unknown, IUpdateProductArgs, unknown>;
 }

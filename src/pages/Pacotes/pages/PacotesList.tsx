@@ -13,14 +13,14 @@ import { Content, SectionTop } from "./styled";
 import ReactSelect from "react-select";
 import SimpleModal from "../../../components/SimpleModal";
 import { ISelect } from "../../../models/generics.model";
-import ModalRecordProduct from "../components/ModalRegisterProduct";
+import ModalRecordProduct from "../components/ModalRegisterPacote";
 import AlertNoDataFound from "../../../components/AlertNoDataFound";
 import useProduct from "../../../hooks/useProducts";
 import { MdEdit } from "react-icons/md";
-import ModalUpdateProduct from "../components/ModalUpdateProduct";
+import ModalUpdateProduct from "../components/ModalUpdatePacote";
 import { IDataProduct } from "../../../models/product2.model";
 
-const ProductsList = () => {
+const PacotesList = () => {
   const { getProducts } = useProduct();
   const [statusSelected, setStatusSelected] = useState<ISelect | null>();
   const [resetFilter, setResetFilter] = useState(false);
@@ -44,14 +44,14 @@ const ProductsList = () => {
             setModalRecordProduct(true);
           }}
         >
-          Cadastrar produto
+          Cadastrar pacote
         </Button>
       </SectionTop>
 
       <Content className="contentMain">
         <Flex width="100%" gap="15px" alignItems="flex-end" flexWrap="wrap">
           <div className="searchWrap">
-            <span>Buscar produto</span>
+            <span>Buscar pacote</span>
             <FieldSearch
               placeholder="Nome ou CPF"
               handleSearch={() => {
@@ -161,14 +161,14 @@ const ProductsList = () => {
             )}
 
             {data.length === 0 && (
-              <AlertNoDataFound title="Nenhum produto encontrado" />
+              <AlertNoDataFound title="Nenhum pacote encontrado" />
             )}
           </>
         )}
       </Content>
 
       <SimpleModal
-        title="Produto"
+        title="Pacote"
         size="xl"
         isOpen={modalRecordProduct}
         handleModal={setModalRecordProduct}
@@ -180,7 +180,7 @@ const ProductsList = () => {
 
       {productData && (
         <SimpleModal
-          title="Produto"
+          title="Pacote"
           size="xl"
           isOpen={modalUpdateProduct}
           handleModal={setModalUpdateProduct}
@@ -195,4 +195,4 @@ const ProductsList = () => {
   );
 };
 
-export default ProductsList;
+export default PacotesList;

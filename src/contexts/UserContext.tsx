@@ -212,7 +212,7 @@ const GlobalProvider = ({ children }: IGlobalProvider) => {
         value: JSON.stringify(userResponse.data),
       });
 
-      navigate("/produtos2");
+      navigate("/");
 
     } catch (error: any) {
       if (error?.code === "ERR_NETWORK") {

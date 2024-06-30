@@ -1,12 +1,12 @@
 // Pages
-import ProductsList from "../../pages/ProductsList"
+import PacotesList from "../../pages/PacotesList"
 
 // Interfaces
 import { ISection } from "../../../../models/sidebar.model"
 
 const Section = ({ menu }: ISection) => (
   <>
-    {menu === 1 && <ProductsList />}
+    {menu === 1 && <PacotesList />}
   </>
 )
 

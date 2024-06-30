@@ -165,6 +165,10 @@ const styles = {
           height: "40px",
         },
       },
+
+      "&.multi": {
+        flex: "1"
+      },
     },
   },
 };

@@ -9,8 +9,8 @@ import { useGlobal } from "../contexts/UserContext";
 import BenefitSettings from "../pages/BenefitSettings";
 import Benefits from "../pages/Benefits";
 import ProductsPrice from "../pages/Benefits/pages/ProductsPrice";
-import Collaborator from "../pages/Collaborator";
-import CollaboratorDetails from "../pages/CollaboratorDetails";
+// import Collaborator from "../pages/Collaborator";
+// import CollaboratorDetails from "../pages/CollaboratorDetails";
 import Company from "../pages/Company";
 import FinancialArea from "../pages/FinancialArea";
 import HealthVoucherManagement from "../pages/HealthVoucherManagement";
@@ -36,6 +36,7 @@ import Register from "../pages/Register";
 import ResetToken from "../pages/ResetToken";
 import Notifications from "../pages/Notifications";
 import Products from "../pages/Products";
+import Pacotes from "../pages/Pacotes";
 
 export const AppRoutes = () => {
   const location = useLocation();
@@ -65,12 +66,13 @@ export const AppRoutes = () => {
         <Route path="/index.htm" element={homeElement} />
         <Route path="/index.html" element={homeElement} />
         <Route path="/produtos2" element={<Products />} />
+        <Route path="/pacotes" element={<Pacotes />} />
 
         <Route path="/politica-privacidade" element={<PrivacyPolicy />} />
 
         <Route element={<ProtectedRoute isAuth={permissions?.collaborator} />}>
-          <Route path="/pacotes" element={<Collaborator />} />
-          <Route path="/pacotes/:id" element={<CollaboratorDetails />} />
+          {/* <Route path="/pacotes" element={<Collaborator />} />
+          <Route path="/pacotes/:id" element={<CollaboratorDetails />} /> */}
         </Route>
 
         <Route element={<ProtectedRoute isAuth={permissions?.product} />}>

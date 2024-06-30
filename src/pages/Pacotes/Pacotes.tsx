@@ -10,17 +10,17 @@ import { IStatus } from "../../models/sidebar.model";
 import { theme } from "../../theme";
 import { useLocation } from "react-router-dom";
 
-const Products = () => {
+const Pacotes = () => {
   const location = useLocation();
   const menuBack =
     parseInt(window.location.href?.split("menu=")[1]?.split("?")[0]) || null;
   const [status, setStatus] = useState<IStatus>({
-    title: "Produtos",
+    title: "Pacotes",
     menu: menuBack || 1,
   });
 
   useEffect(() => {
-    document.title = `${theme.content.project} - Produtos`;
+    document.title = `${theme.content.project} - Pacotes`;
 
     const menuPath = parseInt(
       location.search?.split("menu=")[1]?.split("?")[0],
@@ -28,7 +28,7 @@ const Products = () => {
 
     if (location?.search) {
       setStatus({
-        title: "Produtos",
+        title: "Pacotes",
         menu: menuPath,
       });
     }
@@ -43,4 +43,4 @@ const Products = () => {
   );
 };
 
-export default Products;
+export default Pacotes;

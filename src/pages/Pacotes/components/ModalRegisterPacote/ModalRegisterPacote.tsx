@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Box, Button, Flex, Input } from "@chakra-ui/react";
+import { Box, Button, Flex, Input, FormControl, FormLabel } from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -19,6 +19,7 @@ import ReactSelect from "react-select";
 import { useGlobal } from "../../../../contexts/UserContext";
 import FormInputNumber from "../../../../components/FormInputNumber";
 import FormInput from "../../../../components/FormInput";
+import { useState } from "react";
 
 const handleSubmitRegisterSchema = z.object({
   nome: z
@@ -65,6 +66,9 @@ const ModalRegisterPacote = ({
   const { user } = useGlobal();
   const { createProduct } = useProduct();
   // const { getAllOrigemes } = useOrigem();
+
+  const [ufSelected, setUfSelected] = useState<any>(null);
+  const [citySelected, setCitySelected] = useState<any>(null);
 
   const {
     setValue,
@@ -251,6 +255,92 @@ const ModalRegisterPacote = ({
             />
           </Box>
         </FieldWrap>
+
+        <Flex gap={5}>
+          <FormControl
+            maxWidth={{
+              base: "100%",
+              md: "250px",
+            }}
+            minW="130px"
+          >
+            <FormLabel>Estado</FormLabel>
+
+            <ReactSelect
+              className="estado select-fields large"
+              classNamePrefix="select"
+              closeMenuOnSelect={true}
+              isSearchable={true}
+              placeholder="Selecionar"
+              noOptionsMessage={() => "Nenhum opção para selecionar"}
+              value={ufSelected}
+              onChange={(selectedOption) => {
+                setUfSelected(selectedOption)
+                setCitySelected(null)
+              }}
+              // options={
+              //   uf &&
+              //   uf
+              //     .filter((el) =>
+              //       search?.uf ? !search?.uf.includes(el.codIbgeUF) : true,
+              //     )
+              //     .map((item) => ({
+              //       value: item?.codIbgeUF,
+              //       label: item?.nomeUF,
+              //     }))
+              // }
+            />
+          </FormControl>
+
+          <FormControl
+            maxWidth={{
+              base: "100%",
+              md: "250px",
+            }}
+          >
+            <FormLabel>Município</FormLabel>
+
+            {!ufSelected ? (
+              <Flex
+                justifyContent="flex-start"
+                paddingLeft="10px"
+                alignItems="center"
+                border="1px solid hsl(0, 0%, 80%)"
+                borderRadius="4px"
+                height="38px"
+                minW="165px"
+              >
+                Selecione um Estado
+              </Flex>
+            ) : (
+              <ReactSelect
+                className="municipio select-fields large"
+                classNamePrefix="select"
+                closeMenuOnSelect={true}
+                isSearchable={true}
+                placeholder="Selecionar"
+                noOptionsMessage={() => "Nenhum opção para selecionar"}
+                value={citySelected}
+                onChange={(selectedOption) => {
+                  setCitySelected(selectedOption)
+                }}
+                // options={
+                //   cities &&
+                //   cities
+                //     .filter(
+                //       (item) =>
+                //         item?.unidade_federativa?.codIbgeUF === ufSelected?.value,
+                //     )
+                //     .map((item) => ({
+                //       value: item?.codIbgeMunicipio,
+                //       label: item?.nomeMunicipio,
+                //       uf: item?.unidade_federativa?.codIbgeUF,
+                //     }))
+                // }
+              />
+            )}
+          </FormControl>
+        </Flex>
 
         <Flex justifyContent="flex-end" gap="15px">
           <Button

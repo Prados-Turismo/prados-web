@@ -13,20 +13,24 @@ import { Content, SectionTop } from "./styled";
 import ReactSelect from "react-select";
 import SimpleModal from "../../../components/SimpleModal";
 import { ISelect } from "../../../models/generics.model";
-import ModalRecordProduct from "../components/ModalRegisterPacote";
+import ModalRecordPacote from "../components/ModalRegisterPacote";
 import AlertNoDataFound from "../../../components/AlertNoDataFound";
 import useProduct from "../../../hooks/useProducts";
 import { MdEdit } from "react-icons/md";
-import ModalUpdateProduct from "../components/ModalUpdatePacote";
+import ModalUpdatePacote from "../components/ModalUpdatePacote";
 import { IDataProduct } from "../../../models/product2.model";
+import ButtonIcon from "../../../components/ButtonIcon";
+import { FiTrash } from "react-icons/fi";
+import AlertModal from "../../../components/AlertModal";
 
 const PacotesList = () => {
   const { getProducts } = useProduct();
   const [statusSelected, setStatusSelected] = useState<ISelect | null>();
   const [resetFilter, setResetFilter] = useState(false);
-  const [modalRecordProduct, setModalRecordProduct] = useState(false);
-  const [modalUpdateProduct, setModalUpdateProduct] = useState(false);
-  const [productData, setProductData] = useState<IDataProduct | undefined>();
+  const [modalRecordPacote, setModalRecordPacote] = useState(false);
+  const [modalUpdatePacote, setModalUpdatePacote] = useState(false);
+  const [modalRemovePacote, setModalRemovePacote] = useState(false);
+  const [pacoteData, setPacoteData] = useState<IDataProduct | undefined>();
   const [currentPage, setCurrentPage] = useState(1);
   const registerPerPage = 10;
 
@@ -41,7 +45,7 @@ const PacotesList = () => {
         <Button
           leftIcon={<IoIosAdd />}
           onClick={() => {
-            setModalRecordProduct(true);
+            setModalRecordPacote(true);
           }}
         >
           Cadastrar pacote
@@ -113,8 +117,8 @@ const PacotesList = () => {
                   <Table>
                     <THead padding="0 30px 0 30px">
                       <TD>Nome</TD>
-                      <TD>Estoque</TD>
-                      <TD>Fornecedor</TD>
+                      <TD>Origem</TD>
+                      <TD>Destino</TD>
                       <TD>Status</TD>
                       <TD></TD>
                     </THead>
@@ -134,16 +138,28 @@ const PacotesList = () => {
                           <TD>
                             {item.ativo ? "Ativo" : "Inativo"}
                           </TD>
-                          <TD>
+                          <TD gap={3}>
                             <MdEdit
                               size={20}
                               // color={customTheme.colors.brandSecond.first}
                               cursor="pointer"
                               onClick={() => {
-                                setProductData(item)
-                                setModalUpdateProduct(true)
+                                setPacoteData(item)
+                                setModalUpdatePacote(true)
                               }}
                             />
+
+                            <ButtonIcon tooltip="Excluir Pacote">
+                              <Button
+                                variant="unstyled"
+                                display="flex"
+                                alignItems="center"
+                                colorScheme="red"
+                                onClick={() => setModalRemovePacote(true)}
+                              >
+                                <FiTrash />
+                              </Button>
+                            </ButtonIcon>
                           </TD>
                         </TR>
                       ))}
@@ -170,26 +186,37 @@ const PacotesList = () => {
       <SimpleModal
         title="Pacote"
         size="xl"
-        isOpen={modalRecordProduct}
-        handleModal={setModalRecordProduct}
+        isOpen={modalRecordPacote}
+        handleModal={setModalRecordPacote}
       >
-        <ModalRecordProduct
-          handleClose={() => setModalRecordProduct(false)}
+        <ModalRecordPacote
+          handleClose={() => setModalRecordPacote(false)}
         />
       </SimpleModal>
 
-      {productData && (
+      {pacoteData && (
         <SimpleModal
           title="Pacote"
           size="xl"
-          isOpen={modalUpdateProduct}
-          handleModal={setModalUpdateProduct}
+          isOpen={modalUpdatePacote}
+          handleModal={setModalUpdatePacote}
         >
-          <ModalUpdateProduct
-            handleClose={() => setModalUpdateProduct(false)}
-            data={productData}
+          <ModalUpdatePacote
+            handleClose={() => setModalUpdatePacote(false)}
+            // data={pacoteData}
           />
         </SimpleModal>
+      )}
+
+      {modalRemovePacote && (
+        <AlertModal
+          title="Remover Pacote"
+          question="Deseja realmente remover este pacote?"
+          request={() => {}}
+          showModal={modalRemovePacote}
+          setShowModal={setModalRemovePacote}
+          size="md"
+        ></AlertModal>
       )}
     </>
   );

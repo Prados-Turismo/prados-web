@@ -161,7 +161,7 @@ const ModalUpdateProduct = ({
             isLoading={isLoading}
             type="submit"
           >
-            Cadastrar
+            Salvar
           </Button>
         </Flex>
       </Box>

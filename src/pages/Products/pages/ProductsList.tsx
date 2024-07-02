@@ -19,6 +19,9 @@ import useProduct from "../../../hooks/useProducts";
 import { MdEdit } from "react-icons/md";
 import ModalUpdateProduct from "../components/ModalUpdateProduct";
 import { IDataProduct } from "../../../models/product2.model";
+import ButtonIcon from "../../../components/ButtonIcon";
+import { FiTrash } from "react-icons/fi";
+import AlertModal from "../../../components/AlertModal";
 
 const ProductsList = () => {
   const { getProducts } = useProduct();
@@ -26,6 +29,7 @@ const ProductsList = () => {
   const [resetFilter, setResetFilter] = useState(false);
   const [modalRecordProduct, setModalRecordProduct] = useState(false);
   const [modalUpdateProduct, setModalUpdateProduct] = useState(false);
+  const [modalRemoveProduto, setModalRemoveProduto] = useState(false);
   const [productData, setProductData] = useState<IDataProduct | undefined>();
   const [currentPage, setCurrentPage] = useState(1);
   const registerPerPage = 10;
@@ -134,7 +138,7 @@ const ProductsList = () => {
                           <TD>
                             {item.ativo ? "Ativo" : "Inativo"}
                           </TD>
-                          <TD>
+                          <TD gap={3}>
                             <MdEdit
                               size={20}
                               // color={customTheme.colors.brandSecond.first}
@@ -144,6 +148,18 @@ const ProductsList = () => {
                                 setModalUpdateProduct(true)
                               }}
                             />
+
+                            <ButtonIcon tooltip="Excluir Produto">
+                              <Button
+                                variant="unstyled"
+                                display="flex"
+                                alignItems="center"
+                                colorScheme="red"
+                                onClick={() => setModalRemoveProduto(true)}
+                              >
+                                <FiTrash />
+                              </Button>
+                            </ButtonIcon>
                           </TD>
                         </TR>
                       ))}
@@ -190,6 +206,17 @@ const ProductsList = () => {
             data={productData}
           />
         </SimpleModal>
+      )}
+
+      {modalRemoveProduto && (
+        <AlertModal
+          title="Remover Produto"
+          question="Deseja realmente remover este produto?"
+          request={() => {}}
+          showModal={modalRemoveProduto}
+          setShowModal={setModalRemoveProduto}
+          size="md"
+        ></AlertModal>
       )}
     </>
   );

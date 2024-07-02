@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Box, Button, Flex, Input } from "@chakra-ui/react";
+import { Box, Button, Flex, Input, FormControl, FormLabel } from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -15,9 +15,11 @@ import {
 
 import { FieldWrap } from "./styled";
 import ReactSelect from "react-select";
-import useFornecedor from "../../../../hooks/useFornecedor";
+// import useOrigem from "../../../../hooks/useOrigem";
 import { useGlobal } from "../../../../contexts/UserContext";
-import { IDataProduct } from "../../../../models/product2.model";
+import FormInputNumber from "../../../../components/FormInputNumber";
+import FormInput from "../../../../components/FormInput";
+import { useState } from "react";
 
 const handleSubmitRegisterSchema = z.object({
   nome: z
@@ -25,62 +27,105 @@ const handleSubmitRegisterSchema = z.object({
     .min(1, {
       message: fieldRequired("nome"),
     }),
-  estoque: z
-    .coerce
-    .number()
-    .min(0, {
-      message: fieldRequired("estoque"),
-    }),
-  codigoFornecedor: z
+  valor: z
     .string()
     .min(1, {
-      message: fieldRequired("fornecedor"),
-    })
+      message: fieldRequired("valor"),
+    }),
+  descricao: z
+      .string()
+      .optional(),
+  codigoOrigem: z
+    .string()
+    .min(1, {
+      message: fieldRequired("origem"),
+    }),
+  tipoTransporte: z
+    .string()
+    .min(1, {
+      message: fieldRequired("tipo de transporte"),
+    }),
+  localEmbarque: z
+    .array(
+      z.string()
+    )
+    .min(1, {
+      message: fieldRequired("local de embarque"),
+    }),
 });
 
 type IhandleSubmitRegister = z.infer<typeof handleSubmitRegisterSchema>;
 
 interface IModalRecordCollaborator {
-  handleClose: () => void
-  data: IDataProduct
+  handleClose: () => void;
 }
 
 const ModalUpdatePacote = ({
   handleClose,
-  data
 }: IModalRecordCollaborator) => {
   const { user } = useGlobal();
-  const { updateProduct } = useProduct();
-  const { getAllFornecedores } = useFornecedor();
+  const { createProduct } = useProduct();
+  // const { getAllOrigemes } = useOrigem();
+
+  const [ufSelected, setUfSelected] = useState<any>(null);
+  const [citySelected, setCitySelected] = useState<any>(null);
 
   const {
     setValue,
+    getValues,
     reset,
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<IhandleSubmitRegister>({
     resolver: zodResolver(handleSubmitRegisterSchema),
-    defaultValues: {
-      nome: data.nome,
-      estoque: data.estoque,
-      codigoFornecedor: data.codigoFornecedor
-    }
   });
-  const { mutate, isLoading } = updateProduct(reset, handleClose);
-  const { data: dataFornecedores, isLoading: loadingFornecedores } = getAllFornecedores();
+  const { mutate, isLoading } = createProduct(reset, handleClose);
+  // const { data: dataOrigens, isLoading: loadingOrigemes } = getAllOrigemes();
 
-  const handleSubmitRegister = (submitData: IhandleSubmitRegister) => {
+  const dataOrigens = [
+    {
+      id: 1,
+      nome: "Tianguá, Ceará"
+    },
+    {
+      id: 2,
+      nome: "Fortaleza, Ceará"
+    }
+  ]
+
+  const dataTipoTransporte = [
+    {
+      id: 1,
+      nome: "Terrestre"
+    },
+    {
+      id: 2,
+      nome: "Aéreo"
+    }
+  ]
+
+  const dataLocalEmbarque = [
+    {
+      id: 1,
+      nome: "Local de Embarque 1"
+    },
+    {
+      id: 2,
+      nome: "Local de Embarque 2"
+    },
+    {
+      id: 3,
+      nome: "Local de Embarque 3"
+    }
+  ]
+
+  const handleSubmitRegister = (data: IhandleSubmitRegister) => {
     mutate({
-      ...submitData,
-      id: data.id,
+      ...data,
       ativo: true,
       usuarioCadastro: user?.id
     })
-  };
-
-  const isEmpty = (value: string | null | undefined) => {
-    return value == null || value.trim() === "";
   };
 
   return (
@@ -107,51 +152,195 @@ const ModalUpdatePacote = ({
           {errors.nome && <p className="error">{errors.nome.message}</p>}
         </FieldWrap>
 
-        <FieldWrap>
-          <span>
-            Estoque <Asterisk />
-          </span>
+        <FormInputNumber
+          height="40px"
+          label="Valor"
+          setValue={setValue}
+          value={getValues("valor")}
+          isMoneyValue
+          flex="1.01"
+          name="valor"
+          maxLength={25}
+          isRequired
+          errors={errors.valor}
+        />
 
-          <Input
-            placeholder="Digite o Estoque"
-            id="estoque"
-            type="number"
-            {...register("estoque", { valueAsNumber: !isEmpty("estoque") })}
-            min={0}
-          />
-          {errors.estoque && <p className="error">{errors.estoque.message}</p>}
-        </FieldWrap>
+        <FormInput
+          id="descricao"
+          label="Descrição"
+          type="text"
+          {...register("descricao")}
+          inputArea={true}
+          errors={errors.descricao}
+        />
 
         <FieldWrap>
-          <span>Fornecedor</span>
+          <span>Origem</span>
 
           <Box display="flex" gap="10px">
             <ReactSelect
-              isLoading={loadingFornecedores}
+              // isLoading={loadingOrigemes}
               className="select-fields large"
               classNamePrefix="select"
               closeMenuOnSelect={true}
-              {...register?.("codigoFornecedor")}
+              {...register?.("codigoOrigem")}
               isSearchable={true}
               placeholder="Selecione"
-              noOptionsMessage={() => "Não há fornecedor cadastrado"}
-              options={dataFornecedores
-                ?.map((fornecedor) => ({
-                  label: fornecedor?.nome,
-                  value: fornecedor?.id,
+              noOptionsMessage={() => "Não há origem cadastrado"}
+              options={dataOrigens
+                ?.map((origem) => ({
+                  label: origem?.nome,
+                  value: origem?.id,
                 }))}
-              name="codigoFornecedor"
-              id="codigoFornecedor"
+              name="codigoOrigem"
+              id="codigoOrigem"
               onChange={(option) => {
-                setValue("codigoFornecedor", option?.value.toString() || "");
-              }}
-              defaultValue={{
-                label: data.Fornecedor?.nome,
-                value: data.Fornecedor?.id
+                setValue("codigoOrigem", option?.value.toString() || "");
               }}
             />
           </Box>
         </FieldWrap>
+
+        <FieldWrap>
+          <span>Tipo de Transporte</span>
+
+          <Box display="flex" gap="10px">
+            <ReactSelect
+              // isLoading={loadingOrigemes}
+              className="select-fields large"
+              classNamePrefix="select"
+              closeMenuOnSelect={true}
+              {...register?.("tipoTransporte")}
+              isSearchable={true}
+              placeholder="Selecione"
+              noOptionsMessage={() => "Não há tipo de transporte cadastrado"}
+              options={dataTipoTransporte
+                ?.map((tipoTransporte) => ({
+                  label: tipoTransporte?.nome,
+                  value: tipoTransporte?.id,
+                }))}
+              name="tipoTransporte"
+              id="tipoTransporte"
+              onChange={(option) => {
+                setValue("tipoTransporte", option?.value.toString() || "");
+              }}
+            />
+          </Box>
+        </FieldWrap>
+
+        <FieldWrap>
+          <span>Local de Embarque</span>
+
+          <Box display="flex" gap="10px">
+            <ReactSelect
+              // isLoading={loadingOrigemes}
+              isMulti={true}
+              className="select-fields multi"
+              classNamePrefix="select"
+              closeMenuOnSelect={true}
+              {...register?.("localEmbarque")}
+              isSearchable={true}
+              placeholder="Selecione"
+              noOptionsMessage={() => "Não há tipo de transporte cadastrado"}
+              options={dataLocalEmbarque
+                ?.map((localEmbarque) => ({
+                  label: localEmbarque?.nome,
+                  value: localEmbarque?.id,
+                }))}
+              name="localEmbarque"
+              id="localEmbarque"
+              onChange={(option) => {
+                setValue("localEmbarque", option?.map((item) => item?.value.toString()) || []);
+              }}
+            />
+          </Box>
+        </FieldWrap>
+
+        <Flex gap={5}>
+          <FormControl
+            maxWidth={{
+              base: "100%",
+              md: "250px",
+            }}
+            minW="130px"
+          >
+            <FormLabel>Estado</FormLabel>
+
+            <ReactSelect
+              className="estado select-fields large"
+              classNamePrefix="select"
+              closeMenuOnSelect={true}
+              isSearchable={true}
+              placeholder="Selecionar"
+              noOptionsMessage={() => "Nenhum opção para selecionar"}
+              value={ufSelected}
+              onChange={(selectedOption) => {
+                setUfSelected(selectedOption)
+                setCitySelected(null)
+              }}
+              // options={
+              //   uf &&
+              //   uf
+              //     .filter((el) =>
+              //       search?.uf ? !search?.uf.includes(el.codIbgeUF) : true,
+              //     )
+              //     .map((item) => ({
+              //       value: item?.codIbgeUF,
+              //       label: item?.nomeUF,
+              //     }))
+              // }
+            />
+          </FormControl>
+
+          <FormControl
+            maxWidth={{
+              base: "100%",
+              md: "250px",
+            }}
+          >
+            <FormLabel>Município</FormLabel>
+
+            {!ufSelected ? (
+              <Flex
+                justifyContent="flex-start"
+                paddingLeft="10px"
+                alignItems="center"
+                border="1px solid hsl(0, 0%, 80%)"
+                borderRadius="4px"
+                height="38px"
+                minW="165px"
+              >
+                Selecione um Estado
+              </Flex>
+            ) : (
+              <ReactSelect
+                className="municipio select-fields large"
+                classNamePrefix="select"
+                closeMenuOnSelect={true}
+                isSearchable={true}
+                placeholder="Selecionar"
+                noOptionsMessage={() => "Nenhum opção para selecionar"}
+                value={citySelected}
+                onChange={(selectedOption) => {
+                  setCitySelected(selectedOption)
+                }}
+                // options={
+                //   cities &&
+                //   cities
+                //     .filter(
+                //       (item) =>
+                //         item?.unidade_federativa?.codIbgeUF === ufSelected?.value,
+                //     )
+                //     .map((item) => ({
+                //       value: item?.codIbgeMunicipio,
+                //       label: item?.nomeMunicipio,
+                //       uf: item?.unidade_federativa?.codIbgeUF,
+                //     }))
+                // }
+              />
+            )}
+          </FormControl>
+        </Flex>
 
         <Flex justifyContent="flex-end" gap="15px">
           <Button
@@ -161,7 +350,7 @@ const ModalUpdatePacote = ({
             isLoading={isLoading}
             type="submit"
           >
-            Cadastrar
+            Salvar
           </Button>
         </Flex>
       </Box>

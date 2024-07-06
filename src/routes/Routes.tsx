@@ -37,6 +37,7 @@ import ResetToken from "../pages/ResetToken";
 import Notifications from "../pages/Notifications";
 import Products from "../pages/Products";
 import Pacotes from "../pages/Pacotes";
+import Excursoes from "../pages/Excursoes";
 
 export const AppRoutes = () => {
   const location = useLocation();
@@ -67,6 +68,7 @@ export const AppRoutes = () => {
         <Route path="/index.html" element={homeElement} />
         <Route path="/produtos2" element={<Products />} />
         <Route path="/pacotes" element={<Pacotes />} />
+        <Route path="/excursoes" element={<Excursoes />} />
 
         <Route path="/politica-privacidade" element={<PrivacyPolicy />} />
 

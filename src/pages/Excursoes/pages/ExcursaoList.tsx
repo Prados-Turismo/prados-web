@@ -22,9 +22,12 @@ import { IDataProduct } from "../../../models/product2.model";
 import ButtonIcon from "../../../components/ButtonIcon";
 import AlertModal from "../../../components/AlertModal";
 import { IoBed } from "react-icons/io5";
+import { useNavigate } from "react-router-dom";
 
 const ExcursaoList = () => {
+  const navigate = useNavigate();
   const { getProducts } = useProduct();
+
   const [statusSelected, setStatusSelected] = useState<ISelect | null>();
   const [resetFilter, setResetFilter] = useState(false);
   const [modalRecordExcursao, setModalRecordExcursao] = useState(false);
@@ -163,7 +166,7 @@ const ExcursaoList = () => {
                             <ButtonIcon tooltip="Embarque">
                               <IoMdPaper
                                 size={20}
-                                onClick={() => {}}
+                                onClick={() => navigate(`/excursoes/${item.id}/embarque`)}
                               />
                             </ButtonIcon>
 

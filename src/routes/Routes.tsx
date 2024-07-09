@@ -38,6 +38,7 @@ import Notifications from "../pages/Notifications";
 import Products from "../pages/Products";
 import Pacotes from "../pages/Pacotes";
 import Excursoes from "../pages/Excursoes";
+import Embarque from "../pages/Excursoes/pages/Embarque";
 
 export const AppRoutes = () => {
   const location = useLocation();
@@ -69,6 +70,7 @@ export const AppRoutes = () => {
         <Route path="/produtos2" element={<Products />} />
         <Route path="/pacotes" element={<Pacotes />} />
         <Route path="/excursoes" element={<Excursoes />} />
+        <Route path="/excursoes/:id/embarque" element={<Embarque />} />
 
         <Route path="/politica-privacidade" element={<PrivacyPolicy />} />
 

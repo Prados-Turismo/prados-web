@@ -173,7 +173,7 @@ const ExcursaoList = () => {
                             <ButtonIcon tooltip="Quartos">
                               <IoBed
                                 size={20}
-                                onClick={() => {}}
+                                onClick={() => navigate(`/excursoes/${item.id}/quartos`)}
                               />
                             </ButtonIcon>
 

@@ -2,6 +2,7 @@ import { queryClient, generateQueryClient } from "./queryClient";
 
 const keys = {
   products: "products",
+  pacotes: "pacotes",
   fornecedores: "fornecedores",
   home: "home",
   company: "company",

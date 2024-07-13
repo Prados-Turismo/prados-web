@@ -15,26 +15,26 @@ import SimpleModal from "../../../components/SimpleModal";
 import { ISelect } from "../../../models/generics.model";
 import ModalRecordPacote from "../components/ModalRegisterPacote";
 import AlertNoDataFound from "../../../components/AlertNoDataFound";
-import useProduct from "../../../hooks/useProducts";
+import usePacotes from "../../../hooks/usePacotes";
 import { MdEdit } from "react-icons/md";
 import ModalUpdatePacote from "../components/ModalUpdatePacote";
-import { IDataProduct } from "../../../models/product2.model";
+import { IDataPacote } from "../../../models/pacote.model";
 import ButtonIcon from "../../../components/ButtonIcon";
 import { FiTrash } from "react-icons/fi";
 import AlertModal from "../../../components/AlertModal";
 
 const PacotesList = () => {
-  const { getProducts } = useProduct();
+  const { getPacotes } = usePacotes();
   const [statusSelected, setStatusSelected] = useState<ISelect | null>();
   const [resetFilter, setResetFilter] = useState(false);
   const [modalRecordPacote, setModalRecordPacote] = useState(false);
   const [modalUpdatePacote, setModalUpdatePacote] = useState(false);
   const [modalRemovePacote, setModalRemovePacote] = useState(false);
-  const [pacoteData, setPacoteData] = useState<IDataProduct | undefined>();
+  const [pacoteData, setPacoteData] = useState<IDataPacote | undefined>();
   const [currentPage, setCurrentPage] = useState(1);
   const registerPerPage = 10;
 
-  const { data, count, isLoading } = getProducts({
+  const { data, count, isLoading } = getPacotes({
     size: registerPerPage,
     page: currentPage
   });
@@ -57,7 +57,7 @@ const PacotesList = () => {
           <div className="searchWrap">
             <span>Buscar pacote</span>
             <FieldSearch
-              placeholder="Nome ou CPF"
+              placeholder="Nome ou Destino"
               handleSearch={() => {
                 setResetFilter(false);
                 setCurrentPage(1);
@@ -130,10 +130,10 @@ const PacotesList = () => {
                             {item.nome}
                           </TD>
                           <TD>
-                            {item.estoque}
+                            {item.origem == 1 ? 'Fortaleza' : 'Tianguá'}
                           </TD>
                           <TD>
-                            {item.Fornecedor.nome}
+                            {item.destino}
                           </TD>
                           <TD>
                             {item.ativo ? "Ativo" : "Inativo"}
@@ -203,7 +203,7 @@ const PacotesList = () => {
         >
           <ModalUpdatePacote
             handleClose={() => setModalUpdatePacote(false)}
-            // data={pacoteData}
+          data={pacoteData}
           />
         </SimpleModal>
       )}
@@ -212,7 +212,7 @@ const PacotesList = () => {
         <AlertModal
           title="Remover Pacote"
           question="Deseja realmente remover este pacote?"
-          request={() => {}}
+          request={() => { }}
           showModal={modalRemovePacote}
           setShowModal={setModalRemovePacote}
           size="md"

@@ -21,8 +21,9 @@ import { pixelToRem } from "../../utils";
 import { MdOutlineContentPaste } from "react-icons/md";
 import { IoHelp } from "react-icons/io5";
 import { customTheme } from "../../theme";
+import { forwardRef } from "react";
 
-const FormInput = ({
+const FormInput = forwardRef<HTMLInputElement, IFormInput>(({
   label,
   placeholder,
   type,
@@ -45,7 +46,7 @@ const FormInput = ({
   helpText,
   maxLengthInpt,
   ...restProps
-}: IFormInput) => {
+}, ref) => {
   const { isOpen, onToggle, onClose } = useDisclosure();
 
   const handleCopyClick = () => {
@@ -111,6 +112,7 @@ const FormInput = ({
       ) : (
         <InputGroup>
           <Input
+            ref={ref} // Forwarding the ref to the input element
             placeholder={placeholder ?? ""}
             type={type || "text"}
             {...restProps}
@@ -132,7 +134,6 @@ const FormInput = ({
             backgroundColor={
               restProps?.isReadOnly ? "#F9F9F9 !important" : "white"
             }
-            {...register?.(name)}
             defaultValue={defaultValue}
           />
           {restProps.onPaste && (
@@ -166,6 +167,6 @@ const FormInput = ({
       </Stack>
     </FieldWrap>
   );
-};
+});
 
 export default FormInput;

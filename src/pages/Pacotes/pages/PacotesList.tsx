@@ -24,7 +24,7 @@ import { FiTrash } from "react-icons/fi";
 import AlertModal from "../../../components/AlertModal";
 
 const PacotesList = () => {
-  const { getPacotes } = usePacotes();
+  const { getPacotes, deletePacote } = usePacotes();
   const [statusSelected, setStatusSelected] = useState<ISelect | null>();
   const [resetFilter, setResetFilter] = useState(false);
   const [modalRecordPacote, setModalRecordPacote] = useState(false);
@@ -34,10 +34,19 @@ const PacotesList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const registerPerPage = 10;
 
+  const { mutate: mutateToDeletePacote } = deletePacote();
+  const [deleteItemId, setDeletePacoteId] = useState('');
+
+
   const { data, count, isLoading } = getPacotes({
     size: registerPerPage,
     page: currentPage
   });
+
+  const onConfirmRemovePacote = () => {
+    mutateToDeletePacote(deleteItemId || "");
+    setModalRemovePacote(false);
+  };
 
   return (
     <>
@@ -155,7 +164,10 @@ const PacotesList = () => {
                                 display="flex"
                                 alignItems="center"
                                 colorScheme="red"
-                                onClick={() => setModalRemovePacote(true)}
+                                onClick={() => {
+                                  setModalRemovePacote(true)
+                                  setDeletePacoteId(item.id)
+                                }}
                               >
                                 <FiTrash />
                               </Button>
@@ -203,7 +215,7 @@ const PacotesList = () => {
         >
           <ModalUpdatePacote
             handleClose={() => setModalUpdatePacote(false)}
-          data={pacoteData}
+            data={pacoteData}
           />
         </SimpleModal>
       )}
@@ -212,7 +224,7 @@ const PacotesList = () => {
         <AlertModal
           title="Remover Pacote"
           question="Deseja realmente remover este pacote?"
-          request={() => { }}
+          request={onConfirmRemovePacote}
           showModal={modalRemovePacote}
           setShowModal={setModalRemovePacote}
           size="md"

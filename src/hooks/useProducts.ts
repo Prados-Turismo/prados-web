@@ -116,10 +116,38 @@ const updateProduct = (
   };
 };
 
+const deleteProduto = (): IUpdateProductResponse => {
+
+  const { isLoading, mutate } = useMutation(
+    async (id: string) => {
+      const urlPath = `produtos/delete/${id}`
+
+      try {
+        await apiPrados.patch(urlPath).then(function (data) {
+          queryClient.invalidateQueries([keys.products])
+
+          useToastStandalone({
+            title: "Excluído com sucesso!",
+            status: "success"
+          })
+        })
+      } catch (error: any) {
+        throw new Warning(error.response.data.message, error?.response?.status);
+      }
+    }
+  )
+
+  return {
+    isLoading,
+    mutate
+  }
+}
+
 export default function useProduct() {
   return {
     getProducts,
     createProduct,
-    updateProduct
+    updateProduct,
+    deleteProduto
   };
 }

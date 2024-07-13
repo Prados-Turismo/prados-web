@@ -83,7 +83,6 @@ const updatePacote = (
 
   const { isLoading, mutate } = useMutation(
     async (data: IUpdatePacoteArgs) => {
-      console.log(data)
       const urlPath = `pacotes/update/${data.id}`;
 
       try {
@@ -109,10 +108,38 @@ const updatePacote = (
   }
 }
 
+const deletePacote = (): IUpdatePacoteResponse => {
+
+  const { isLoading, mutate } = useMutation(
+    async (id: string) => {
+      const urlPath = `pacotes/delete/${id}`
+
+      try {
+        await apiPrados.patch(urlPath).then(function (data) {
+          queryClient.invalidateQueries([keys.pacotes])
+
+          useToastStandalone({
+            title: "Excluído com sucesso!",
+            status: "success"
+          })
+        })
+      } catch (error: any) {
+        throw new Warning(error.response.data.message, error?.response?.status);
+      }
+    }
+  )
+
+  return {
+    isLoading,
+    mutate
+  }
+}
+
 export default function usePacotes() {
   return {
     getPacotes,
     createPacotes,
-    updatePacote
+    updatePacote,
+    deletePacote
   }
 }

@@ -24,7 +24,7 @@ import { FiTrash } from "react-icons/fi";
 import AlertModal from "../../../components/AlertModal";
 
 const ProductsList = () => {
-  const { getProducts } = useProduct();
+  const { getProducts, deleteProduto } = useProduct();
   const [statusSelected, setStatusSelected] = useState<ISelect | null>();
   const [resetFilter, setResetFilter] = useState(false);
   const [modalRecordProduct, setModalRecordProduct] = useState(false);
@@ -34,10 +34,18 @@ const ProductsList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const registerPerPage = 10;
 
+  const { mutate: mutateToDeleteProduto } = deleteProduto();
+  const [deleteItemId, setDeleteProdutoId] = useState('');
+
   const { data, count, isLoading } = getProducts({
     size: registerPerPage,
     page: currentPage
   });
+
+  const onConfirmRemoveProduto = () => {
+    mutateToDeleteProduto(deleteItemId || "");
+    setModalRemoveProduto(false);
+  };
 
   return (
     <>
@@ -119,7 +127,6 @@ const ProductsList = () => {
                       <TD>Nome</TD>
                       <TD>Estoque</TD>
                       <TD>Fornecedor</TD>
-                      <TD>Status</TD>
                       <TD></TD>
                     </THead>
 
@@ -134,9 +141,6 @@ const ProductsList = () => {
                           </TD>
                           <TD>
                             {item.Fornecedor.nome}
-                          </TD>
-                          <TD>
-                            {item.ativo ? "Ativo" : "Inativo"}
                           </TD>
                           <TD gap={3}>
                             <MdEdit
@@ -155,7 +159,10 @@ const ProductsList = () => {
                                 display="flex"
                                 alignItems="center"
                                 colorScheme="red"
-                                onClick={() => setModalRemoveProduto(true)}
+                                onClick={() => {
+                                  setModalRemoveProduto(true)
+                                  setDeleteProdutoId(item.id)
+                                }}
                               >
                                 <FiTrash />
                               </Button>
@@ -212,7 +219,7 @@ const ProductsList = () => {
         <AlertModal
           title="Remover Produto"
           question="Deseja realmente remover este produto?"
-          request={() => {}}
+          request={onConfirmRemoveProduto}
           showModal={modalRemoveProduto}
           setShowModal={setModalRemoveProduto}
           size="md"

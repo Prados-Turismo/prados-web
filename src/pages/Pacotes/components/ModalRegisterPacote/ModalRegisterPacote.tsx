@@ -7,7 +7,7 @@ import { z } from "zod";
 import Asterisk from "../../../../components/Asterisk";
 
 // Hooks
-import useProduct from "../../../../hooks/useProducts";
+import usePacotes from "../../../../hooks/usePacotes";
 
 import {
   fieldRequired
@@ -28,30 +28,28 @@ const handleSubmitRegisterSchema = z.object({
       message: fieldRequired("nome"),
     }),
   valor: z
-    .string()
+    .number()
     .min(1, {
       message: fieldRequired("valor"),
     }),
   descricao: z
-      .string()
-      .optional(),
-  codigoOrigem: z
     .string()
+    .optional(),
+  origem: z
+    .number()
     .min(1, {
       message: fieldRequired("origem"),
     }),
   tipoTransporte: z
-    .string()
+    .number()
     .min(1, {
       message: fieldRequired("tipo de transporte"),
     }),
-  localEmbarque: z
-    .array(
-      z.string()
-    )
+  destino: z
+    .string()
     .min(1, {
-      message: fieldRequired("local de embarque"),
-    }),
+      message: fieldRequired("destino")
+    })
 });
 
 type IhandleSubmitRegister = z.infer<typeof handleSubmitRegisterSchema>;
@@ -64,7 +62,7 @@ const ModalRegisterPacote = ({
   handleClose,
 }: IModalRecordCollaborator) => {
   const { user } = useGlobal();
-  const { createProduct } = useProduct();
+  const { createPacotes } = usePacotes();
   // const { getAllOrigemes } = useOrigem();
 
   const [ufSelected, setUfSelected] = useState<any>(null);
@@ -80,17 +78,17 @@ const ModalRegisterPacote = ({
   } = useForm<IhandleSubmitRegister>({
     resolver: zodResolver(handleSubmitRegisterSchema),
   });
-  const { mutate, isLoading } = createProduct(reset, handleClose);
+  const { mutate, isLoading } = createPacotes(reset, handleClose);
   // const { data: dataOrigens, isLoading: loadingOrigemes } = getAllOrigemes();
 
   const dataOrigens = [
     {
       id: 1,
-      nome: "Tianguá, Ceará"
+      nome: "Fortaleza, Ceará"
     },
     {
       id: 2,
-      nome: "Fortaleza, Ceará"
+      nome: "Tianguá, Ceará"
     }
   ]
 
@@ -102,21 +100,6 @@ const ModalRegisterPacote = ({
     {
       id: 2,
       nome: "Aéreo"
-    }
-  ]
-
-  const dataLocalEmbarque = [
-    {
-      id: 1,
-      nome: "Local de Embarque 1"
-    },
-    {
-      id: 2,
-      nome: "Local de Embarque 2"
-    },
-    {
-      id: 3,
-      nome: "Local de Embarque 3"
     }
   ]
 
@@ -155,8 +138,8 @@ const ModalRegisterPacote = ({
         <FormInputNumber
           height="40px"
           label="Valor"
+          {...register("valor")}
           setValue={setValue}
-          value={getValues("valor")}
           isMoneyValue
           flex="1.01"
           name="valor"
@@ -172,6 +155,10 @@ const ModalRegisterPacote = ({
           {...register("descricao")}
           inputArea={true}
           errors={errors.descricao}
+          name="descricao"
+          onChangeTextarea={(event) => {
+            setValue("descricao", event.target.value || '');
+          }}
         />
 
         <FieldWrap>
@@ -183,7 +170,7 @@ const ModalRegisterPacote = ({
               className="select-fields large"
               classNamePrefix="select"
               closeMenuOnSelect={true}
-              {...register?.("codigoOrigem")}
+              {...register?.("origem")}
               isSearchable={true}
               placeholder="Selecione"
               noOptionsMessage={() => "Não há origem cadastrado"}
@@ -192,10 +179,10 @@ const ModalRegisterPacote = ({
                   label: origem?.nome,
                   value: origem?.id,
                 }))}
-              name="codigoOrigem"
-              id="codigoOrigem"
+              name="origem"
+              id="origem"
               onChange={(option) => {
-                setValue("codigoOrigem", option?.value.toString() || "");
+                setValue("origem", option?.value || 1);
               }}
             />
           </Box>
@@ -222,41 +209,27 @@ const ModalRegisterPacote = ({
               name="tipoTransporte"
               id="tipoTransporte"
               onChange={(option) => {
-                setValue("tipoTransporte", option?.value.toString() || "");
+                setValue("tipoTransporte", option?.value || 1);
               }}
             />
           </Box>
         </FieldWrap>
 
         <FieldWrap>
-          <span>Local de Embarque</span>
+          <span>
+            Destino <Asterisk />
+          </span>
 
-          <Box display="flex" gap="10px">
-            <ReactSelect
-              // isLoading={loadingOrigemes}
-              isMulti={true}
-              className="select-fields multi"
-              classNamePrefix="select"
-              closeMenuOnSelect={true}
-              {...register?.("localEmbarque")}
-              isSearchable={true}
-              placeholder="Selecione"
-              noOptionsMessage={() => "Não há tipo de transporte cadastrado"}
-              options={dataLocalEmbarque
-                ?.map((localEmbarque) => ({
-                  label: localEmbarque?.nome,
-                  value: localEmbarque?.id,
-                }))}
-              name="localEmbarque"
-              id="localEmbarque"
-              onChange={(option) => {
-                setValue("localEmbarque", option?.map((item) => item?.value.toString()) || []);
-              }}
-            />
-          </Box>
+          <Input
+            placeholder="Digite o destino"
+            id="destino"
+            type="text"
+            {...register("destino")}
+          />
+          {errors.destino && <p className="error">{errors.destino.message}</p>}
         </FieldWrap>
 
-        <Flex gap={5}>
+        {/* <Flex gap={5}>
           <FormControl
             maxWidth={{
               base: "100%",
@@ -278,17 +251,17 @@ const ModalRegisterPacote = ({
                 setUfSelected(selectedOption)
                 setCitySelected(null)
               }}
-              // options={
-              //   uf &&
-              //   uf
-              //     .filter((el) =>
-              //       search?.uf ? !search?.uf.includes(el.codIbgeUF) : true,
-              //     )
-              //     .map((item) => ({
-              //       value: item?.codIbgeUF,
-              //       label: item?.nomeUF,
-              //     }))
-              // }
+            // options={
+            //   uf &&
+            //   uf
+            //     .filter((el) =>
+            //       search?.uf ? !search?.uf.includes(el.codIbgeUF) : true,
+            //     )
+            //     .map((item) => ({
+            //       value: item?.codIbgeUF,
+            //       label: item?.nomeUF,
+            //     }))
+            // }
             />
           </FormControl>
 
@@ -324,23 +297,23 @@ const ModalRegisterPacote = ({
                 onChange={(selectedOption) => {
                   setCitySelected(selectedOption)
                 }}
-                // options={
-                //   cities &&
-                //   cities
-                //     .filter(
-                //       (item) =>
-                //         item?.unidade_federativa?.codIbgeUF === ufSelected?.value,
-                //     )
-                //     .map((item) => ({
-                //       value: item?.codIbgeMunicipio,
-                //       label: item?.nomeMunicipio,
-                //       uf: item?.unidade_federativa?.codIbgeUF,
-                //     }))
-                // }
+              // options={
+              //   cities &&
+              //   cities
+              //     .filter(
+              //       (item) =>
+              //         item?.unidade_federativa?.codIbgeUF === ufSelected?.value,
+              //     )
+              //     .map((item) => ({
+              //       value: item?.codIbgeMunicipio,
+              //       label: item?.nomeMunicipio,
+              //       uf: item?.unidade_federativa?.codIbgeUF,
+              //     }))
+              // }
               />
             )}
           </FormControl>
-        </Flex>
+        </Flex> */}
 
         <Flex justifyContent="flex-end" gap="15px">
           <Button

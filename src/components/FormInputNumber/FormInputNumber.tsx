@@ -100,7 +100,7 @@ const FormInputNumber = ({
             isAllowed={(values) => {
               return values?.floatValue
                 ? values?.floatValue <=
-                    (prefix === "percentual" ? 100 : 100000000000000000n)
+                (prefix === "percentual" ? 100 : 100000000000000000n)
                 : true
             }}
             decimalScale={2}
@@ -125,9 +125,9 @@ const FormInputNumber = ({
             onValueChange={({ floatValue }) => {
               if (!readOnly) {
                 if (isStateForm) {
-                  setValue(floatValue?.toString() || "")
+                  setValue(floatValue || "")
                 } else {
-                  setValue(name, floatValue?.toString() || "")
+                  setValue(name, floatValue || "")
                 }
               }
             }}

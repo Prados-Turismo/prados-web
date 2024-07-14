@@ -58,7 +58,7 @@ const QuartosList = () => {
     return `${parseInt(roomName) + 1}`
   }
 
-  if (!isLoading) {
+  if (!isLoading && data.length) {
     numeroQuarto = returnRoomName();
   }
 

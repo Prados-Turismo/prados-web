@@ -26,6 +26,11 @@ export interface IPacoteResponse {
   isLoading: boolean;
 }
 
+export interface IPacoteFindResponse {
+  data: IDataPacote[]
+  isLoading: boolean
+}
+
 export interface ICreatePacoteArgs {
   nome: string,
   valor: number,

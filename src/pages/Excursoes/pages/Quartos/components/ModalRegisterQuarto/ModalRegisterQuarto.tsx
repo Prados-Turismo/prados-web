@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Box, Button, Flex } from "@chakra-ui/react";
+import { Box, Button, Flex, Input } from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -7,7 +7,7 @@ import { z } from "zod";
 import Asterisk from "../../../../../../components/Asterisk";
 
 // Hooks
-import useProduct from "../../../../../../hooks/useProducts";
+import useExcursaoQuarto from "../../../../../../hooks/useExcursaoQuarto";
 
 import {
   fieldRequired
@@ -15,7 +15,9 @@ import {
 
 import { FieldWrap } from "./styled";
 import ReactSelect from "react-select";
-// import { useGlobal } from "../../../../contexts/UserContext";
+import { useGlobal } from "../../../../../../contexts/UserContext";
+import { useParams } from "react-router-dom";
+import useExcursaoPassageiro from "../../../../../../hooks/useExcursaoPassageiros";
 
 const handleSubmitRegisterSchema = z.object({
   passageiros: z
@@ -25,19 +27,23 @@ const handleSubmitRegisterSchema = z.object({
     .min(1, {
       message: fieldRequired("local de embarque"),
     }),
+  numeroQuarto: z
+    .string()
+    .min(1)
 });
 
 type IhandleSubmitRegister = z.infer<typeof handleSubmitRegisterSchema>;
 
 interface IModalRecordCollaborator {
-  handleClose: () => void;
+  handleClose: () => void
 }
 
 const ModalRegisterQuarto = ({
   handleClose,
 }: IModalRecordCollaborator) => {
-  // const { user } = useGlobal();
-  const { createProduct } = useProduct();
+  const { user } = useGlobal();
+  const { createExcursaoQuarto } = useExcursaoQuarto();
+  const { listExcursaoPassageiros } = useExcursaoPassageiro();
   const {
     setValue,
     reset,
@@ -47,30 +53,15 @@ const ModalRegisterQuarto = ({
   } = useForm<IhandleSubmitRegister>({
     resolver: zodResolver(handleSubmitRegisterSchema),
   });
-  const { mutate: _, isLoading } = createProduct(reset, handleClose);
-  // const { data: dataPacotes, isLoading: loadingpacotees } = getAllpacotees();
+  const { id: idExcursao } = useParams();
+  const { mutate, isLoading } = createExcursaoQuarto(reset, handleClose);
+  const { data: dataPassageiros, isLoading: loadingPassageiros } = listExcursaoPassageiros(idExcursao || '');
 
-  const datapassageiros = [
-    {
-      id: 1,
-      nome: "Passageiro 1"
-    },
-    {
-      id: 2,
-      nome: "Passageiro 2"
-    },
-    {
-      id: 3,
-      nome: "Passageiro 3"
-    }
-  ]
-
-  const handleSubmitRegister = (_data: IhandleSubmitRegister) => {
-    // mutate({
-    //   ...data,
-    //   ativo: true,
-    //   usuarioCadastro: user?.id
-    // })
+  const handleSubmitRegister = (submitData: IhandleSubmitRegister) => {
+    mutate({
+      ...submitData,
+      usuarioCadastro: user?.id
+    })
   };
 
   return (
@@ -88,7 +79,7 @@ const ModalRegisterQuarto = ({
 
           <Box display="flex" gap="10px">
             <ReactSelect
-              // isLoading={loadingOrigemes}
+              isLoading={isLoading}
               isMulti={true}
               className="select-fields multi"
               classNamePrefix="select"
@@ -97,8 +88,8 @@ const ModalRegisterQuarto = ({
               isSearchable={true}
               placeholder="Selecione"
               noOptionsMessage={() => "Não há passageiros cadastrados"}
-              options={datapassageiros
-                ?.map((passageiro) => ({
+              options={dataPassageiros
+                .map((passageiro) => ({
                   label: passageiro?.nome,
                   value: passageiro?.id,
                 }))}
@@ -111,6 +102,8 @@ const ModalRegisterQuarto = ({
           </Box>
           {errors.passageiros && <p className="error">{errors.passageiros.message}</p>}
         </FieldWrap>
+
+        <Input type="hidden" {...register("numeroQuarto")} />
 
         <Flex justifyContent="flex-end" gap="15px">
           <Button

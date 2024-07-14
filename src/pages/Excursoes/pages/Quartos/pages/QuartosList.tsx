@@ -10,7 +10,8 @@ import { Content, SectionTop } from "./styled";
 import ReactSelect from "react-select";
 import { ISelect } from "../../../../../models/generics.model";
 import AlertNoDataFound from "../../../../../components/AlertNoDataFound";
-import useProduct from "../../../../../hooks/useProducts";
+import useExcursaoQuarto from "../../../../../hooks/useExcursaoQuarto";
+import useExcursao from "../../../../../hooks/useExcursao";
 import { useNavigate, useParams } from "react-router-dom";
 import { MdEdit } from "react-icons/md";
 import ButtonIcon from "../../../../../components/ButtonIcon";
@@ -22,7 +23,9 @@ import ModalUpdateQuarto from "../components/ModalUpdateQuarto";
 const QuartosList = () => {
   const { id: _id } = useParams();
   const navigate = useNavigate();
-  const { getProducts } = useProduct();
+  const { getExcursaoQuarto } = useExcursaoQuarto();
+  const { getExcursao } = useExcursao();
+  const { data: dataExcursao, isLoading: loadingExcursao } = getExcursao(_id || '');
 
   const [modalRecordQuarto, setModalRecordQuarto] = useState(false);
   const [modalUpdateQuarto, setModalUpdateQuarto] = useState(false);
@@ -30,44 +33,48 @@ const QuartosList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const registerPerPage = 10;
 
-  const { data, count, isLoading } = getProducts({
+  const { data, count, isLoading } = getExcursaoQuarto({
     size: registerPerPage,
     page: currentPage
   });
 
   return (
     <>
-      <Flex>
-        <SectionTop className="contentTop" gap="30px">
-          <Button
-            variant="outline"
-            width="74px"
-            onClick={() => navigate("/quartos")}
-          >
-            Voltar
-          </Button>
+      {!loadingExcursao && (
+        <>
+          <Flex>
+            <SectionTop className="contentTop" gap="30px">
+              <Button
+                variant="outline"
+                width="74px"
+                onClick={() => navigate("/excursoes")}
+              >
+                Voltar
+              </Button>
 
-          <Flex gap="10px" flexWrap="wrap">
-            <Text fontSize="2xl" fontWeight="bold">
-              Quartos:
-            </Text>
-            <Text fontSize="2xl">
-              Excursão Guaramiranga
-            </Text>
+              <Flex gap="10px" flexWrap="wrap">
+                <Text fontSize="2xl" fontWeight="bold">
+                  Quartos:
+                </Text>
+                <Text fontSize="2xl">
+                  {dataExcursao.nome}
+                </Text>
+              </Flex>
+            </SectionTop>
+
+            <SectionTop className="contentTop" gap="30px" justifyContent="end">
+              <Button
+                leftIcon={<IoIosAdd />}
+                onClick={() => {
+                  setModalRecordQuarto(true);
+                }}
+              >
+                Adicionar Quarto
+              </Button>
+            </SectionTop>
           </Flex>
-        </SectionTop>
-
-        <SectionTop className="contentTop" gap="30px" justifyContent="end">
-          <Button
-            leftIcon={<IoIosAdd />}
-            onClick={() => {
-              setModalRecordQuarto(true);
-            }}
-          >
-            Adicionar Quarto
-          </Button>
-        </SectionTop>
-      </Flex>
+        </>
+      )}
 
       <Content className="contentMain">
         <Flex width="100%" gap="15px" alignItems="flex-end" flexWrap="wrap">
@@ -124,7 +131,7 @@ const QuartosList = () => {
                       <h2>
                         <AccordionButton>
                           <Box as='span' flex='1' textAlign='left'>
-                            Quarto: {index + 1}
+                            {item.numeroQuarto}
                           </Box>
 
                           <Box marginEnd={3}>
@@ -162,9 +169,10 @@ const QuartosList = () => {
                         flexDirection="column"
                       >
                         <ul>
-                          <li>Passageiro 1</li>
-                          <li>Passageiro 2</li>
-                          <li>Passageiro 3</li>
+                          {item.Passageiros.map((pass, index) => (
+                            <li>{pass.nome}</li>
+                          ))}
+
                         </ul>
                       </AccordionPanel>
                     </AccordionItem>
@@ -185,7 +193,7 @@ const QuartosList = () => {
             )}
           </>
         )}
-      </Content>
+      </Content >
 
       <SimpleModal
         title="Quarto"

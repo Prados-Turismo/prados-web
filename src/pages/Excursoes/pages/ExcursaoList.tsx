@@ -15,10 +15,10 @@ import SimpleModal from "../../../components/SimpleModal";
 import { ISelect } from "../../../models/generics.model";
 import ModalRecordExcursao from "../components/ModalRegisterExcursao";
 import AlertNoDataFound from "../../../components/AlertNoDataFound";
-import useProduct from "../../../hooks/useProducts";
+import useExcursoes from "../../../hooks/useExcursao";
 import { MdEdit } from "react-icons/md";
 import ModalUpdateExcursao from "../components/ModalUpdateExcursao";
-import { IDataProduct } from "../../../models/product2.model";
+import { IDataExcursao, IExcursao } from "../../../models/excursao.model";
 import ButtonIcon from "../../../components/ButtonIcon";
 import AlertModal from "../../../components/AlertModal";
 import { IoBed } from "react-icons/io5";
@@ -26,18 +26,18 @@ import { useNavigate } from "react-router-dom";
 
 const ExcursaoList = () => {
   const navigate = useNavigate();
-  const { getProducts } = useProduct();
+  const { getExcursoes } = useExcursoes();
 
   const [statusSelected, setStatusSelected] = useState<ISelect | null>();
   const [resetFilter, setResetFilter] = useState(false);
   const [modalRecordExcursao, setModalRecordExcursao] = useState(false);
   const [modalUpdateExcursao, setModalUpdateExcursao] = useState(false);
   const [modalRemoveExcursao, setModalRemoveExcursao] = useState(false);
-  const [excursaoData, setExcursaoData] = useState<IDataProduct | undefined>();
+  const [excursaoData, setExcursaoData] = useState<IExcursao | undefined>();
   const [currentPage, setCurrentPage] = useState(1);
   const registerPerPage = 10;
 
-  const { data, count, isLoading } = getProducts({
+  const { data, count, isLoading } = getExcursoes({
     size: registerPerPage,
     page: currentPage
   });
@@ -60,7 +60,7 @@ const ExcursaoList = () => {
           <div className="searchWrap">
             <span>Buscar excursão</span>
             <FieldSearch
-              placeholder="Nome ou CPF"
+              placeholder="Nome"
               handleSearch={() => {
                 setResetFilter(false);
                 setCurrentPage(1);
@@ -119,7 +119,7 @@ const ExcursaoList = () => {
                 <TableContainer marginBottom="10px">
                   <Table>
                     <THead padding="0 30px 0 30px">
-                      <TD>Nome</TD>
+                      <TD>Excursão</TD>
                       <TD>Pacote</TD>
                       <TD>Data Início</TD>
                       <TD>Data Fim</TD>
@@ -134,13 +134,13 @@ const ExcursaoList = () => {
                             {item.nome}
                           </TD>
                           <TD>
-                            {item.estoque}
+                            {item.Pacotes.nome}
                           </TD>
                           <TD>
-                            {item.Fornecedor.nome}
+                            {item.dataInicio.toString()}
                           </TD>
                           <TD>
-                            {item.Fornecedor.nome}
+                            {item.dataFim.toString()}
                           </TD>
                           <TD>
                             {item.ativo ? "Ativo" : "Inativo"}
@@ -159,7 +159,7 @@ const ExcursaoList = () => {
                             <ButtonIcon tooltip="Ônibus">
                               <IoMdBus
                                 size={20}
-                                onClick={() => {}}
+                                onClick={() => { }}
                               />
                             </ButtonIcon>
 
@@ -226,7 +226,7 @@ const ExcursaoList = () => {
         >
           <ModalUpdateExcursao
             handleClose={() => setModalUpdateExcursao(false)}
-            // data={excursaoData}
+            data={excursaoData}
           />
         </SimpleModal>
       )}
@@ -235,7 +235,7 @@ const ExcursaoList = () => {
         <AlertModal
           title="Remover Excursão"
           question="Deseja realmente remover esta excursão?"
-          request={() => {}}
+          request={() => { }}
           showModal={modalRemoveExcursao}
           setShowModal={setModalRemoveExcursao}
           size="md"

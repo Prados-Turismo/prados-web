@@ -2,54 +2,25 @@ import { useMutation, useQuery } from "react-query";
 import { useToastStandalone } from "./useToastStandalone";
 import { apiPrados } from "../services/api";
 import {
-  IPacoteArgs,
-  IPacoteResponse,
-  ICreatePacoteArgs,
-  ICreatePacoteResponse,
-  IUpdatePacoteArgs,
-  IUpdatePacoteResponse,
-  IPacoteFindResponse
-} from "../models/pacote.model";
+  IExcursaoQuartoArgs,
+  IExcursaoQuartoResponse,
+  ICreateExcursaoQuartoArgs,
+  ICreateExcursaoQuartoResponse,
+  IUpdateExcursaoQuartoArgs,
+  IUpdateExcursaoQuartoResponse
+} from "../models/excursao-quarto.model";
 import { Warning } from "../errors";
 import { keys, queryClient } from "../services/query";
 
-const getAllPacotes = (): IPacoteFindResponse => {
-  const { data, isLoading } = useQuery(
-    [
-      keys.fornecedores
-    ],
-    async () => {
-      const path = 'pacotes/findAll';
-
-      try {
-        const { data } = await apiPrados.get(path, {
-          params: {
-            ativo: true
-          },
-        });
-
-        return data
-      } catch (error: any) {
-        throw new Warning(error.response.data.message, error.response.status);
-      }
-    }
-  );
-
-  return {
-    data: data || [],
-    isLoading
-  };
-};
-
-const getPacotes = ({ page, size }: IPacoteArgs): IPacoteResponse => {
+const getExcursaoQuarto = ({ page, size }: IExcursaoQuartoArgs): IExcursaoQuartoResponse => {
 
   const { data, isLoading } = useQuery(
     [
-      keys.pacotes,
+      keys.excursao,
       page
     ],
     async () => {
-      const path = 'pacotes/index';
+      const path = 'excursao-quartos/index';
 
       try {
         const { data } = await apiPrados.get(path, {
@@ -73,20 +44,19 @@ const getPacotes = ({ page, size }: IPacoteArgs): IPacoteResponse => {
   };
 }
 
-const createPacotes = (
+const createExcursaoQuarto = (
   reset: () => void,
   handleClose: () => void
-): ICreatePacoteResponse => {
+): ICreateExcursaoQuartoResponse => {
 
   const { isLoading, mutate } = useMutation(
-    async (data: ICreatePacoteArgs) => {
-      const urlPath = 'pacotes/create'
-
+    async (data: ICreateExcursaoQuartoArgs) => {
+      const urlPath = 'excursao-quartos/create'
       try {
         await apiPrados.post(urlPath, data).then(() => {
           reset()
           handleClose()
-          queryClient.invalidateQueries([keys.pacotes])
+          queryClient.invalidateQueries([keys.excursao])
 
           useToastStandalone({
             title: "Cadastro concluído!",
@@ -105,20 +75,20 @@ const createPacotes = (
   }
 }
 
-const updatePacote = (
+const updateExcursaoQuarto = (
   reset: () => void,
   handleClose: () => void
-): IUpdatePacoteResponse => {
+): IUpdateExcursaoQuartoResponse => {
 
   const { isLoading, mutate } = useMutation(
-    async (data: IUpdatePacoteArgs) => {
-      const urlPath = `pacotes/update/${data.id}`;
+    async (data: IUpdateExcursaoQuartoArgs) => {
+      const urlPath = `excursao-quartos/update/${data.id}`;
 
       try {
         await apiPrados.put(urlPath, data).then((data) => {
           reset()
           handleClose()
-          queryClient.invalidateQueries([keys.pacotes])
+          queryClient.invalidateQueries([keys.excursao])
 
           useToastStandalone({
             title: "Atualizado com sucesso!",
@@ -137,18 +107,18 @@ const updatePacote = (
   }
 }
 
-const deletePacote = (): IUpdatePacoteResponse => {
+const deleteExcursaoQuarto = (): IUpdateExcursaoQuartoResponse => {
 
   const { isLoading, mutate } = useMutation(
     async (id: string) => {
-      const urlPath = `pacotes/delete/${id}`
+      const urlPath = `excursao-quartos/delete/${id}`
 
       try {
         await apiPrados.patch(urlPath).then(function (data) {
-          queryClient.invalidateQueries([keys.pacotes])
+          queryClient.invalidateQueries([keys.excursao])
 
           useToastStandalone({
-            title: "Excluído com sucesso!",
+            title: "Excluída com sucesso!",
             status: "success"
           })
         })
@@ -164,12 +134,11 @@ const deletePacote = (): IUpdatePacoteResponse => {
   }
 }
 
-export default function usePacotes() {
+export default function useExcursoes() {
   return {
-    getPacotes,
-    createPacotes,
-    updatePacote,
-    deletePacote,
-    getAllPacotes
+    getExcursaoQuarto,
+    createExcursaoQuarto,
+    updateExcursaoQuarto,
+    deleteExcursaoQuarto
   }
 }

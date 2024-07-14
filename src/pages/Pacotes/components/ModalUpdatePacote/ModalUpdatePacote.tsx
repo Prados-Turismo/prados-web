@@ -113,25 +113,10 @@ const ModalUpdatePacote = ({
     }
   ]
 
-  const dataLocalEmbarque = [
-    {
-      id: 1,
-      nome: "Local de Embarque 1"
-    },
-    {
-      id: 2,
-      nome: "Local de Embarque 2"
-    },
-    {
-      id: 3,
-      nome: "Local de Embarque 3"
-    }
-  ]
-
-  const handleSubmitRegister = (data: IhandleSubmitRegister) => {
+  const handleSubmitRegister = (submitData: IhandleSubmitRegister) => {
     mutate({
-      ...data,
-      id: '523c052f-ac4f-4a7c-ae63-0a11f881c417',
+      ...submitData,
+      id: data.id,
       ativo: true,
       usuarioCadastro: user?.id
     })

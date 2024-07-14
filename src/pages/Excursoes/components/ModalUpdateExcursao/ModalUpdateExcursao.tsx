@@ -7,7 +7,8 @@ import { z } from "zod";
 import Asterisk from "../../../../components/Asterisk";
 
 // Hooks
-import useProduct from "../../../../hooks/useProducts";
+import usePacotes from "../../../../hooks/usePacotes";
+import useExcursoes from "../../../../hooks/useExcursao";
 
 import {
   fieldRequired
@@ -15,12 +16,13 @@ import {
 
 import { FieldWrap } from "./styled";
 import ReactSelect from "react-select";
-// import usepacote from "../../../../hooks/usepacote";
 // import { useGlobal } from "../../../../contexts/UserContext";
 import FormInputNumber from "../../../../components/FormInputNumber";
 import FormInput from "../../../../components/FormInput";
 import { useState } from "react";
 import { isDateLessThan150YearsAgo } from "../../../../utils/formattingDate";
+import { useGlobal } from "../../../../contexts/UserContext";
+import { IExcursao } from "../../../../models/excursao.model";
 
 const handleSubmitRegisterSchema = z.object({
   nome: z
@@ -44,27 +46,29 @@ const handleSubmitRegisterSchema = z.object({
       message: fieldRequired("data de fim"),
     }),
   vagas: z
-    .string()
+    .number()
     .min(1, {
       message: fieldRequired("vagas"),
     }),
   observacoes: z
-      .string()
-      .optional()
+    .string()
+    .optional()
 });
 
 type IhandleSubmitRegister = z.infer<typeof handleSubmitRegisterSchema>;
 
 interface IModalRecordCollaborator {
   handleClose: () => void;
+  data: IExcursao
 }
 
 const ModalUpdateExcursao = ({
   handleClose,
+  data
 }: IModalRecordCollaborator) => {
-  // const { user } = useGlobal();
-  const { createProduct } = useProduct();
-  // const { getAllpacotees } = usepacote();
+  const { user } = useGlobal();
+  const { updateExcursao } = useExcursoes();
+  const { getAllPacotes } = usePacotes();
 
   const [errorBornDate, setErrorBornDate] = useState({
     message: "",
@@ -79,27 +83,26 @@ const ModalUpdateExcursao = ({
     formState: { errors },
   } = useForm<IhandleSubmitRegister>({
     resolver: zodResolver(handleSubmitRegisterSchema),
-  });
-  const { mutate: _, isLoading } = createProduct(reset, handleClose);
-  // const { data: dataPacotes, isLoading: loadingpacotees } = getAllpacotees();
-
-  const dataPacotes = [
-    {
-      id: 1,
-      nome: "Pacote 1"
-    },
-    {
-      id: 2,
-      nome: "Pacote 2"
+    defaultValues: {
+      nome: data.nome,
+      vagas: data.vagas,
+      observacoes: data.observacoes || '',
+      dataInicio: data.dataInicio.split('T')[0],
+      dataFim: data.dataFim.split('T')[0],
+      codigoPacote: data.codigoPacote
     }
-  ]
+  });
 
-  const handleSubmitRegister = (_data: IhandleSubmitRegister) => {
-    // mutate({
-    //   ...data,
-    //   ativo: true,
-    //   usuarioCadastro: user?.id
-    // })
+  const { mutate, isLoading } = updateExcursao(reset, handleClose);
+  const { data: dataPacotes, isLoading: loadingpacotees } = getAllPacotes();
+
+  const handleSubmitRegister = (submitData: IhandleSubmitRegister) => {
+    mutate({
+      ...submitData,
+      id: data.id,
+      ativo: true,
+      usuarioCadastro: user?.id
+    })
   };
 
   return (
@@ -131,7 +134,7 @@ const ModalUpdateExcursao = ({
 
           <Box display="flex" gap="10px">
             <ReactSelect
-              // isLoading={loadingpacotees}
+              isLoading={loadingpacotees}
               className="select-fields large"
               classNamePrefix="select"
               closeMenuOnSelect={true}
@@ -148,6 +151,10 @@ const ModalUpdateExcursao = ({
               id="codigoPacote"
               onChange={(option) => {
                 setValue("codigoPacote", option?.value.toString() || "");
+              }}
+              defaultValue={{
+                label: data.Pacotes.nome,
+                value: data.Pacotes.id
               }}
             />
           </Box>
@@ -186,11 +193,12 @@ const ModalUpdateExcursao = ({
                   });
                 } else {
                   setErrorBornDate({
-                    message: "",
-                  });
+                    message: ''
+                  })
                 }
                 setValue("dataInicio", value);
               }}
+
               max="2099-12-31"
               maxLength={10}
             />
@@ -223,8 +231,8 @@ const ModalUpdateExcursao = ({
                   });
                 } else {
                   setErrorBornDate({
-                    message: "",
-                  });
+                    message: ''
+                  })
                 }
                 setValue("dataFim", value);
               }}
@@ -250,9 +258,16 @@ const ModalUpdateExcursao = ({
           id="observacoes"
           label="Observações"
           type="text"
-          {...register("observacoes")}
+          {...register?.("observacoes")}
           inputArea={true}
           errors={errors.observacoes}
+          name="observacoes"
+          defaultValue={
+            data.observacoes || ''
+          }
+          onChangeTextarea={(event) => {
+            setValue("observacoes", event.target.value || '');
+          }}
         />
 
         <Flex justifyContent="flex-end" gap="15px">

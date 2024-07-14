@@ -2,54 +2,26 @@ import { useMutation, useQuery } from "react-query";
 import { useToastStandalone } from "./useToastStandalone";
 import { apiPrados } from "../services/api";
 import {
-  IPacoteArgs,
-  IPacoteResponse,
-  ICreatePacoteArgs,
-  ICreatePacoteResponse,
-  IUpdatePacoteArgs,
-  IUpdatePacoteResponse,
-  IPacoteFindResponse
-} from "../models/pacote.model";
+  IExcursaoArgs,
+  IExcursaoResponse,
+  ICreateExcursaoArgs,
+  ICreateExcursaoResponse,
+  IUpdateExcursaoArgs,
+  IUpdateExcursaoResponse,
+  IExcursaoListResponse
+} from "../models/excursao.model";
 import { Warning } from "../errors";
 import { keys, queryClient } from "../services/query";
 
-const getAllPacotes = (): IPacoteFindResponse => {
-  const { data, isLoading } = useQuery(
-    [
-      keys.fornecedores
-    ],
-    async () => {
-      const path = 'pacotes/findAll';
-
-      try {
-        const { data } = await apiPrados.get(path, {
-          params: {
-            ativo: true
-          },
-        });
-
-        return data
-      } catch (error: any) {
-        throw new Warning(error.response.data.message, error.response.status);
-      }
-    }
-  );
-
-  return {
-    data: data || [],
-    isLoading
-  };
-};
-
-const getPacotes = ({ page, size }: IPacoteArgs): IPacoteResponse => {
+const getExcursoes = ({ page, size }: IExcursaoArgs): IExcursaoResponse => {
 
   const { data, isLoading } = useQuery(
     [
-      keys.pacotes,
+      keys.excursao,
       page
     ],
     async () => {
-      const path = 'pacotes/index';
+      const path = 'excursao/index';
 
       try {
         const { data } = await apiPrados.get(path, {
@@ -73,20 +45,42 @@ const getPacotes = ({ page, size }: IPacoteArgs): IPacoteResponse => {
   };
 }
 
-const createPacotes = (
+const getExcursao = (id: string): IExcursaoListResponse => {
+
+  const { data, isLoading } = useQuery(
+    [keys.excursao],
+    async () => {
+      const path = `excursao/find/${id}`
+      try {
+        const { data } = await apiPrados.get(path)
+
+        return data
+      } catch (error: any) {
+        throw new Warning(error.response.data.message, error.response.status);
+      }
+    }
+  )
+
+  return {
+    data: data || [],
+    isLoading
+  };
+
+}
+
+const createExcursao = (
   reset: () => void,
   handleClose: () => void
-): ICreatePacoteResponse => {
+): ICreateExcursaoResponse => {
 
   const { isLoading, mutate } = useMutation(
-    async (data: ICreatePacoteArgs) => {
-      const urlPath = 'pacotes/create'
-
+    async (data: ICreateExcursaoArgs) => {
+      const urlPath = 'excursao/create'
       try {
         await apiPrados.post(urlPath, data).then(() => {
           reset()
           handleClose()
-          queryClient.invalidateQueries([keys.pacotes])
+          queryClient.invalidateQueries([keys.excursao])
 
           useToastStandalone({
             title: "Cadastro concluído!",
@@ -105,20 +99,20 @@ const createPacotes = (
   }
 }
 
-const updatePacote = (
+const updateExcursao = (
   reset: () => void,
   handleClose: () => void
-): IUpdatePacoteResponse => {
+): IUpdateExcursaoResponse => {
 
   const { isLoading, mutate } = useMutation(
-    async (data: IUpdatePacoteArgs) => {
-      const urlPath = `pacotes/update/${data.id}`;
+    async (data: IUpdateExcursaoArgs) => {
+      const urlPath = `excursao/update/${data.id}`;
 
       try {
         await apiPrados.put(urlPath, data).then((data) => {
           reset()
           handleClose()
-          queryClient.invalidateQueries([keys.pacotes])
+          queryClient.invalidateQueries([keys.excursao])
 
           useToastStandalone({
             title: "Atualizado com sucesso!",
@@ -137,18 +131,18 @@ const updatePacote = (
   }
 }
 
-const deletePacote = (): IUpdatePacoteResponse => {
+const deleteExcursao = (): IUpdateExcursaoResponse => {
 
   const { isLoading, mutate } = useMutation(
     async (id: string) => {
-      const urlPath = `pacotes/delete/${id}`
+      const urlPath = `excursao/delete/${id}`
 
       try {
         await apiPrados.patch(urlPath).then(function (data) {
-          queryClient.invalidateQueries([keys.pacotes])
+          queryClient.invalidateQueries([keys.excursao])
 
           useToastStandalone({
-            title: "Excluído com sucesso!",
+            title: "Excluída com sucesso!",
             status: "success"
           })
         })
@@ -164,12 +158,12 @@ const deletePacote = (): IUpdatePacoteResponse => {
   }
 }
 
-export default function usePacotes() {
+export default function useExcursoes() {
   return {
-    getPacotes,
-    createPacotes,
-    updatePacote,
-    deletePacote,
-    getAllPacotes
+    getExcursoes,
+    getExcursao,
+    createExcursao,
+    updateExcursao,
+    deleteExcursao
   }
 }

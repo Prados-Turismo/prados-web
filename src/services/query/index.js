@@ -1,6 +1,8 @@
 import { queryClient, generateQueryClient } from "./queryClient";
 
 const keys = {
+  excursaoPassageiro: "excursaoPassageiro",
+  excursao: "excursao",
   products: "products",
   pacotes: "pacotes",
   fornecedores: "fornecedores",

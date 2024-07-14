@@ -2,31 +2,27 @@ import { useMutation, useQuery } from "react-query";
 import { useToastStandalone } from "./useToastStandalone";
 import { apiPrados } from "../services/api";
 import {
-  IPacoteArgs,
-  IPacoteResponse,
-  ICreatePacoteArgs,
-  ICreatePacoteResponse,
-  IUpdatePacoteArgs,
-  IUpdatePacoteResponse,
-  IPacoteFindResponse
-} from "../models/pacote.model";
+  IExcursaoPassageiroArgs,
+  IExcursaoPassageiroResponse,
+  ICreateExcursaoPassageiroArgs,
+  ICreateExcursaoPassageiroResponse,
+  IUpdateExcursaoPassageiroArgs,
+  IUpdateExcursaoPassageiroResponse,
+  IExcursaoPassageiroListResponse
+} from "../models/excursao-passageiro.model";
 import { Warning } from "../errors";
 import { keys, queryClient } from "../services/query";
 
-const getAllPacotes = (): IPacoteFindResponse => {
+const listExcursaoPassageiros = (idExcursao: string): IExcursaoPassageiroListResponse => {
   const { data, isLoading } = useQuery(
     [
-      keys.fornecedores
+      keys.excursaoPassageiro
     ],
     async () => {
-      const path = 'pacotes/findAll';
+      const path = `excursao-passageiros/list-passageiros/${idExcursao}`;
 
       try {
-        const { data } = await apiPrados.get(path, {
-          params: {
-            ativo: true
-          },
-        });
+        const { data } = await apiPrados.get(path);
 
         return data
       } catch (error: any) {
@@ -39,54 +35,48 @@ const getAllPacotes = (): IPacoteFindResponse => {
     data: data || [],
     isLoading
   };
-};
+}
 
-const getPacotes = ({ page, size }: IPacoteArgs): IPacoteResponse => {
+const getExcursaoPassageiros = (): IUpdateExcursaoPassageiroResponse => {
 
-  const { data, isLoading } = useQuery(
-    [
-      keys.pacotes,
-      page
-    ],
-    async () => {
-      const path = 'pacotes/index';
+  const { isLoading, mutate } = useMutation(
+    async (idExcursao: string) => {
+      const urlPath = `excursao-passageiros/find/${idExcursao}`
 
       try {
-        const { data } = await apiPrados.get(path, {
-          params: {
-            page,
-            size
-          },
-        });
+        await apiPrados.patch(urlPath).then(function (data) {
+          queryClient.invalidateQueries([keys.excursao])
 
-        return data
+          useToastStandalone({
+            title: "Excluída com sucesso!",
+            status: "success"
+          })
+        })
       } catch (error: any) {
-        throw new Warning(error.response.data.message, error.response.status);
+        throw new Warning(error.response.data.message, error?.response?.status);
       }
     }
   )
 
   return {
-    data: data?.rows || [],
-    count: data?.count || 0,
-    isLoading
-  };
+    isLoading,
+    mutate
+  }
 }
 
-const createPacotes = (
+const createExcursaoPassageiro = (
   reset: () => void,
   handleClose: () => void
-): ICreatePacoteResponse => {
+): ICreateExcursaoPassageiroResponse => {
 
   const { isLoading, mutate } = useMutation(
-    async (data: ICreatePacoteArgs) => {
-      const urlPath = 'pacotes/create'
-
+    async (data: ICreateExcursaoPassageiroArgs) => {
+      const urlPath = 'excursao-passageiros/create'
       try {
         await apiPrados.post(urlPath, data).then(() => {
           reset()
           handleClose()
-          queryClient.invalidateQueries([keys.pacotes])
+          queryClient.invalidateQueries([keys.excursao])
 
           useToastStandalone({
             title: "Cadastro concluído!",
@@ -105,20 +95,20 @@ const createPacotes = (
   }
 }
 
-const updatePacote = (
+const updateExcursaoPassageiro = (
   reset: () => void,
   handleClose: () => void
-): IUpdatePacoteResponse => {
+): IUpdateExcursaoPassageiroResponse => {
 
   const { isLoading, mutate } = useMutation(
-    async (data: IUpdatePacoteArgs) => {
-      const urlPath = `pacotes/update/${data.id}`;
+    async (data: IUpdateExcursaoPassageiroArgs) => {
+      const urlPath = `excursao-passageiros/update/${data.id}`;
 
       try {
         await apiPrados.put(urlPath, data).then((data) => {
           reset()
           handleClose()
-          queryClient.invalidateQueries([keys.pacotes])
+          queryClient.invalidateQueries([keys.excursao])
 
           useToastStandalone({
             title: "Atualizado com sucesso!",
@@ -137,18 +127,18 @@ const updatePacote = (
   }
 }
 
-const deletePacote = (): IUpdatePacoteResponse => {
+const deleteExcursaoPassageiro = (): IUpdateExcursaoPassageiroResponse => {
 
   const { isLoading, mutate } = useMutation(
     async (id: string) => {
-      const urlPath = `pacotes/delete/${id}`
+      const urlPath = `excursao-passageiros/delete/${id}`
 
       try {
         await apiPrados.patch(urlPath).then(function (data) {
-          queryClient.invalidateQueries([keys.pacotes])
+          queryClient.invalidateQueries([keys.excursao])
 
           useToastStandalone({
-            title: "Excluído com sucesso!",
+            title: "Excluída com sucesso!",
             status: "success"
           })
         })
@@ -164,12 +154,12 @@ const deletePacote = (): IUpdatePacoteResponse => {
   }
 }
 
-export default function usePacotes() {
+export default function useExcursaoPassageiro() {
   return {
-    getPacotes,
-    createPacotes,
-    updatePacote,
-    deletePacote,
-    getAllPacotes
+    listExcursaoPassageiros,
+    getExcursaoPassageiros,
+    createExcursaoPassageiro,
+    updateExcursaoPassageiro,
+    deleteExcursaoPassageiro
   }
 }

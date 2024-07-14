@@ -15,11 +15,9 @@ import { keys, queryClient } from "../services/query";
 
 const listExcursaoPassageiros = (idExcursao: string): IExcursaoPassageiroListResponse => {
   const { data, isLoading } = useQuery(
-    [
-      keys.excursaoPassageiro
-    ],
+    [],
     async () => {
-      const path = `excursao-passageiros/list-passageiros/${idExcursao}`;
+      const path = `excursao-passageiros/list-passageiros-filtered/${idExcursao}`;
 
       try {
         const { data } = await apiPrados.get(path);

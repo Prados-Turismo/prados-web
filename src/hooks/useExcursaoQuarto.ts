@@ -16,7 +16,7 @@ const getExcursaoQuarto = ({ page, size }: IExcursaoQuartoArgs): IExcursaoQuarto
 
   const { data, isLoading } = useQuery(
     [
-      keys.excursao,
+      keys.excursaoQuarto,
       page
     ],
     async () => {
@@ -56,7 +56,7 @@ const createExcursaoQuarto = (
         await apiPrados.post(urlPath, data).then(() => {
           reset()
           handleClose()
-          queryClient.invalidateQueries([keys.excursao])
+          queryClient.invalidateQueries([keys.excursaoQuarto])
 
           useToastStandalone({
             title: "Cadastro concluído!",
@@ -83,12 +83,11 @@ const updateExcursaoQuarto = (
   const { isLoading, mutate } = useMutation(
     async (data: IUpdateExcursaoQuartoArgs) => {
       const urlPath = `excursao-quartos/update/${data.id}`;
-
       try {
         await apiPrados.put(urlPath, data).then((data) => {
           reset()
           handleClose()
-          queryClient.invalidateQueries([keys.excursao])
+          queryClient.invalidateQueries([keys.excursaoQuarto])
 
           useToastStandalone({
             title: "Atualizado com sucesso!",
@@ -112,10 +111,11 @@ const deleteExcursaoQuarto = (): IUpdateExcursaoQuartoResponse => {
   const { isLoading, mutate } = useMutation(
     async (id: string) => {
       const urlPath = `excursao-quartos/delete/${id}`
+      debugger
 
       try {
-        await apiPrados.patch(urlPath).then(function (data) {
-          queryClient.invalidateQueries([keys.excursao])
+        await apiPrados.delete(urlPath).then(function (data) {
+          queryClient.invalidateQueries([keys.excursaoQuarto])
 
           useToastStandalone({
             title: "Excluída com sucesso!",

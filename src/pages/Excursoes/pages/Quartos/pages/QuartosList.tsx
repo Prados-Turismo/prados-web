@@ -19,24 +19,48 @@ import { IoIosAdd, IoMdTrash } from "react-icons/io";
 import SimpleModal from "../../../../../components/SimpleModal";
 import ModalRegisterQuarto from "../components/ModalRegisterQuarto";
 import ModalUpdateQuarto from "../components/ModalUpdateQuarto";
+import { IExcursaoQuarto } from "../../../../../models/excursao-quarto.model";
+import AlertModal from "../../../../../components/AlertModal";
 
 const QuartosList = () => {
   const { id: _id } = useParams();
   const navigate = useNavigate();
-  const { getExcursaoQuarto } = useExcursaoQuarto();
+  const { getExcursaoQuarto, deleteExcursaoQuarto } = useExcursaoQuarto();
   const { getExcursao } = useExcursao();
   const { data: dataExcursao, isLoading: loadingExcursao } = getExcursao(_id || '');
 
   const [modalRecordQuarto, setModalRecordQuarto] = useState(false);
   const [modalUpdateQuarto, setModalUpdateQuarto] = useState(false);
+  const [modalRemoveExcursaoQuarto, setModalRemoveExcursaoQuarto] = useState(false);
   const [statusSelected, setStatusSelected] = useState<ISelect | null>();
   const [currentPage, setCurrentPage] = useState(1);
+  const [quartoData, setQuartoData] = useState<IExcursaoQuarto | undefined>();
   const registerPerPage = 10;
+  var numeroQuarto: string = ''
 
   const { data, count, isLoading } = getExcursaoQuarto({
     size: registerPerPage,
     page: currentPage
   });
+
+  const { mutate: mutateToDeleteExcursaoQuarto } = deleteExcursaoQuarto();
+  const [deleteItemId, setDeleteExcursaoQuartoId] = useState('');
+
+  const onConfirmRemoveExcursaoQuarto = () => {
+    mutateToDeleteExcursaoQuarto(deleteItemId || "");
+    setModalRemoveExcursaoQuarto(false);
+  };
+
+  const returnRoomName = () => {
+    const result = data.sort((a, b) => a.numeroQuarto.localeCompare(b.numeroQuarto));
+
+    let roomName = result.slice(-1)[0].numeroQuarto.split(' ')[1]
+    return `${parseInt(roomName) + 1}`
+  }
+
+  if (!isLoading) {
+    numeroQuarto = returnRoomName();
+  }
 
   return (
     <>
@@ -143,6 +167,7 @@ const QuartosList = () => {
                                 onClick={(e) => {
                                   e.stopPropagation()
                                   setModalUpdateQuarto(true)
+                                  setQuartoData(item)
                                 }}
                               />
                             </ButtonIcon>
@@ -153,7 +178,8 @@ const QuartosList = () => {
                               <IoMdTrash
                                 size={18}
                                 onClick={(e) => {
-                                  e.stopPropagation()
+                                  setModalRemoveExcursaoQuarto(true)
+                                  setDeleteExcursaoQuartoId(item.id)
                                 }}
                               />
                             </ButtonIcon>
@@ -170,7 +196,7 @@ const QuartosList = () => {
                       >
                         <ul>
                           {item.Passageiros.map((pass, index) => (
-                            <li>{pass.nome}</li>
+                            <li key={pass.id}>{pass.nome}</li>
                           ))}
 
                         </ul>
@@ -203,19 +229,34 @@ const QuartosList = () => {
       >
         <ModalRegisterQuarto
           handleClose={() => setModalRecordQuarto(false)}
+          numeroQuarto={numeroQuarto}
         />
       </SimpleModal>
 
-      <SimpleModal
-        title="Quarto"
-        size="xl"
-        isOpen={modalUpdateQuarto}
-        handleModal={setModalUpdateQuarto}
-      >
-        <ModalUpdateQuarto
-          handleClose={() => setModalUpdateQuarto(false)}
-        />
-      </SimpleModal>
+      {quartoData && (
+        <SimpleModal
+          title="Quarto"
+          size="xl"
+          isOpen={modalUpdateQuarto}
+          handleModal={setModalUpdateQuarto}
+        >
+          <ModalUpdateQuarto
+            handleClose={() => setModalUpdateQuarto(false)}
+            data={quartoData}
+          />
+        </SimpleModal>
+      )}
+
+      {modalRemoveExcursaoQuarto && (
+        <AlertModal
+          title="Remover Quarto"
+          question="Deseja realmente remover este quarto?"
+          request={onConfirmRemoveExcursaoQuarto}
+          showModal={modalRemoveExcursaoQuarto}
+          setShowModal={setModalRemoveExcursaoQuarto}
+          size="md"
+        ></AlertModal>
+      )}
     </>
   );
 };

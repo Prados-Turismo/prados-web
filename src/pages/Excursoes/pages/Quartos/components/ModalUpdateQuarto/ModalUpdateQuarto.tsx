@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Box, Button, Flex } from "@chakra-ui/react";
+import { Box, Button, Flex, Input } from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -7,7 +7,8 @@ import { z } from "zod";
 import Asterisk from "../../../../../../components/Asterisk";
 
 // Hooks
-import useProduct from "../../../../../../hooks/useProducts";
+import useExcursaoQuarto from "../../../../../../hooks/useExcursaoQuarto";
+import useExcursaoPassageiro from "../../../../../../hooks/useExcursaoPassageiros";
 
 import {
   fieldRequired
@@ -15,6 +16,9 @@ import {
 
 import { FieldWrap } from "./styled";
 import ReactSelect from "react-select";
+import { IExcursaoQuarto, IUpdateExcursaoQuartoArgs } from "../../../../../../models/excursao-quarto.model";
+import { useGlobal } from "../../../../../../contexts/UserContext";
+import { useParams } from "react-router-dom";
 // import { useGlobal } from "../../../../contexts/UserContext";
 
 const handleSubmitRegisterSchema = z.object({
@@ -25,19 +29,24 @@ const handleSubmitRegisterSchema = z.object({
     .min(1, {
       message: fieldRequired("local de embarque"),
     }),
+  numeroQuarto: z
+    .string()
 });
 
 type IhandleSubmitRegister = z.infer<typeof handleSubmitRegisterSchema>;
 
 interface IModalRecordCollaborator {
   handleClose: () => void;
+  data: IExcursaoQuarto
 }
 
 const ModalUpdateQuarto = ({
   handleClose,
+  data
 }: IModalRecordCollaborator) => {
-  // const { user } = useGlobal();
-  const { createProduct } = useProduct();
+  const { user } = useGlobal();
+  const { updateExcursaoQuarto } = useExcursaoQuarto();
+  const { listExcursaoPassageiros } = useExcursaoPassageiro();
   const {
     setValue,
     reset,
@@ -46,31 +55,21 @@ const ModalUpdateQuarto = ({
     formState: { errors },
   } = useForm<IhandleSubmitRegister>({
     resolver: zodResolver(handleSubmitRegisterSchema),
-  });
-  const { mutate: _, isLoading } = createProduct(reset, handleClose);
-  // const { data: dataPacotes, isLoading: loadingpacotees } = getAllpacotees();
-
-  const datapassageiros = [
-    {
-      id: 1,
-      nome: "Passageiro 1"
-    },
-    {
-      id: 2,
-      nome: "Passageiro 2"
-    },
-    {
-      id: 3,
-      nome: "Passageiro 3"
+    defaultValues: {
+      numeroQuarto: data.numeroQuarto
     }
-  ]
+  });
+  const { id: idExcursao } = useParams();
+  const { mutate, isLoading } = updateExcursaoQuarto(reset, handleClose);
+  const { data: dataPassageiros, isLoading: loadingPassageiros } = listExcursaoPassageiros(idExcursao || '');
+  const allOptions = [...dataPassageiros, ...data.Passageiros]
 
-  const handleSubmitRegister = (_data: IhandleSubmitRegister) => {
-    // mutate({
-    //   ...data,
-    //   ativo: true,
-    //   usuarioCadastro: user?.id
-    // })
+  const handleSubmitRegister = (submitData: IhandleSubmitRegister) => {
+    mutate({
+      ...submitData,
+      id: data.id,
+      usuarioCadastro: user?.id
+    })
   };
 
   return (
@@ -88,7 +87,7 @@ const ModalUpdateQuarto = ({
 
           <Box display="flex" gap="10px">
             <ReactSelect
-              // isLoading={loadingOrigemes}
+              isLoading={loadingPassageiros}
               isMulti={true}
               className="select-fields multi"
               classNamePrefix="select"
@@ -97,7 +96,7 @@ const ModalUpdateQuarto = ({
               isSearchable={true}
               placeholder="Selecione"
               noOptionsMessage={() => "Não há passageiros cadastrados"}
-              options={datapassageiros
+              options={allOptions
                 ?.map((passageiro) => ({
                   label: passageiro?.nome,
                   value: passageiro?.id,
@@ -107,10 +106,16 @@ const ModalUpdateQuarto = ({
               onChange={(option) => {
                 setValue("passageiros", option?.map((item) => item?.value.toString()) || []);
               }}
+              defaultValue={
+                data.Passageiros.map((passageiro) => {
+                  return { value: passageiro.id, label: passageiro.nome }
+                })}
             />
           </Box>
           {errors.passageiros && <p className="error">{errors.passageiros.message}</p>}
         </FieldWrap>
+
+        <Input type="hidden" {...register("numeroQuarto")} />
 
         <Flex justifyContent="flex-end" gap="15px">
           <Button

@@ -49,18 +49,13 @@ export interface IExcursaoQuartoListResponse {
 }
 
 export interface ICreateExcursaoQuartoArgs {
-  nome: string
-  dataInicio: Date
-  dataFim: Date
-  observacoes: string | null
-  ativo: boolean
-  gerouFinanceiro: boolean
-  vagas: number
-  codigoPacote: string
+  numeroQuarto: string
+  passageiros: [string]
+  codigoExcursao: string
   usuarioCadastro: string
 }
 
-export interface IUpdateExcursaoQuartoArgs extends ICreateExcursaoArgs {
+export interface IUpdateExcursaoQuartoArgs extends ICreateExcursaoQuartoArgs {
   id: string
 }
 

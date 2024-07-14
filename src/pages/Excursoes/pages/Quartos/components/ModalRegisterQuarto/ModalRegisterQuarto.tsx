@@ -35,11 +35,13 @@ const handleSubmitRegisterSchema = z.object({
 type IhandleSubmitRegister = z.infer<typeof handleSubmitRegisterSchema>;
 
 interface IModalRecordCollaborator {
-  handleClose: () => void
+  handleClose: () => void,
+  numeroQuarto: string
 }
 
 const ModalRegisterQuarto = ({
   handleClose,
+  numeroQuarto
 }: IModalRecordCollaborator) => {
   const { user } = useGlobal();
   const { createExcursaoQuarto } = useExcursaoQuarto();
@@ -52,6 +54,9 @@ const ModalRegisterQuarto = ({
     formState: { errors },
   } = useForm<IhandleSubmitRegister>({
     resolver: zodResolver(handleSubmitRegisterSchema),
+    defaultValues: {
+      numeroQuarto: `Quarto ${numeroQuarto}`
+    }
   });
   const { id: idExcursao } = useParams();
   const { mutate, isLoading } = createExcursaoQuarto(reset, handleClose);
@@ -60,6 +65,7 @@ const ModalRegisterQuarto = ({
   const handleSubmitRegister = (submitData: IhandleSubmitRegister) => {
     mutate({
       ...submitData,
+      codigoExcursao: idExcursao,
       usuarioCadastro: user?.id
     })
   };
@@ -79,7 +85,7 @@ const ModalRegisterQuarto = ({
 
           <Box display="flex" gap="10px">
             <ReactSelect
-              isLoading={isLoading}
+              isLoading={loadingPassageiros}
               isMulti={true}
               className="select-fields multi"
               classNamePrefix="select"

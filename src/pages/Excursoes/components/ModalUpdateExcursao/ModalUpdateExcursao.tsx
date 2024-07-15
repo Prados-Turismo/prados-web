@@ -70,7 +70,7 @@ const ModalUpdateExcursao = ({
   const { updateExcursao } = useExcursoes();
   const { getAllPacotes } = usePacotes();
 
-  const [errorBornDate, setErrorBornDate] = useState({
+  const [errorBornDate, setErrorDate] = useState({
     message: "",
   });
 
@@ -182,17 +182,17 @@ const ModalUpdateExcursao = ({
                 const data = new Date(value);
 
                 if (data < dataAtual) {
-                  setErrorBornDate({
+                  setErrorDate({
                     message:
                       "A data de início não pode ser inferior a data atual",
                   });
                 } else if (isDateLessThan150YearsAgo(data)) {
-                  setErrorBornDate({
+                  setErrorDate({
                     message:
                       "A data de início não pode ser inferior há 150 anos atrás",
                   });
                 } else {
-                  setErrorBornDate({
+                  setErrorDate({
                     message: ''
                   })
                 }
@@ -220,17 +220,17 @@ const ModalUpdateExcursao = ({
                 const data = new Date(value);
 
                 if (data < dataAtual) {
-                  setErrorBornDate({
+                  setErrorDate({
                     message:
                       "A data de fim não pode ser inferior a data atual",
                   });
                 } else if (isDateLessThan150YearsAgo(data)) {
-                  setErrorBornDate({
+                  setErrorDate({
                     message:
                       "A data de fim não pode ser inferior há 150 anos atrás",
                   });
                 } else {
-                  setErrorBornDate({
+                  setErrorDate({
                     message: ''
                   })
                 }

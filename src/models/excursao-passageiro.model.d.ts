@@ -26,15 +26,9 @@ export interface IExcursaoPassageiroArgs {
 }
 
 export interface IDataExcursaoPassageiro {
-  nome: string
-  dataInicio: Date
-  dataFim: Date
-  observacoes: string | null
-  ativo: boolean
-  gerouFinanceiro: boolean
-  vagas: number
-  codigoPacote: string
-  usuarioCadastro: string
+  id: string
+  dataCadastro: Date
+  reserva: string
 }
 
 export interface IExcursaoListPassageiro {

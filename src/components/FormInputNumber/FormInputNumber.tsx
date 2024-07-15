@@ -155,9 +155,9 @@ const FormInputNumber = ({
             defaultValue={defaultValue}
             onValueChange={({ value }) => {
               if (isStateForm) {
-                setValue(value?.toString() || "")
+                setValue(Number(value) || "")
               } else {
-                setValue(name, value?.toString() || "")
+                setValue(name, Number(value) || "")
               }
             }}
             disabled={isLoading}

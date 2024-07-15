@@ -76,10 +76,12 @@ const createExcursao = (
   const { isLoading, mutate } = useMutation(
     async (data: ICreateExcursaoArgs) => {
       const urlPath = 'excursao/create'
+
       try {
         await apiPrados.post(urlPath, data).then(() => {
           reset()
           handleClose()
+
           queryClient.invalidateQueries([keys.excursao])
 
           useToastStandalone({

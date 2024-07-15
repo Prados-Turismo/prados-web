@@ -7,7 +7,8 @@ import { z } from "zod";
 import Asterisk from "../../../../components/Asterisk";
 
 // Hooks
-import useProduct from "../../../../hooks/useProducts";
+import usePacotes from "../../../../hooks/usePacotes";
+import useExcursoes from "../../../../hooks/useExcursao";
 
 import {
   fieldRequired
@@ -15,12 +16,12 @@ import {
 
 import { FieldWrap } from "./styled";
 import ReactSelect from "react-select";
-// import usepacote from "../../../../hooks/usepacote";
-// import { useGlobal } from "../../../../contexts/UserContext";
+import { useGlobal } from "../../../../contexts/UserContext";
 import FormInputNumber from "../../../../components/FormInputNumber";
 import FormInput from "../../../../components/FormInput";
 import { useState } from "react";
 import { isDateLessThan150YearsAgo } from "../../../../utils/formattingDate";
+
 
 const handleSubmitRegisterSchema = z.object({
   nome: z
@@ -44,13 +45,13 @@ const handleSubmitRegisterSchema = z.object({
       message: fieldRequired("data de fim"),
     }),
   vagas: z
-    .string()
+    .number()
     .min(1, {
       message: fieldRequired("vagas"),
     }),
   observacoes: z
-      .string()
-      .optional()
+    .string()
+    .optional()
 });
 
 type IhandleSubmitRegister = z.infer<typeof handleSubmitRegisterSchema>;
@@ -62,20 +63,16 @@ interface IModalRecordCollaborator {
 const ModalRegisterExcursao = ({
   handleClose,
 }: IModalRecordCollaborator) => {
-  // const { user } = useGlobal();
-  const { createProduct } = useProduct();
-  // const { getAllpacotees } = usepacote();
+  const { user } = useGlobal();
+  const { createExcursao } = useExcursoes();
+  const { getAllPacotes } = usePacotes();
 
-  const [errorDataInicio, setErrorDataInicio] = useState({
-    message: "",
-  });
-  const [errorDataFim, setErrorDataFim] = useState({
+  const [errorDate, setErrorDate] = useState({
     message: "",
   });
 
   const {
     setValue,
-    getValues,
     reset,
     register,
     handleSubmit,
@@ -83,26 +80,15 @@ const ModalRegisterExcursao = ({
   } = useForm<IhandleSubmitRegister>({
     resolver: zodResolver(handleSubmitRegisterSchema),
   });
-  const { mutate: _, isLoading } = createProduct(reset, handleClose);
-  // const { data: dataPacotes, isLoading: loadingpacotees } = getAllpacotees();
+  const { mutate, isLoading } = createExcursao(reset, handleClose);
+  const { data: dataPacotes, isLoading: loadingPacotes } = getAllPacotes();
 
-  const dataPacotes = [
-    {
-      id: 1,
-      nome: "Pacote 1"
-    },
-    {
-      id: 2,
-      nome: "Pacote 2"
-    }
-  ]
-
-  const handleSubmitRegister = (_data: IhandleSubmitRegister) => {
-    // mutate({
-    //   ...data,
-    //   ativo: true,
-    //   usuarioCadastro: user?.id
-    // })
+  const handleSubmitRegister = (submitData: IhandleSubmitRegister) => {
+    mutate({
+      ...submitData,
+      ativo: true,
+      usuarioCadastro: user?.id
+    })
   };
 
   return (
@@ -134,7 +120,7 @@ const ModalRegisterExcursao = ({
 
           <Box display="flex" gap="10px">
             <ReactSelect
-              // isLoading={loadingpacotees}
+              isLoading={loadingPacotes}
               className="select-fields large"
               classNamePrefix="select"
               closeMenuOnSelect={true}
@@ -165,30 +151,29 @@ const ModalRegisterExcursao = ({
         >
           <FormControl
             isRequired
-            isInvalid={errorDataInicio?.message ? true : false}
+            isInvalid={errorDate?.message ? true : false}
           >
             <FormLabel>Data de início</FormLabel>
             <Input
               name="dataInicio"
               type="date"
               placeholder="dd/mm/aaaa"
-              value={getValues("dataInicio")}
               onChange={({ target: { value } }) => {
                 const dataAtual = new Date();
                 const data = new Date(value);
 
                 if (data < dataAtual) {
-                  setErrorDataInicio({
+                  setErrorDate({
                     message:
                       "A data de início não pode ser inferior a data atual",
                   });
                 } else if (isDateLessThan150YearsAgo(data)) {
-                  setErrorDataInicio({
+                  setErrorDate({
                     message:
                       "A data de início não pode ser inferior há 150 anos atrás",
                   });
                 } else {
-                  setErrorDataInicio({
+                  setErrorDate({
                     message: "",
                   });
                 }
@@ -197,35 +182,34 @@ const ModalRegisterExcursao = ({
               max="2099-12-31"
               maxLength={10}
             />
-            <FormErrorMessage>{errorDataInicio?.message}</FormErrorMessage>
+            <FormErrorMessage>{errorDate?.message}</FormErrorMessage>
           </FormControl>
 
           <FormControl
             isRequired
-            isInvalid={errorDataFim?.message ? true : false}
+            isInvalid={errorDate?.message ? true : false}
           >
             <FormLabel>Data de fim</FormLabel>
             <Input
               name="dataFim"
               type="date"
               placeholder="dd/mm/aaaa"
-              value={getValues("dataFim")}
               onChange={({ target: { value } }) => {
                 const dataAtual = new Date();
                 const data = new Date(value);
 
                 if (data < dataAtual) {
-                  setErrorDataFim({
+                  setErrorDate({
                     message:
                       "A data de fim não pode ser inferior a data atual",
                   });
                 } else if (isDateLessThan150YearsAgo(data)) {
-                  setErrorDataFim({
+                  setErrorDate({
                     message:
                       "A data de fim não pode ser inferior há 150 anos atrás",
                   });
                 } else {
-                  setErrorDataFim({
+                  setErrorDate({
                     message: "",
                   });
                 }
@@ -234,7 +218,7 @@ const ModalRegisterExcursao = ({
               max="2099-12-31"
               maxLength={10}
             />
-            <FormErrorMessage>{errorDataFim?.message}</FormErrorMessage>
+            <FormErrorMessage>{errorDate?.message}</FormErrorMessage>
           </FormControl>
         </Flex>
 
@@ -242,7 +226,6 @@ const ModalRegisterExcursao = ({
           height="40px"
           label="Vagas"
           setValue={setValue}
-          value={getValues("vagas")}
           name="vagas"
           maxLength={25}
           isRequired

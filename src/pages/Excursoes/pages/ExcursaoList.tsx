@@ -1,6 +1,6 @@
 import { Button, Flex, TableContainer } from "@chakra-ui/react";
 import { useState } from "react";
-import { IoIosAdd, IoMdBus, IoMdPaper, IoMdTrash } from "react-icons/io";
+import { IoIosAdd, IoIosPeople, IoMdBus, IoMdPaper, IoMdTrash } from "react-icons/io";
 import FieldSearch from "../../../components/FieldSearch";
 import Loading from "../../../components/Loading";
 import Pagination from "../../../components/Pagination";
@@ -23,10 +23,11 @@ import ButtonIcon from "../../../components/ButtonIcon";
 import AlertModal from "../../../components/AlertModal";
 import { IoBed } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
+import { dateFormat } from "../../../utils";
 
 const ExcursaoList = () => {
   const navigate = useNavigate();
-  const { getExcursoes } = useExcursoes();
+  const { getExcursoes, deleteExcursao } = useExcursoes();
 
   const [statusSelected, setStatusSelected] = useState<ISelect | null>();
   const [resetFilter, setResetFilter] = useState(false);
@@ -41,6 +42,14 @@ const ExcursaoList = () => {
     size: registerPerPage,
     page: currentPage
   });
+
+  const { mutate: mutateToDeleteExcursao, isLoading: isLoadingDelete } = deleteExcursao();
+  const [deleteItemId, setDeleteExcursaoId] = useState('');
+
+  const onConfirmRemoveExcursao = () => {
+    mutateToDeleteExcursao(deleteItemId || "");
+    setModalRemoveExcursao(false);
+  };
 
   return (
     <>
@@ -137,10 +146,10 @@ const ExcursaoList = () => {
                             {item.Pacotes.nome}
                           </TD>
                           <TD>
-                            {item.dataInicio.toString()}
+                            {dateFormat(new Date(item.dataInicio))}
                           </TD>
                           <TD>
-                            {item.dataFim.toString()}
+                            {dateFormat(new Date(item.dataFim))}
                           </TD>
                           <TD>
                             {item.ativo ? "Ativo" : "Inativo"}
@@ -177,10 +186,21 @@ const ExcursaoList = () => {
                               />
                             </ButtonIcon>
 
+                            <ButtonIcon tooltip="Passageiros">
+                              <IoIosPeople
+                                size={20}
+                                onClick={() => navigate(`/excursoes/${item.id}/passageiros`)}
+                              />
+                            </ButtonIcon>
+
                             <ButtonIcon tooltip="Excluir Excursao">
                               <IoMdTrash
                                 size={20}
-                                onClick={() => setModalRemoveExcursao(true)}
+                                onClick={() => {
+                                  setModalRemoveExcursao(true)
+                                  setDeleteExcursaoId(item.id)
+                                }
+                                }
                               />
                             </ButtonIcon>
                           </TD>
@@ -231,15 +251,19 @@ const ExcursaoList = () => {
         </SimpleModal>
       )}
 
-      {modalRemoveExcursao && (
-        <AlertModal
-          title="Remover Excursão"
-          question="Deseja realmente remover esta excursão?"
-          request={() => { }}
-          showModal={modalRemoveExcursao}
-          setShowModal={setModalRemoveExcursao}
-          size="md"
-        ></AlertModal>
+      {!isLoadingDelete && (
+        <>
+          {modalRemoveExcursao && (
+            <AlertModal
+              title="Remover Excursão"
+              question="Deseja realmente remover esta excursão?"
+              request={onConfirmRemoveExcursao}
+              showModal={modalRemoveExcursao}
+              setShowModal={setModalRemoveExcursao}
+              size="md"
+            ></AlertModal>
+          )}
+        </>
       )}
     </>
   );

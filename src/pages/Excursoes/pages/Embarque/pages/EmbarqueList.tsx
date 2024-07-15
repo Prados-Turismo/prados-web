@@ -11,22 +11,46 @@ import { Content, SectionTop } from "./styled";
 import ReactSelect from "react-select";
 import { ISelect } from "../../../../../models/generics.model";
 import AlertNoDataFound from "../../../../../components/AlertNoDataFound";
-import useProduct from "../../../../../hooks/useProducts";
 import { useNavigate, useParams } from "react-router-dom";
+import useExcursaoPassageiro from "../../../../../hooks/useExcursaoPassageiros";
+import useExcursao from "../../../../../hooks/useExcursao";
+import { IExcursaoEmbarque, IUpdateExcursaoEmbarqueArgs, IUpdateExcursaoEmbarqueResponse } from "../../../../../models/excursao-embarque.model";
+import useExcursaoEmbarque from "../../../../../hooks/useExcursaoEmbarque";
+import { useGlobal } from "../../../../../contexts/UserContext";
+import useLocalEmbarque from "../../../../../hooks/useLocalEmbarque";
 
-const ExcursaoList = () => {
+const EmbarqueList = () => {
   const { id: _id } = useParams();
   const navigate = useNavigate();
-  const { getProducts } = useProduct();
+  const { getAllPassageiros } = useExcursaoPassageiro();
+  const { getExcursao } = useExcursao();
+  const { createExcursaoEmbarque, updateExcursaoEmbarque } = useExcursaoEmbarque()
+  const { getLocalEmbarque } = useLocalEmbarque()
+  const [checkEmbarqueDesembarque, setcheckEmbarqueDesembarque] = useState<boolean>(false);
+  const { user } = useGlobal();
 
+  const { data: dataExcursao, isLoading: loadingExcursao } = getExcursao(_id || '');
   const [statusSelected, setStatusSelected] = useState<ISelect | null>();
   const [currentPage, setCurrentPage] = useState(1);
   const registerPerPage = 10;
 
-  const { data, count, isLoading } = getProducts({
+  const { data, count, isLoading } = getAllPassageiros({
     size: registerPerPage,
     page: currentPage
-  });
+  }, _id || '');
+  const { mutate: mutateToCreateEmbarque, isLoading: isLoadingCreateEmbarque } = createExcursaoEmbarque()
+  const { mutate: mutateToUpdateEmbarque, isLoading: isLoadingUpdateEmbarque } = updateExcursaoEmbarque()
+  const { data: localEmbarqueData, isLoading: isLoadingLocalEmbarque } = getLocalEmbarque()
+
+  const embarqueDesembarque = (dadosEmbarque: IUpdateExcursaoEmbarqueArgs) => {
+    if (!isLoadingCreateEmbarque && !isLoadingUpdateEmbarque) {
+      if (dadosEmbarque.id) {
+        mutateToUpdateEmbarque(dadosEmbarque)
+      } else {
+        mutateToCreateEmbarque(dadosEmbarque)
+      }
+    }
+  }
 
   return (
     <>
@@ -44,7 +68,7 @@ const ExcursaoList = () => {
             Embarque:
           </Text>
           <Text fontSize="2xl">
-            Excursão Guaramiranga
+            {dataExcursao.nome}
           </Text>
         </Flex>
       </SectionTop>
@@ -65,16 +89,9 @@ const ExcursaoList = () => {
               onChange={(item) => {
                 setStatusSelected(item);
               }}
-              options={[
-                {
-                  label: "Local 1",
-                  value: 1,
-                },
-                {
-                  label: "Local 2",
-                  value: 2,
-                },
-              ]}
+              options={localEmbarqueData.map((local) => {
+                return { value: local.id, label: local.nome }
+              })}
             />
           </Flex>
           <Button
@@ -104,25 +121,29 @@ const ExcursaoList = () => {
                       <TD>Passageiro</TD>
                       <TD>Local de Embarque</TD>
                       <TD>Hora Prevista</TD>
+                      <TD>Hora Embarque</TD>
                       <TD>Embarcou?</TD>
                     </THead>
 
                     <TBody>
                       {data.map((item) => (
-                        <TR key={item.id}>
+                        <TR key={item.Pessoa.id}>
                           <TD>
-                            {item.nome}
+                            {item.Pessoa.nome}
                           </TD>
                           <TD>
-                            {item.estoque}
+                            {item?.LocalEmbarque.nome}
                           </TD>
                           <TD>
-                            {item.Fornecedor.nome}
+                            {item.LocalEmbarque.horaEmbarque}
+                          </TD>
+                          <TD>
+                            {item.horaEmbarque}
                           </TD>
                           <TD>
                             <Checkbox
                               borderColor="#909090"
-                              // isChecked={true}
+                              isChecked={item.embarcou}
                               _checked={{
                                 ".chakra-checkbox__control": {
                                   bgColor: "brand.500",
@@ -135,7 +156,20 @@ const ExcursaoList = () => {
                                   boxShadow: "none",
                                 },
                               }}
-                              onChange={() => {}}
+                              onChange={(event) => {
+                                setcheckEmbarqueDesembarque(event.target.checked ? true : false)
+                                if (!isLoadingCreateEmbarque && !isLoadingUpdateEmbarque) {
+                                  embarqueDesembarque({
+                                    'codigoPassageiro': item.Pessoa.id,
+                                    'codigoLocalEmbarque': item.LocalEmbarque.id,
+                                    'embarcou': event.target.checked ? true : false,
+                                    'horaEmbarque': '12:00:00',
+                                    'codigoExcursao': _id || '',
+                                    'usuarioCadastro': user?.id || '',
+                                    'id': item.hasBoarded
+                                  })
+                                }
+                              }}
                             />
                           </TD>
                         </TR>
@@ -163,4 +197,4 @@ const ExcursaoList = () => {
   );
 };
 
-export default ExcursaoList;
+export default EmbarqueList;

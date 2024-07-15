@@ -2,16 +2,46 @@ import { useMutation, useQuery } from "react-query";
 import { useToastStandalone } from "./useToastStandalone";
 import { apiPrados } from "../services/api";
 import {
-  IExcursaoPassageiroArgs,
-  IExcursaoPassageiroResponse,
   ICreateExcursaoPassageiroArgs,
   ICreateExcursaoPassageiroResponse,
   IUpdateExcursaoPassageiroArgs,
   IUpdateExcursaoPassageiroResponse,
-  IExcursaoPassageiroListResponse
+  IExcursaoPassageiroListResponse,
+  IExcursaoPassageiroArgs,
+  IExcursaoPassageiroIndexResponse
 } from "../models/excursao-passageiro.model";
 import { Warning } from "../errors";
 import { keys, queryClient } from "../services/query";
+
+const getAllPassageiros = ({ page, size }: IExcursaoPassageiroArgs, idExcursao: string): IExcursaoPassageiroIndexResponse => {
+  const { data, isLoading } = useQuery(
+    [
+      keys.excursaoPassageiro
+    ],
+    async () => {
+      const path = `excursao-passageiros/index/${idExcursao}`;
+
+      try {
+        const { data } = await apiPrados.get(path, {
+          params: {
+            page,
+            size
+          },
+        });
+
+        return data
+      } catch (error: any) {
+        throw new Warning(error.response.data.message, error.response.status);
+      }
+    }
+  );
+
+  return {
+    data: data?.rows || [],
+    count: data?.count || 0,
+    isLoading
+  };
+};
 
 const listExcursaoPassageiros = (idExcursao: string): IExcursaoPassageiroListResponse => {
   const { data, isLoading } = useQuery(
@@ -154,6 +184,7 @@ const deleteExcursaoPassageiro = (): IUpdateExcursaoPassageiroResponse => {
 
 export default function useExcursaoPassageiro() {
   return {
+    getAllPassageiros,
     listExcursaoPassageiros,
     getExcursaoPassageiros,
     createExcursaoPassageiro,

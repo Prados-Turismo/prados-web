@@ -65,6 +65,59 @@ export interface ICreateExcursaoPassageiroArgs {
   usuarioCadastro: string
 }
 
+export interface IDataExcursaoPassageiroLocalPessoa extends IDataExcursaoPassageiro {
+  embarcou: boolean
+  hasBoarded: string
+  horaEmbarque: string
+  id: string
+  LocalEmbarque: {
+    id: string
+    nome: string
+    observacoes: string
+    horaEmbarque: string | null
+    horaPrevista: string
+    dataCadastro: Date
+    codigoEndereco: string
+    usuarioCadastro: string
+    ativo: boolean
+  },
+  Pessoa: {
+    id: string
+    nome: string
+    cpf: string
+    sexo: string
+    dataCadastro: Date
+    observacoes: string | null
+    telefone: string | null
+    telefoneWpp: string | null
+    email: string
+    contato: string | null
+    telefoneContato: string | null
+    ativo: boolean
+    dataNascimento: Date | null
+    usuarioCadastro: string
+  },
+  Excursao: {
+    id: string
+    nome: string
+    dataInicio: Date
+    dataFim: Date
+    observacoes: string | null
+    dataCadastro: Date
+    ativo: boolean
+    gerouFinanceiro: boolean
+    vagas: number
+    codigoPacote: string
+    usuarioCadastro: string
+  }
+}
+
+export interface IExcursaoPassageiroIndexResponse {
+  data: IDataExcursaoPassageiroLocalPessoa[];
+  count: number;
+  isLoading: boolean;
+}
+
 export interface IUpdateExcursaoPassageiroArgs extends ICreateExcursaoArgs {
   id: string
 }

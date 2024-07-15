@@ -18,7 +18,7 @@ import AlertNoDataFound from "../../../components/AlertNoDataFound";
 import useExcursoes from "../../../hooks/useExcursao";
 import { MdEdit } from "react-icons/md";
 import ModalUpdateExcursao from "../components/ModalUpdateExcursao";
-import { IDataExcursao, IExcursao } from "../../../models/excursao.model";
+import { IExcursao } from "../../../models/excursao.model";
 import ButtonIcon from "../../../components/ButtonIcon";
 import AlertModal from "../../../components/AlertModal";
 import { IoBed } from "react-icons/io5";
@@ -159,7 +159,7 @@ const ExcursaoList = () => {
                             <ButtonIcon tooltip="Ônibus">
                               <IoMdBus
                                 size={20}
-                                onClick={() => { }}
+                                onClick={() => navigate(`/excursoes/${item.id}/onibus`)}
                               />
                             </ButtonIcon>
 

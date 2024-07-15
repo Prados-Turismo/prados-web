@@ -40,6 +40,7 @@ import Pacotes from "../pages/Pacotes";
 import Excursoes from "../pages/Excursoes";
 import Embarque from "../pages/Excursoes/pages/Embarque";
 import Quartos from "../pages/Excursoes/pages/Quartos";
+import Onibus from "../pages/Excursoes/pages/Onibus";
 
 export const AppRoutes = () => {
   const location = useLocation();
@@ -73,6 +74,7 @@ export const AppRoutes = () => {
         <Route path="/excursoes" element={<Excursoes />} />
         <Route path="/excursoes/:id/embarque" element={<Embarque />} />
         <Route path="/excursoes/:id/quartos" element={<Quartos />} />
+        <Route path="/excursoes/:id/onibus" element={<Onibus />} />
 
         <Route path="/politica-privacidade" element={<PrivacyPolicy />} />
 

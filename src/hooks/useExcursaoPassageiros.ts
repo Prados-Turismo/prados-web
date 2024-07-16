@@ -14,10 +14,12 @@ import {
 import { Warning } from "../errors";
 import { keys, queryClient } from "../services/query";
 
-const getAllPassageiros = ({ page, size }: IExcursaoPassageiroArgs, idExcursao: string): IExcursaoPassageiroIndexResponse => {
+const getAllPassageiros = ({ page, size, localEmbarque }: IExcursaoPassageiroArgs, idExcursao: string): IExcursaoPassageiroIndexResponse => {
   const { data, isLoading } = useQuery(
     [
-      keys.excursaoPassageiro
+      keys.excursaoPassageiro,
+      page,
+      localEmbarque
     ],
     async () => {
       const path = `excursao-passageiros/index/${idExcursao}`;
@@ -26,7 +28,8 @@ const getAllPassageiros = ({ page, size }: IExcursaoPassageiroArgs, idExcursao: 
         const { data } = await apiPrados.get(path, {
           params: {
             page,
-            size
+            size,
+            localEmbarque
           },
         });
 

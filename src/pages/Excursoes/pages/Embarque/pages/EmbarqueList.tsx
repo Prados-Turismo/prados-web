@@ -30,13 +30,14 @@ const EmbarqueList = () => {
   const { user } = useGlobal();
 
   const { data: dataExcursao, isLoading: loadingExcursao } = getExcursao(_id || '');
-  const [statusSelected, setStatusSelected] = useState<ISelect | null>();
+  const [localEmbarqueSelected, setLocalEmbarqueSelected] = useState<ISelect | null>();
   const [currentPage, setCurrentPage] = useState(1);
   const registerPerPage = 10;
 
   const { data, count, isLoading } = getAllPassageiros({
     size: registerPerPage,
-    page: currentPage
+    page: currentPage,
+    localEmbarque: typeof localEmbarqueSelected?.value == 'string' ? localEmbarqueSelected.value : null
   }, _id || '');
   const { mutate: mutateToCreateEmbarque, isLoading: isLoadingCreateEmbarque } = createExcursaoEmbarque()
   const { mutate: mutateToUpdateEmbarque, isLoading: isLoadingUpdateEmbarque } = updateExcursaoEmbarque()
@@ -76,18 +77,18 @@ const EmbarqueList = () => {
       <Content className="contentMain">
         <Flex width="100%" gap="15px" alignItems="flex-end" flexWrap="wrap">
           <Flex flexDirection="column" gap="5px" width="500px">
-            <span>Local</span>
+            <span>Local de Embarque</span>
 
             <ReactSelect
               className="select-fields"
               classNamePrefix="select"
               closeMenuOnSelect={true}
               isSearchable={true}
-              value={statusSelected}
+              value={localEmbarqueSelected}
               placeholder="Selecionar"
               noOptionsMessage={() => "Nenhum local encontrado"}
               onChange={(item) => {
-                setStatusSelected(item);
+                setLocalEmbarqueSelected(item);
               }}
               options={localEmbarqueData.map((local) => {
                 return { value: local.id, label: local.nome }
@@ -98,7 +99,7 @@ const EmbarqueList = () => {
             borderRadius="5px"
             variant="outline"
             onClick={() => {
-              setStatusSelected(null);
+              setLocalEmbarqueSelected(null);
             }}
           >
             Limpar Filtros

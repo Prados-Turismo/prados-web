@@ -23,6 +23,7 @@ export interface IExcursaoPassageiro {
 export interface IExcursaoPassageiroArgs {
   page: number;
   size: number;
+  localEmbarque: string | null
 }
 
 export interface IDataExcursaoPassageiro {

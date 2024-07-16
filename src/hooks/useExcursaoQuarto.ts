@@ -111,7 +111,6 @@ const deleteExcursaoQuarto = (): IUpdateExcursaoQuartoResponse => {
   const { isLoading, mutate } = useMutation(
     async (id: string) => {
       const urlPath = `excursao-quartos/delete/${id}`
-      debugger
 
       try {
         await apiPrados.delete(urlPath).then(function (data) {

@@ -8,15 +8,15 @@ const PassengerList = ({ passengers, seatAssignments, onSelectPassenger, selecte
           key={index}
           width="100%"
           justifyContent="space-between"
-          onClick={() => onSelectPassenger(passenger)}
-          backgroundColor={selectedPassenger === passenger ? 'orange.600' : seatAssignments[passenger] ? 'blue.500' : 'gray.300'}
-          color={selectedPassenger === passenger || seatAssignments[passenger] ? 'white' : 'black'}
+          onClick={() => onSelectPassenger(passenger.nome)}
+          backgroundColor={selectedPassenger === passenger.nome ? 'orange.600' : seatAssignments[passenger.nome] ? 'blue.500' : 'gray.300'}
+          color={selectedPassenger === passenger || seatAssignments[passenger.nome] ? 'white' : 'black'}
           borderRadius={8}
           _hover={{ backgroundColor: 'blue.500' }}
         >
           <Box display="flex" alignItems="center" justifyContent="space-between" width="100%">
-            <Text>{passenger}</Text>
-            {seatAssignments[passenger] && (
+            <Text>{passenger.nome}</Text>
+            {seatAssignments[passenger.nome] && (
               <Box
                 ml={2}
                 px={2}
@@ -28,7 +28,7 @@ const PassengerList = ({ passengers, seatAssignments, onSelectPassenger, selecte
                 alignItems="center"
                 justifyContent="center"
               >
-                Nº {seatAssignments[passenger]}
+                Nº {seatAssignments[passenger.nome]}
               </Box>
             )}
           </Box>

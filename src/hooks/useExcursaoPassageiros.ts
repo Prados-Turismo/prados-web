@@ -8,7 +8,8 @@ import {
   IUpdateExcursaoPassageiroResponse,
   IExcursaoPassageiroListResponse,
   IExcursaoPassageiroArgs,
-  IExcursaoPassageiroIndexResponse
+  IExcursaoPassageiroIndexResponse,
+  IExcursaoPassageiroResponse
 } from "../models/excursao-passageiro.model";
 import { Warning } from "../errors";
 import { keys, queryClient } from "../services/query";
@@ -43,7 +44,7 @@ const getAllPassageiros = ({ page, size }: IExcursaoPassageiroArgs, idExcursao: 
   };
 };
 
-const listExcursaoPassageiros = (idExcursao: string): IExcursaoPassageiroListResponse => {
+const listExcursaoPassageiros = (idExcursao: string): IExcursaoPassageiroResponse => {
   const { data, isLoading } = useQuery(
     [],
     async () => {
@@ -65,21 +66,19 @@ const listExcursaoPassageiros = (idExcursao: string): IExcursaoPassageiroListRes
   };
 }
 
-const getExcursaoPassageiros = (): IUpdateExcursaoPassageiroResponse => {
+const getExcursaoPassageiros = (idExcursao: string): IExcursaoPassageiroListResponse => {
 
-  const { isLoading, mutate } = useMutation(
-    async (idExcursao: string) => {
+  const { data, isLoading } = useQuery(
+    [
+      keys.excursaoPassageiro
+    ],
+    async () => {
       const urlPath = `excursao-passageiros/find/${idExcursao}`
 
       try {
-        await apiPrados.patch(urlPath).then(function (data) {
-          queryClient.invalidateQueries([keys.excursao])
+        const { data } = await apiPrados.get(urlPath)
 
-          useToastStandalone({
-            title: "Excluída com sucesso!",
-            status: "success"
-          })
-        })
+        return data
       } catch (error: any) {
         throw new Warning(error.response.data.message, error?.response?.status);
       }
@@ -87,8 +86,8 @@ const getExcursaoPassageiros = (): IUpdateExcursaoPassageiroResponse => {
   )
 
   return {
-    isLoading,
-    mutate
+    data: data || [],
+    isLoading
   }
 }
 

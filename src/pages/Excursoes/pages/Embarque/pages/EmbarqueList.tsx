@@ -163,11 +163,12 @@ const EmbarqueList = () => {
                                     'codigoPassageiro': item.Pessoa.id,
                                     'codigoLocalEmbarque': item.LocalEmbarque.id,
                                     'embarcou': event.target.checked ? true : false,
-                                    'horaEmbarque': '12:00:00',
+                                    'horaEmbarque': new Date().toTimeString().split(' ')[0],
                                     'codigoExcursao': _id || '',
                                     'usuarioCadastro': user?.id || '',
                                     'id': item.hasBoarded
                                   })
+                                  item.embarcou = event.target.checked ? true : false
                                 }
                               }}
                             />

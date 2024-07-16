@@ -16,7 +16,7 @@ import { keys, queryClient } from "../services/query";
 const getAllPacotes = (): IPacoteFindResponse => {
   const { data, isLoading } = useQuery(
     [
-      keys.fornecedores
+      keys.pacotes
     ],
     async () => {
       const path = 'pacotes/findAll';

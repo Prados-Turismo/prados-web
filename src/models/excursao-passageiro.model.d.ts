@@ -29,6 +29,7 @@ export interface IDataExcursaoPassageiro {
   id: string
   dataCadastro: Date
   reserva: string
+  nome: string
 }
 
 export interface IExcursaoListPassageiro {
@@ -37,13 +38,12 @@ export interface IExcursaoListPassageiro {
 }
 
 export interface IExcursaoPassageiroResponse {
-  data: IExcursaoListPassageiro[];
-  count: number;
+  data: Array<IDataExcursaoPassageiro>;
   isLoading: boolean;
 }
 
 export interface IExcursaoPassageiroListResponse {
-  data: Array<IExcursaoListPassageiro>;
+  data: Array<IDataExcursaoPassageiroLocalPessoa>;
   isLoading: boolean;
 }
 

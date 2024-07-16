@@ -3,16 +3,54 @@ import { Box, Button, Flex, Text } from '@chakra-ui/react';
 import SeatMap from '../components/SeatMap';
 import PassengerList from '../components/PassengerList';
 import { Content, SectionTop } from './styled';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { IoIosAdd } from 'react-icons/io';
+import useExcursaoPassageiro from '../../../../../hooks/useExcursaoPassageiros';
+import useExcursoes from '../../../../../hooks/useExcursao';
+import { z } from "zod"
+import { fieldRequired } from '../../../../../utils/messagesError';
 
 function OnibusList() {
   const navigate = useNavigate();
-  const isLoading = false;
-
-  const [passengers] = useState(Array.from({ length: 50 }, (_, i) => `Passageiro ${i + 1}`));
+  const { id: _id } = useParams();
+  const { getExcursaoPassageiros } = useExcursaoPassageiro();
+  const { getExcursao } = useExcursoes();
+  const { data, isLoading } = getExcursaoPassageiros(_id || '');
+  const passengers = data.map((d) => { return { id: d.Pessoa.id, nome: d.Pessoa.nome } })
   const [selectedPassenger, setSelectedPassenger] = useState('');
   const [seatAssignments, setSeatAssignments] = useState({});
+  const { data: dataExcursao, isLoading: loadingExcursao } = getExcursao(_id || '');
+
+  const handleSubmitRegisterSchema = z.object({
+    nome: z
+      .string()
+      .min(1, {
+        message: fieldRequired("nome"),
+      }),
+    codigoPacote: z
+      .string()
+      .min(1, {
+        message: fieldRequired("pacote"),
+      }),
+    dataInicio: z
+      .string()
+      .min(1, {
+        message: fieldRequired("data de início"),
+      }),
+    dataFim: z
+      .string()
+      .min(1, {
+        message: fieldRequired("data de fim"),
+      }),
+    vagas: z
+      .number()
+      .min(1, {
+        message: fieldRequired("vagas"),
+      }),
+    observacoes: z
+      .string()
+      .optional()
+  });
 
   const handleSelectPassenger = (passenger) => {
     setSelectedPassenger(passenger);
@@ -71,7 +109,7 @@ function OnibusList() {
               Ônibus:
             </Text>
             <Text fontSize="2xl">
-              Excursão Guaramiranga
+              {dataExcursao.nome}
             </Text>
           </Flex>
         </SectionTop>
@@ -79,7 +117,7 @@ function OnibusList() {
         <SectionTop className="contentTop" gap="30px" justifyContent="end">
           <Button
             isLoading={isLoading}
-            onClick={() => {}}
+            onClick={() => { }}
             width={100}
           >
             Salvar

@@ -18,8 +18,8 @@ const createExcursaoEmbarque = (): ICreateExcursaoEmbarqueResponse => {
       const urlPath = 'passageiro-embarque/create'
 
       try {
-        await apiPrados.post(urlPath, data).then(() => {
-          queryClient.invalidateQueries([keys.excursaoEmbarque])
+        await apiPrados.post(urlPath, data).then((reponse) => {
+          queryClient.invalidateQueries([keys.excursaoPassageiro])
 
           useToastStandalone({
             title: "Embarque Registrado!",
@@ -42,11 +42,11 @@ const updateExcursaoEmbarque = (): IUpdateExcursaoEmbarqueResponse => {
 
   const { isLoading, mutate } = useMutation(
     async (data: IUpdateExcursaoEmbarqueArgs) => {
-      const urlPath = `passageiro-embarque/update/${data.id}`;
+      const urlPath = `passageiro-embarque/embarcou`;
       try {
         await apiPrados.put(urlPath, data).then((data) => {
 
-          queryClient.invalidateQueries([keys.excursaoEmbarque])
+          queryClient.invalidateQueries([keys.excursaoPassageiro])
 
           useToastStandalone({
             title: "Atualizado com sucesso!",

@@ -11,3 +11,6 @@ export const minContent = (min: number): string =>
 
 export const maxContent = (max: number): string =>
   `deve conter no máximo ${max} caracteres`
+
+export const positiveNumber = (): string =>
+  `deve conter somente valores positivos`

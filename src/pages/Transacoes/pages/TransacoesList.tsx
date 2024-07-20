@@ -207,7 +207,7 @@ const TransacoesList = () => {
       </Content>
 
       <SimpleModal
-        title="transação"
+        title="Transação"
         size="xl"
         isOpen={modalRecordProduct}
         handleModal={setModalRecordProduct}
@@ -219,7 +219,7 @@ const TransacoesList = () => {
 
       {productData && (
         <SimpleModal
-          title="transação"
+          title="Transação"
           size="xl"
           isOpen={modalUpdateProduct}
           handleModal={setModalUpdateProduct}

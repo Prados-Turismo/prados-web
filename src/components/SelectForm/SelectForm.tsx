@@ -44,7 +44,7 @@ const SelectForm = ({
       {label && (
         <>
           <Text display="flex">
-            {label} {isRequired && <Asterisk />}
+            {label}&nbsp;{isRequired && <Asterisk />}
             {helpText && (
               <Box
                 marginLeft="5px"

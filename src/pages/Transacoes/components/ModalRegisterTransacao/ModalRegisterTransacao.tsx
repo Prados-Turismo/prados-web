@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Box, Button, Flex, Input } from "@chakra-ui/react";
+import { Box, Button, Flex } from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -13,28 +13,31 @@ import {
   fieldRequired
 } from "../../../../utils/messagesError";
 
-import { FieldWrap } from "./styled";
-import ReactSelect from "react-select";
 import useFornecedor from "../../../../hooks/useFornecedor";
 import { useGlobal } from "../../../../contexts/UserContext";
+import SelectForm from "../../../../components/SelectForm";
+import FormInputNumber from "../../../../components/FormInputNumber";
+import FormInput from "../../../../components/FormInput";
 
 const handleSubmitRegisterSchema = z.object({
-  nome: z
-    .string()
-    .min(1, {
-      message: fieldRequired("nome"),
+  tipo: z
+    .number({
+      required_error: fieldRequired("tipo")
     }),
-  estoque: z
-    .coerce
-    .number()
-    .min(0, {
-      message: fieldRequired("estoque"),
+  valor: z
+    .number({
+      required_error: fieldRequired("valor")
     }),
-  codigoFornecedor: z
+  numeroComprovanteBancario: z
+    .string({
+      required_error: fieldRequired("número do comprovante bancário")
+    }),
+  passageiro: z
     .string()
-    .min(1, {
-      message: fieldRequired("fornecedor"),
-    })
+    .optional(),
+  fornecedor: z
+    .string()
+    .optional(),
 });
 
 type IhandleSubmitRegister = z.infer<typeof handleSubmitRegisterSchema>;
@@ -70,9 +73,27 @@ const ModalRegisterTransacao = ({
     })
   };
 
-  const isEmpty = (value: string | null | undefined) => {
-    return value == null || value.trim() === "";
-  };
+  const dataTipo = [
+    {
+      id: 1,
+      nome: "Débito"
+    },
+    {
+      id: 2,
+      nome: "Crédito"
+    }
+  ]
+
+  const dataPassageiros = [
+    {
+      id: 1,
+      nome: "João"
+    },
+    {
+      id: 2,
+      nome: "Maria"
+    }
+  ]
 
   return (
     <form
@@ -84,61 +105,82 @@ const ModalRegisterTransacao = ({
           (<Asterisk />) indica os campos obrigatórios
         </span>
 
-        <FieldWrap>
-          <span>
-            Nome <Asterisk />
-          </span>
-
-          <Input
-            placeholder="Digite o nome"
-            id="nome"
-            type="text"
-            {...register("nome")}
+        <Flex
+          gap="15px"
+          flexDirection={{
+            base: "column",
+            lg: "row",
+          }}
+        >
+          <SelectForm
+            name="tipo"
+            label="tipo"
+            isRequired
+            minW="20px"
+            handleChange={(option) => {
+              setValue("tipo", option?.value || 1);
+            }}
+            options={dataTipo
+              ?.map((tipo) => ({
+                label: tipo?.nome,
+                value: tipo?.id,
+              }))}
+            errors={errors.tipo}
           />
-          {errors.nome && <p className="error">{errors.nome.message}</p>}
-        </FieldWrap>
 
-        <FieldWrap>
-          <span>
-            Estoque <Asterisk />
-          </span>
-
-          <Input
-            placeholder="Digite o Estoque"
-            id="estoque"
-            type="number"
-            {...register("estoque", { valueAsNumber: !isEmpty("estoque") })}
-            min={0}
+          <FormInputNumber
+            height="40px"
+            label="Valor"
+            {...register("valor")}
+            setValue={setValue}
+            isMoneyValue
+            flex="1.01"
+            name="valor"
+            maxLength={25}
+            isRequired
+            dontAllowNegative
+            errors={errors.valor}
           />
-          {errors.estoque && <p className="error">{errors.estoque.message}</p>}
-        </FieldWrap>
+        </Flex>
 
-        <FieldWrap>
-          <span>Fornecedor</span>
+        <FormInput
+          label="Nº do comprovante bancário"
+          isRequired
+          errors={errors?.numeroComprovanteBancario}
+          name="numeroComprovanteBancario"
+          register={register}
+        />
 
-          <Box display="flex" gap="10px">
-            <ReactSelect
-              isLoading={loadingFornecedores}
-              className="select-fields large"
-              classNamePrefix="select"
-              closeMenuOnSelect={true}
-              {...register?.("codigoFornecedor")}
-              isSearchable={true}
-              placeholder="Selecione"
-              noOptionsMessage={() => "Não há fornecedor cadastrado"}
-              options={dataFornecedores
-                ?.map((fornecedor) => ({
-                  label: fornecedor?.nome,
-                  value: fornecedor?.id,
-                }))}
-              name="codigoFornecedor"
-              id="codigoFornecedor"
-              onChange={(option) => {
-                setValue("codigoFornecedor", option?.value.toString() || "");
-              }}
-            />
-          </Box>
-        </FieldWrap>
+        <SelectForm
+          name="passageiro"
+          label="Passageiro"
+          minW="20px"
+          handleChange={(option) => {
+            setValue("passageiro", option?.value);
+          }}
+          options={dataPassageiros
+            ?.map((passageiro) => ({
+              label: passageiro?.nome,
+              value: passageiro?.id,
+            }))}
+          errors={errors.passageiro}
+        />
+
+        <SelectForm
+          name="fornecedor"
+          label="fornecedor"
+          minW="20px"
+          isLoading={loadingFornecedores}
+          handleChange={(option) => {
+            setValue("fornecedor", option?.value);
+          }}
+          options={dataFornecedores
+            ?.map((fornecedor) => ({
+              label: fornecedor?.nome,
+              value: fornecedor?.id,
+            }))}
+          errors={errors.fornecedor}
+        />
 
         <Flex justifyContent="flex-end" gap="15px">
           <Button

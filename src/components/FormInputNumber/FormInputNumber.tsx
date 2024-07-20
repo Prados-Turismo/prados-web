@@ -43,7 +43,7 @@ const FormInputNumber = ({
   helpText,
   isDisabled,
   prefix = "money",
-  allowNegative,
+  dontAllowNegative,
   marginLabelBottom = "4px"
 }: IFormInput) => {
   const { isOpen, onToggle, onClose } = useDisclosure()
@@ -132,7 +132,7 @@ const FormInputNumber = ({
               }
             }}
             disabled={isLoading}
-            allowNegative={!allowNegative}
+            allowNegative={!dontAllowNegative}
             {...(register && register(name))}
           />
         ) : (

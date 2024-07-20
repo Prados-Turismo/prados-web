@@ -70,7 +70,6 @@ const ModalRegisterPacote = ({
 
   const {
     setValue,
-    getValues,
     reset,
     register,
     handleSubmit,

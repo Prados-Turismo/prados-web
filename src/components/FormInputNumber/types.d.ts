@@ -27,6 +27,6 @@ export interface IFormInput extends InputProps {
   helpText?: ReactNode
   isDisabled?: boolean
   prefix?: "money" | "percentual"
-  allowNegative?: boolean
+  dontAllowNegative?: boolean
   marginLabelBottom?: string
 }

@@ -18,6 +18,11 @@ import { useGlobal } from "../../../../contexts/UserContext";
 import SelectForm from "../../../../components/SelectForm";
 import FormInputNumber from "../../../../components/FormInputNumber";
 import FormInput from "../../../../components/FormInput";
+import useExcursoes from "../../../../hooks/useExcursao";
+import usePacotes from "../../../../hooks/usePacotes";
+import useExcursaoPassageiro from "../../../../hooks/useExcursaoPassageiros";
+import { useState } from "react";
+import useFormaPagamento from "../../../../hooks/useFormaPagamento";
 
 const handleSubmitRegisterSchema = z.object({
   tipo: z
@@ -75,8 +80,14 @@ const ModalRegisterTransacao = ({
   handleClose,
 }: IModalRecordCollaborator) => {
   const { user } = useGlobal();
-  const { createProduct } = useProduct();
+  const { getAllFormaPagamentos } = useFormaPagamento();
+  const { getExcursaoPassageiros } = useExcursaoPassageiro();
+  const { getProducts, createProduct } = useProduct();
   const { getAllFornecedores } = useFornecedor();
+  const { getExcursoes } = useExcursoes();
+  const { getAllPacotes } = usePacotes();
+
+  const [codigoExcursao, setCodigoExcursao] = useState<string | undefined>(undefined);
 
   const {
     setValue,
@@ -87,8 +98,14 @@ const ModalRegisterTransacao = ({
   } = useForm<IhandleSubmitRegister>({
     resolver: zodResolver(handleSubmitRegisterSchema),
   });
+
   const { mutate, isLoading } = createProduct(reset, handleClose);
+  const {data: dataFormaPagamentos, isLoading: loadingFormaPagamentos } = getAllFormaPagamentos();
+  const { data: dataExcursoes, isLoading: loadingExcursoes } = getExcursoes({ page: 1, size: 100 });
+  const { data: dataPassageiros, isLoading: loadingPassageiros } = getExcursaoPassageiros(codigoExcursao);
+  const { data: dataPacotes, isLoading: loadingPacotes } = getAllPacotes();
   const { data: dataFornecedores, isLoading: loadingFornecedores } = getAllFornecedores();
+  const { data: dataProdutos, isLoading: loadingProdutos } = getProducts({ page: 1, size: 100 });
 
   const handleSubmitRegister = (data: IhandleSubmitRegister) => {
     mutate({
@@ -106,61 +123,6 @@ const ModalRegisterTransacao = ({
     {
       id: 2,
       nome: "Crédito"
-    }
-  ]
-
-  const dataPassageiros = [
-    {
-      id: 1,
-      nome: "João"
-    },
-    {
-      id: 2,
-      nome: "Maria"
-    }
-  ]
-
-  const dataProdutos = [
-    {
-      id: 1,
-      nome: "Produto 1"
-    },
-    {
-      id: 2,
-      nome: "Produto 2"
-    }
-  ]
-
-  const dataExcursao = [
-    {
-      id: 1,
-      nome: "Excursão 1"
-    },
-    {
-      id: 2,
-      nome: "Excursão 2"
-    }
-  ]
-
-  const dataPacotes = [
-    {
-      id: 1,
-      nome: "Pacote 1"
-    },
-    {
-      id: 2,
-      nome: "Pacote 2"
-    }
-  ]
-
-  const dataFormaPagamento = [
-    {
-      id: 1,
-      nome: "Forma de pagamento 1"
-    },
-    {
-      id: 2,
-      nome: "Forma de pagamento 2"
     }
   ]
 
@@ -229,11 +191,11 @@ const ModalRegisterTransacao = ({
           label="Forma de Pagamento"
 
           isRequired
-          // isLoading={loadingFornecedores}
+          isLoading={loadingFormaPagamentos}
           handleChange={(option) => {
             setValue("codigoFormaPagamento", option?.value);
           }}
-          options={dataFormaPagamento
+          options={dataFormaPagamentos
             ?.map((codigoFormaPagamento) => ({
               label: codigoFormaPagamento?.nome,
               value: codigoFormaPagamento?.id,
@@ -290,26 +252,10 @@ const ModalRegisterTransacao = ({
         />
 
         <SelectForm
-          name="codigoExcursao"
-          label="Excursão"
-          minW="20px"
-          // isLoading={loadingFornecedores}
-          handleChange={(option) => {
-            setValue("codigoExcursao", option?.value);
-          }}
-          options={dataExcursao
-            ?.map((codigoExcursao) => ({
-              label: codigoExcursao?.nome,
-              value: codigoExcursao?.id,
-            }))}
-          errors={errors.codigoExcursao}
-        />
-
-        <SelectForm
           name="codigoPacote"
           label="Pacote"
-          minW="20px"
-          // isLoading={loadingFornecedores}
+          minW="200px"
+          isLoading={loadingPacotes}
           handleChange={(option) => {
             setValue("codigoPacote", option?.value);
           }}
@@ -322,9 +268,28 @@ const ModalRegisterTransacao = ({
         />
 
         <SelectForm
+          name="codigoExcursao"
+          label="Excursão"
+          minW="200px"
+          isLoading={loadingExcursoes}
+          handleChange={(option) => {
+            setValue("codigoExcursao", option?.value);
+            setCodigoExcursao(option?.value);
+          }}
+          options={dataExcursoes
+            ?.map((codigoExcursao) => ({
+              label: codigoExcursao?.nome,
+              value: codigoExcursao?.id,
+            }))}
+          errors={errors.codigoExcursao}
+        />
+
+        <SelectForm
           name="codigoPessoa"
+          placeholder={!codigoExcursao ? "Selecione uma excursão primeiro" : "Selecione"}
           label="Passageiro"
-          minW="20px"
+          minW="200px"
+          isLoading={loadingPassageiros}
           handleChange={(option) => {
             setValue("codigoPessoa", option?.value);
           }}
@@ -339,7 +304,7 @@ const ModalRegisterTransacao = ({
         <SelectForm
           name="codigoFornecedor"
           label="Fornecedor"
-          minW="20px"
+          minW="200px"
           isLoading={loadingFornecedores}
           handleChange={(option) => {
             setValue("codigoFornecedor", option?.value);
@@ -355,8 +320,8 @@ const ModalRegisterTransacao = ({
         <SelectForm
           name="codigoProduto"
           label="Produto"
-          minW="20px"
-          // isLoading={loadingFornecedores}
+          minW="200px"
+          isLoading={loadingProdutos}
           handleChange={(option) => {
             setValue("codigoProduto", option?.value);
           }}

@@ -69,13 +69,17 @@ const listExcursaoPassageiros = (idExcursao: string): IExcursaoPassageiroRespons
   };
 }
 
-const getExcursaoPassageiros = (idExcursao: string): IExcursaoPassageiroListResponse => {
-
+const getExcursaoPassageiros = (idExcursao?: string): IExcursaoPassageiroListResponse => {
   const { data, isLoading } = useQuery(
     [
-      keys.excursaoPassageiro
+      keys.excursaoPassageiro,
+      idExcursao
     ],
     async () => {
+      if (!idExcursao) {
+        return []
+      }
+
       const urlPath = `excursao-passageiros/find/${idExcursao}`
 
       try {
@@ -135,7 +139,7 @@ const updateExcursaoPassageiro = (
       const urlPath = `excursao-passageiros/update/${data.id}`;
 
       try {
-        await apiPrados.put(urlPath, data).then((data) => {
+        await apiPrados.put(urlPath, data).then(() => {
           reset()
           handleClose()
           queryClient.invalidateQueries([keys.excursao])
@@ -164,7 +168,7 @@ const deleteExcursaoPassageiro = (): IUpdateExcursaoPassageiroResponse => {
       const urlPath = `excursao-passageiros/delete/${id}`
 
       try {
-        await apiPrados.patch(urlPath).then(function (data) {
+        await apiPrados.patch(urlPath).then(function () {
           queryClient.invalidateQueries([keys.excursao])
 
           useToastStandalone({

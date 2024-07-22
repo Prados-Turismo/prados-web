@@ -13,22 +13,22 @@ import { Content, SectionTop } from "./styled";
 import ReactSelect from "react-select";
 import SimpleModal from "../../../components/SimpleModal";
 import { ISelect } from "../../../models/generics.model";
-import ModalRecordProduct from "../components/ModalRegisterTransacao";
+import ModalRecordTransacao from "../components/ModalRegisterTransacao";
 import AlertNoDataFound from "../../../components/AlertNoDataFound";
 import useProduct from "../../../hooks/useProducts";
 import { MdEdit } from "react-icons/md";
-import ModalUpdateProduct from "../components/ModalUpdateTransacao";
 import { IDataProduct } from "../../../models/product2.model";
 import ButtonIcon from "../../../components/ButtonIcon";
 import { FiTrash } from "react-icons/fi";
 import AlertModal from "../../../components/AlertModal";
+import ModalUpdateTransacao from "../components/ModalUpdateTransacao";
 
 const TransacoesList = () => {
   const { getProducts, deleteProduto } = useProduct();
   const [statusSelected, setStatusSelected] = useState<ISelect | null>();
   const [resetFilter, setResetFilter] = useState(false);
-  const [modalRecordProduct, setModalRecordProduct] = useState(false);
-  const [modalUpdateProduct, setModalUpdateProduct] = useState(false);
+  const [modalRecordTransacao, setModalRecordProduct] = useState(false);
+  const [modalUpdateProduct, setModalUpdateTransacao] = useState(false);
   const [modalRemoveProduto, setModalRemoveProduto] = useState(false);
   const [productData, setProductData] = useState<IDataProduct | undefined>();
   const [currentPage, setCurrentPage] = useState(1);
@@ -165,7 +165,7 @@ const TransacoesList = () => {
                               cursor="pointer"
                               onClick={() => {
                                 setProductData(item)
-                                setModalUpdateProduct(true)
+                                setModalUpdateTransacao(true)
                               }}
                             />
 
@@ -209,10 +209,10 @@ const TransacoesList = () => {
       <SimpleModal
         title="Transação"
         size="xl"
-        isOpen={modalRecordProduct}
+        isOpen={modalRecordTransacao}
         handleModal={setModalRecordProduct}
       >
-        <ModalRecordProduct
+        <ModalRecordTransacao
           handleClose={() => setModalRecordProduct(false)}
         />
       </SimpleModal>
@@ -222,10 +222,10 @@ const TransacoesList = () => {
           title="Transação"
           size="xl"
           isOpen={modalUpdateProduct}
-          handleModal={setModalUpdateProduct}
+          handleModal={setModalUpdateTransacao}
         >
-          <ModalUpdateProduct
-            handleClose={() => setModalUpdateProduct(false)}
+          <ModalUpdateTransacao
+            handleClose={() => setModalUpdateTransacao(false)}
             data={productData}
           />
         </SimpleModal>

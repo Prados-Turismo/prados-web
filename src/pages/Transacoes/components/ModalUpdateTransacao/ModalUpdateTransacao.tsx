@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Box, Button, Flex, Input } from "@chakra-ui/react";
+import { Box, Button, Flex, FormControl, FormErrorMessage, FormLabel, Input } from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -13,44 +13,69 @@ import {
   fieldRequired
 } from "../../../../utils/messagesError";
 
-import { FieldWrap } from "./styled";
-import ReactSelect from "react-select";
 import useFornecedor from "../../../../hooks/useFornecedor";
 import { useGlobal } from "../../../../contexts/UserContext";
-import { IDataProduct } from "../../../../models/product2.model";
+import SelectForm from "../../../../components/SelectForm";
+import FormInputNumber from "../../../../components/FormInputNumber";
+import FormInput from "../../../../components/FormInput";
 
 const handleSubmitRegisterSchema = z.object({
-  nome: z
+  tipo: z
+    .number({
+      required_error: fieldRequired("tipo")
+    }),
+  valor: z
+    .number({
+      required_error: fieldRequired("valor")
+    }),
+  numeroComprovanteBancario: z
+    .string({
+      required_error: fieldRequired("número do comprovante bancário")
+    })
+    .optional(),
+  data: z
+    .string({
+      required_error: fieldRequired("data")
+    }),
+  efetivado: z
+    .number({
+      required_error: fieldRequired("efetivado")
+    }),
+  codigoPessoa: z
     .string()
-    .min(1, {
-      message: fieldRequired("nome"),
-    }),
-  estoque: z
-    .coerce
-    .number()
-    .min(0, {
-      message: fieldRequired("estoque"),
-    }),
+    .optional(),
   codigoFornecedor: z
     .string()
-    .min(1, {
-      message: fieldRequired("fornecedor"),
-    })
+    .optional(),
+  codigoProduto: z
+    .string()
+    .optional(),
+  codigoExcursao: z
+    .string()
+    .optional(),
+  codigoPacote: z
+    .string()
+    .optional(),
+  codigoFormaPagamento: z
+    .string({
+      required_error: fieldRequired("forma de pagamento")
+    }),
+  observacao: z
+    .string()
+    .optional()
 });
 
 type IhandleSubmitRegister = z.infer<typeof handleSubmitRegisterSchema>;
 
 interface IModalRecordCollaborator {
-  handleClose: () => void
-  data: IDataProduct
+  handleClose: () => void;
 }
 
-const ModalUpdateProduct = ({
+const ModalUpdateTransacao = ({
   handleClose,
-  data
 }: IModalRecordCollaborator) => {
   const { user } = useGlobal();
-  const { updateProduct } = useProduct();
+  const { createProduct } = useProduct();
   const { getAllFornecedores } = useFornecedor();
 
   const {
@@ -61,27 +86,94 @@ const ModalUpdateProduct = ({
     formState: { errors },
   } = useForm<IhandleSubmitRegister>({
     resolver: zodResolver(handleSubmitRegisterSchema),
-    defaultValues: {
-      nome: data.nome,
-      estoque: data.estoque,
-      codigoFornecedor: data.codigoFornecedor
-    }
   });
-  const { mutate, isLoading } = updateProduct(reset, handleClose);
+  const { mutate, isLoading } = createProduct(reset, handleClose);
   const { data: dataFornecedores, isLoading: loadingFornecedores } = getAllFornecedores();
 
-  const handleSubmitRegister = (submitData: IhandleSubmitRegister) => {
+  const handleSubmitRegister = (data: IhandleSubmitRegister) => {
     mutate({
-      ...submitData,
-      id: data.id,
+      ...data,
       ativo: true,
       usuarioCadastro: user?.id
     })
   };
 
-  const isEmpty = (value: string | null | undefined) => {
-    return value == null || value.trim() === "";
-  };
+  const dataTipo = [
+    {
+      id: 1,
+      nome: "Débito"
+    },
+    {
+      id: 2,
+      nome: "Crédito"
+    }
+  ]
+
+  const dataPassageiros = [
+    {
+      id: 1,
+      nome: "João"
+    },
+    {
+      id: 2,
+      nome: "Maria"
+    }
+  ]
+
+  const dataProdutos = [
+    {
+      id: 1,
+      nome: "Produto 1"
+    },
+    {
+      id: 2,
+      nome: "Produto 2"
+    }
+  ]
+
+  const dataExcursao = [
+    {
+      id: 1,
+      nome: "Excursão 1"
+    },
+    {
+      id: 2,
+      nome: "Excursão 2"
+    }
+  ]
+
+  const dataPacotes = [
+    {
+      id: 1,
+      nome: "Pacote 1"
+    },
+    {
+      id: 2,
+      nome: "Pacote 2"
+    }
+  ]
+
+  const dataFormaPagamento = [
+    {
+      id: 1,
+      nome: "Forma de pagamento 1"
+    },
+    {
+      id: 2,
+      nome: "Forma de pagamento 2"
+    }
+  ]
+
+  const dataEfetivado = [
+    {
+      id: 1,
+      nome: "Sim"
+    },
+    {
+      id: 2,
+      nome: "Não"
+    }
+  ]
 
   return (
     <form
@@ -93,65 +185,197 @@ const ModalUpdateProduct = ({
           (<Asterisk />) indica os campos obrigatórios
         </span>
 
-        <FieldWrap>
-          <span>
-            Nome <Asterisk />
-          </span>
-
-          <Input
-            placeholder="Digite o nome"
-            id="nome"
-            type="text"
-            {...register("nome")}
+        <Flex
+          gap="15px"
+          flexDirection={{
+            base: "column",
+            lg: "row",
+          }}
+        >
+          <SelectForm
+            name="tipo"
+            label="Tipo"
+            minW="50%"
+            isRequired
+            handleChange={(option) => {
+              setValue("tipo", option?.value || 1);
+            }}
+            options={dataTipo
+              ?.map((tipo) => ({
+                label: tipo?.nome,
+                value: tipo?.id,
+              }))}
+            errors={errors.tipo}
           />
-          {errors.nome && <p className="error">{errors.nome.message}</p>}
-        </FieldWrap>
 
-        <FieldWrap>
-          <span>
-            Estoque <Asterisk />
-          </span>
-
-          <Input
-            placeholder="Digite o Estoque"
-            id="estoque"
-            type="number"
-            {...register("estoque", { valueAsNumber: !isEmpty("estoque") })}
-            min={0}
+          <FormInputNumber
+            height="40px"
+            label="Valor"
+            minWidth="200px"
+            {...register("valor")}
+            setValue={setValue}
+            isMoneyValue
+            flex="1.01"
+            name="valor"
+            maxLength={25}
+            isRequired
+            dontAllowNegative
+            errors={errors.valor}
           />
-          {errors.estoque && <p className="error">{errors.estoque.message}</p>}
-        </FieldWrap>
+        </Flex>
 
-        <FieldWrap>
-          <span>Fornecedor</span>
+        <SelectForm
+          name="codigoFormaPagamento"
+          label="Forma de Pagamento"
 
-          <Box display="flex" gap="10px">
-            <ReactSelect
-              isLoading={loadingFornecedores}
-              className="select-fields large"
-              classNamePrefix="select"
-              closeMenuOnSelect={true}
-              {...register?.("codigoFornecedor")}
-              isSearchable={true}
-              placeholder="Selecione"
-              noOptionsMessage={() => "Não há fornecedor cadastrado"}
-              options={dataFornecedores
-                ?.map((fornecedor) => ({
-                  label: fornecedor?.nome,
-                  value: fornecedor?.id,
-                }))}
-              name="codigoFornecedor"
-              id="codigoFornecedor"
-              onChange={(option) => {
-                setValue("codigoFornecedor", option?.value.toString() || "");
-              }}
-              defaultValue={{
-                label: data.Fornecedor?.nome,
-                value: data.Fornecedor?.id
-              }}
+          isRequired
+          // isLoading={loadingFornecedores}
+          handleChange={(option) => {
+            setValue("codigoFormaPagamento", option?.value);
+          }}
+          options={dataFormaPagamento
+            ?.map((codigoFormaPagamento) => ({
+              label: codigoFormaPagamento?.nome,
+              value: codigoFormaPagamento?.id,
+            }))}
+          errors={errors.codigoFormaPagamento}
+        />
+
+        <Flex
+          gap="15px"
+          flexDirection={{
+            base: "column",
+            lg: "row",
+          }}
+        >
+          <FormControl
+            isRequired
+            minW = "50%"
+            isInvalid={errors.data?.message ? true : false}
+          >
+            <FormLabel>Data</FormLabel>
+            <Input
+              type="date"
+              minW = "50%"
+              placeholder="dd/mm/aaaa"
+              max="2099-12-31"
+              maxLength={10}
+              {...register("data")}
             />
-          </Box>
-        </FieldWrap>
+            <FormErrorMessage>{errors.data?.message}</FormErrorMessage>
+          </FormControl>
+
+          <SelectForm
+            name="efetivado"
+            label="Efetivado"
+            minW = "235px"
+            // isLoading={loadingFornecedores}
+            handleChange={(option) => {
+              setValue("efetivado", option?.value);
+            }}
+            options={dataEfetivado
+              ?.map((efetivado) => ({
+                label: efetivado?.nome,
+                value: efetivado?.id,
+              }))}
+            errors={errors.efetivado}
+          />
+        </Flex>
+
+        <FormInput
+          label="Nº do comprovante bancário"
+          errors={errors?.numeroComprovanteBancario}
+          name="numeroComprovanteBancario"
+          register={register}
+        />
+
+        <SelectForm
+          name="codigoExcursao"
+          label="Excursão"
+          minW="20px"
+          // isLoading={loadingFornecedores}
+          handleChange={(option) => {
+            setValue("codigoExcursao", option?.value);
+          }}
+          options={dataExcursao
+            ?.map((codigoExcursao) => ({
+              label: codigoExcursao?.nome,
+              value: codigoExcursao?.id,
+            }))}
+          errors={errors.codigoExcursao}
+        />
+
+        <SelectForm
+          name="codigoPacote"
+          label="Pacote"
+          minW="20px"
+          // isLoading={loadingFornecedores}
+          handleChange={(option) => {
+            setValue("codigoPacote", option?.value);
+          }}
+          options={dataPacotes
+            ?.map((codigoPacote) => ({
+              label: codigoPacote?.nome,
+              value: codigoPacote?.id,
+            }))}
+          errors={errors.codigoPacote}
+        />
+
+        <SelectForm
+          name="codigoPessoa"
+          label="Passageiro"
+          minW="20px"
+          handleChange={(option) => {
+            setValue("codigoPessoa", option?.value);
+          }}
+          options={dataPassageiros
+            ?.map((codigoPessoa) => ({
+              label: codigoPessoa?.nome,
+              value: codigoPessoa?.id,
+            }))}
+          errors={errors.codigoPessoa}
+        />
+
+        <SelectForm
+          name="codigoFornecedor"
+          label="Fornecedor"
+          minW="20px"
+          isLoading={loadingFornecedores}
+          handleChange={(option) => {
+            setValue("codigoFornecedor", option?.value);
+          }}
+          options={dataFornecedores
+            ?.map((codigoFornecedor) => ({
+              label: codigoFornecedor?.nome,
+              value: codigoFornecedor?.id,
+            }))}
+          errors={errors.codigoFornecedor}
+        />
+
+        <SelectForm
+          name="codigoProduto"
+          label="Produto"
+          minW="20px"
+          // isLoading={loadingFornecedores}
+          handleChange={(option) => {
+            setValue("codigoProduto", option?.value);
+          }}
+          options={dataProdutos
+            ?.map((codigoProduto) => ({
+              label: codigoProduto?.nome,
+              value: codigoProduto?.id,
+            }))}
+          errors={errors.codigoProduto}
+        />
+
+        <FormInput
+          id="observacao"
+          label="Observações"
+          type="text"
+          {...register("observacao")}
+          inputArea={true}
+          errors={errors.observacao}
+        />
 
         <Flex justifyContent="flex-end" gap="15px">
           <Button
@@ -161,7 +385,7 @@ const ModalUpdateProduct = ({
             isLoading={isLoading}
             type="submit"
           >
-            Salvar
+            Cadastrar
           </Button>
         </Flex>
       </Box>
@@ -169,4 +393,4 @@ const ModalUpdateProduct = ({
   );
 };
 
-export default ModalUpdateProduct;
+export default ModalUpdateTransacao;

@@ -91,7 +91,7 @@ const FormInputNumber = ({
         </>
       )}
 
-      <InputGroup position="relative" justifyContent="center">
+      <InputGroup position="relative">
         {isMoneyValue ? (
           <NumericFormat
             isDisabled={isDisabled}

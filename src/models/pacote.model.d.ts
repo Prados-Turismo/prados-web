@@ -26,11 +26,6 @@ export interface IPacoteResponse {
   isLoading: boolean;
 }
 
-export interface IPacoteFindResponse {
-  data: IDataPacote[]
-  isLoading: boolean
-}
-
 export interface ICreatePacoteArgs {
   nome: string,
   valor: number,
@@ -58,4 +53,9 @@ export interface ICreatePacoteResponse {
 export interface IUpdatePacoteResponse {
   isLoading: boolean;
   mutate: UseMutateFunction<void, unknown, IUpdatePacoteArgs, unknown>;
+}
+
+export interface IDeletePacoteResponse {
+  isLoading: boolean;
+  mutate: UseMutateFunction<void, unknown, string, unknown>;
 }

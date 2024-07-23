@@ -8,12 +8,12 @@ import {
   ICreatePacoteResponse,
   IUpdatePacoteArgs,
   IUpdatePacoteResponse,
-  IPacoteFindResponse
+  IDeletePacoteResponse,
 } from "../models/pacote.model";
 import { Warning } from "../errors";
 import { keys, queryClient } from "../services/query";
 
-const getAllPacotes = (): IPacoteFindResponse => {
+const getAllPacotes = (): IPacoteResponse => {
   const { data, isLoading } = useQuery(
     [
       keys.pacotes
@@ -37,6 +37,7 @@ const getAllPacotes = (): IPacoteFindResponse => {
 
   return {
     data: data || [],
+    count: data?.count || 0,
     isLoading
   };
 };
@@ -137,7 +138,7 @@ const updatePacote = (
   }
 }
 
-const deletePacote = (): IUpdatePacoteResponse => {
+const deletePacote = (): IDeletePacoteResponse => {
 
   const { isLoading, mutate } = useMutation(
     async (id: string) => {

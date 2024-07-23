@@ -6,15 +6,14 @@ import {
   ICreateExcursaoPassageiroResponse,
   IUpdateExcursaoPassageiroArgs,
   IUpdateExcursaoPassageiroResponse,
-  IExcursaoPassageiroListResponse,
   IExcursaoPassageiroArgs,
-  IExcursaoPassageiroIndexResponse,
-  IExcursaoPassageiroResponse
+  IExcursaoPassageiroResponse,
+  IDeleteExcursaoPassageiroResponse
 } from "../models/excursao-passageiro.model";
 import { Warning } from "../errors";
 import { keys, queryClient } from "../services/query";
 
-const getAllPassageiros = ({ page, size, localEmbarque }: IExcursaoPassageiroArgs, idExcursao: string): IExcursaoPassageiroIndexResponse => {
+const getAllPassageiros = ({ page, size, localEmbarque }: IExcursaoPassageiroArgs, idExcursao: string): IExcursaoPassageiroResponse => {
   const { data, isLoading } = useQuery(
     [
       keys.excursaoPassageiro,
@@ -65,11 +64,12 @@ const listExcursaoPassageiros = (idExcursao: string): IExcursaoPassageiroRespons
 
   return {
     data: data || [],
+    count: data?.count || 0,
     isLoading
   };
 }
 
-const getExcursaoPassageiros = (idExcursao?: string): IExcursaoPassageiroListResponse => {
+const getExcursaoPassageiros = (idExcursao?: string): IExcursaoPassageiroResponse => {
   const { data, isLoading } = useQuery(
     [
       keys.excursaoPassageiro,
@@ -94,6 +94,7 @@ const getExcursaoPassageiros = (idExcursao?: string): IExcursaoPassageiroListRes
 
   return {
     data: data || [],
+    count: data?.count || 0,
     isLoading
   }
 }
@@ -161,7 +162,7 @@ const updateExcursaoPassageiro = (
   }
 }
 
-const deleteExcursaoPassageiro = (): IUpdateExcursaoPassageiroResponse => {
+const deleteExcursaoPassageiro = (): IDeleteExcursaoPassageiroResponse => {
 
   const { isLoading, mutate } = useMutation(
     async (id: string) => {

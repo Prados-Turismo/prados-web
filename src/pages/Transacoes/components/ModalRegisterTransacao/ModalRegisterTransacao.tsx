@@ -48,9 +48,8 @@ const handleSubmitRegisterSchema = z.object({
       required_error: fieldRequired("efetivado")
     }),
   codigoPessoa: z
-    .string({
-      required_error: fieldRequired("passageiro")
-    }),
+    .string()
+    .optional(),
   codigoFornecedor: z
     .string()
     .optional(),
@@ -251,9 +250,8 @@ const ModalRegisterTransacao = ({
 
         <FormInput
           label="Nº do comprovante bancário"
+          {...register("numeroComprovanteBancario")}
           errors={errors?.numeroComprovanteBancario}
-          name="numeroComprovanteBancario"
-          register={register}
         />
 
         <SelectForm
@@ -291,7 +289,6 @@ const ModalRegisterTransacao = ({
 
         <SelectForm
           name="codigoPessoa"
-          isRequired
           placeholder={!codigoExcursao ? "Selecione uma excursão primeiro" : "Selecione"}
           label="Passageiro"
           minW="200px"
@@ -343,7 +340,8 @@ const ModalRegisterTransacao = ({
           id="observacao"
           label="Observações"
           type="text"
-          {...register("observacao")}
+          name="observacao"
+          register={register}
           inputArea={true}
           errors={errors.observacao}
         />

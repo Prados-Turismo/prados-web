@@ -49,9 +49,8 @@ const handleSubmitRegisterSchema = z.object({
       required_error: fieldRequired("efetivado")
     }),
   codigoPessoa: z
-    .string({
-      required_error: fieldRequired("passageiro")
-    }),
+    .string()
+    .optional(),
   codigoFornecedor: z
     .string()
     .optional(),
@@ -97,6 +96,7 @@ const ModalUpdateTransacao = ({
 
   const {
     setValue,
+    getValues,
     reset,
     register,
     handleSubmit,
@@ -109,7 +109,7 @@ const ModalUpdateTransacao = ({
       numeroComprovanteBancario: data.numeroComprovanteBancario ?? undefined,
       data: data.data.split('T')[0],
       efetivado: data.efetivado ? 1 : 2,
-      codigoPessoa: data.codigoPessoa,
+      codigoPessoa: data.codigoPessoa ?? undefined,
       codigoFornecedor: data.codigoFornecedor ?? undefined,
       codigoProduto: data.codigoProduto ?? undefined,
       codigoExcursao: data.codigoExcursao ?? undefined,
@@ -127,11 +127,11 @@ const ModalUpdateTransacao = ({
   const { data: dataFornecedores, isLoading: loadingFornecedores } = getAllFornecedores();
   const { data: dataProdutos, isLoading: loadingProdutos } = getProducts({ page: 1, size: 100 });
 
-  const handleSubmitRegister = (data: IhandleSubmitRegister) => {
+  const handleSubmitRegister = (dataSubmit: IhandleSubmitRegister) => {
     mutate({
-      ...data,
+      ...dataSubmit,
       id: data.id,
-      efetivado: data.efetivado === 1,
+      efetivado: dataSubmit.efetivado === 1,
       ativo: true,
       dataPrevistaRecebimento: '2024-07-23',
       usuarioCadastro: user?.id ?? '',
@@ -209,6 +209,7 @@ const ModalUpdateTransacao = ({
             maxLength={25}
             isRequired
             dontAllowNegative
+            value={getValues("valor")}
             errors={errors.valor}
           />
         </Flex>
@@ -227,6 +228,10 @@ const ModalUpdateTransacao = ({
               label: codigoFormaPagamento?.nome,
               value: codigoFormaPagamento?.id,
             }))}
+          defaultValue={{
+            label: data.FormaPagamento?.nome,
+            value: data.FormaPagamento?.id
+          }}
           errors={errors.codigoFormaPagamento}
         />
 
@@ -277,9 +282,8 @@ const ModalUpdateTransacao = ({
 
         <FormInput
           label="Nº do comprovante bancário"
+          {...register("numeroComprovanteBancario")}
           errors={errors?.numeroComprovanteBancario}
-          name="numeroComprovanteBancario"
-          register={register}
         />
 
         <SelectForm
@@ -295,6 +299,10 @@ const ModalUpdateTransacao = ({
               label: codigoPacote?.nome,
               value: codigoPacote?.id,
             }))}
+          defaultValue={{
+            label: data.Pacotes?.nome,
+            value: data.Pacotes?.id
+          }}
           errors={errors.codigoPacote}
         />
 
@@ -312,12 +320,15 @@ const ModalUpdateTransacao = ({
               label: codigoExcursao?.nome,
               value: codigoExcursao?.id,
             }))}
+          defaultValue={{
+            label: data.Excursao?.nome,
+            value: data.Excursao?.id
+          }}
           errors={errors.codigoExcursao}
         />
 
         <SelectForm
           name="codigoPessoa"
-          isRequired
           placeholder={!codigoExcursao ? "Selecione uma excursão primeiro" : "Selecione"}
           label="Passageiro"
           minW="200px"
@@ -330,6 +341,10 @@ const ModalUpdateTransacao = ({
               label: codigoPessoa?.nome,
               value: codigoPessoa?.id,
             }))}
+          defaultValue={{
+            label: data.Pessoas?.nome,
+            value: data.Pessoas?.id
+          }}
           errors={errors.codigoPessoa}
         />
 
@@ -346,6 +361,10 @@ const ModalUpdateTransacao = ({
               label: codigoFornecedor?.nome,
               value: codigoFornecedor?.id,
             }))}
+          defaultValue={{
+            label: data.Fornecedor?.nome,
+            value: data.Fornecedor?.id
+          }}
           errors={errors.codigoFornecedor}
         />
 
@@ -362,6 +381,10 @@ const ModalUpdateTransacao = ({
               label: codigoProduto?.nome,
               value: codigoProduto?.id,
             }))}
+          defaultValue={{
+            label: data.Produtos?.nome,
+            value: data.Produtos?.id
+          }}
           errors={errors.codigoProduto}
         />
 
@@ -370,6 +393,7 @@ const ModalUpdateTransacao = ({
           label="Observações"
           type="text"
           {...register("observacao")}
+          register={register}
           inputArea={true}
           errors={errors.observacao}
         />

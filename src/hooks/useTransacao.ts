@@ -7,7 +7,8 @@ import {
   ICreateTransacaoArgs,
   ICreateTransacaoResponse,
   IUpdateTransacaoArgs,
-  IUpdateTransacaoResponse
+  IUpdateTransacaoResponse,
+  IDeleteTransacaoResponse
 } from "../models/transacao.model";
 import { Warning } from "../errors";
 import { keys, queryClient } from "../services/query";
@@ -109,11 +110,11 @@ const updateTransacao = (
   }
 }
 
-const deleteTransacao = (): IUpdateTransacaoResponse => {
+const deleteTransacao = (): IDeleteTransacaoResponse => {
 
   const { isLoading, mutate } = useMutation(
-    async (data: IUpdateTransacaoArgs) => {
-      const urlPath = `financeiro/delete/${data.id}`
+    async (id: string) => {
+      const urlPath = `financeiro/delete/${id}`
 
       try {
         await apiPrados.patch(urlPath).then(function () {

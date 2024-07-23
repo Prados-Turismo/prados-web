@@ -15,35 +15,36 @@ import SimpleModal from "../../../components/SimpleModal";
 import { ISelect } from "../../../models/generics.model";
 import ModalRecordTransacao from "../components/ModalRegisterTransacao";
 import AlertNoDataFound from "../../../components/AlertNoDataFound";
-import useProduct from "../../../hooks/useProducts";
 import { MdEdit } from "react-icons/md";
-import { IDataProduct } from "../../../models/product2.model";
 import ButtonIcon from "../../../components/ButtonIcon";
 import { FiTrash } from "react-icons/fi";
 import AlertModal from "../../../components/AlertModal";
 import ModalUpdateTransacao from "../components/ModalUpdateTransacao";
+import useTransacao from "../../../hooks/useTransacao";
+import { formattingDate } from "../../../utils/formattingDate";
+import { ITransacao } from "../../../models/transacao.model";
 
 const TransacoesList = () => {
-  const { getProducts, deleteProduto } = useProduct();
+  const { getTransacoes, deleteTransacao } = useTransacao();
   const [statusSelected, setStatusSelected] = useState<ISelect | null>();
   const [resetFilter, setResetFilter] = useState(false);
   const [modalRecordTransacao, setModalRecordProduct] = useState(false);
   const [modalUpdateProduct, setModalUpdateTransacao] = useState(false);
   const [modalRemoveProduto, setModalRemoveProduto] = useState(false);
-  const [productData, setProductData] = useState<IDataProduct | undefined>();
+  const [productData, setProductData] = useState<ITransacao | undefined>();
   const [currentPage, setCurrentPage] = useState(1);
   const registerPerPage = 10;
 
-  const { mutate: mutateToDeleteProduto } = deleteProduto();
-  const [deleteItemId, setDeleteProdutoId] = useState('');
+  const { mutate: mutateToDeleteTransacao } = deleteTransacao();
+  const [deleteItemId, setDeleteTransacaoId] = useState('');
 
-  const { data, count, isLoading } = getProducts({
+  const { data, count, isLoading } = getTransacoes({
     size: registerPerPage,
     page: currentPage
   });
 
   const onConfirmRemoveProduto = () => {
-    mutateToDeleteProduto(deleteItemId || "");
+    mutateToDeleteTransacao(deleteItemId || "");
     setModalRemoveProduto(false);
   };
 
@@ -138,25 +139,25 @@ const TransacoesList = () => {
                       {data.map((item) => (
                         <TR key={item.id}>
                           <TD>
-                            {item.nome}
+                            {item.efetivado ? "Sim" : "Não"}
                           </TD>
                           <TD>
-                            {item.estoque}
+                            {formattingDate(item.data)}
                           </TD>
                           <TD>
-                            {item.Fornecedor.nome}
+                            {item.tipo === 1 ? "Débito" : "Crédito"}
                           </TD>
                           <TD>
-                            {item.Fornecedor.nome}
+                            R$ {item.valor}
                           </TD>
                           <TD>
-                            {item.Fornecedor.nome}
+                            {item.FormaPagamento.nome}
                           </TD>
                           <TD>
-                            {item.Fornecedor.nome}
+                            {formattingDate(item.dataPrevistaRecebimento)}
                           </TD>
                           <TD>
-                            {item.Fornecedor.nome}
+                            {item.vistoAdmin ? "Sim" : "Não"}
                           </TD>
                           <TD gap={3}>
                             <MdEdit
@@ -177,7 +178,7 @@ const TransacoesList = () => {
                                 colorScheme="red"
                                 onClick={() => {
                                   setModalRemoveProduto(true)
-                                  setDeleteProdutoId(item.id)
+                                  setDeleteTransacaoId(item.id)
                                 }}
                               >
                                 <FiTrash />

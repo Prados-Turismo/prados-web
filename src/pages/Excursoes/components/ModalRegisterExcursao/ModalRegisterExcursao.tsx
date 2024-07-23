@@ -239,6 +239,9 @@ const ModalRegisterExcursao = ({
           {...register("observacoes")}
           inputArea={true}
           errors={errors.observacoes}
+          onChangeTextarea={(event) => {
+            setValue("observacoes", event.target.value || '');
+          }}
         />
 
         <Flex justifyContent="flex-end" gap="15px">

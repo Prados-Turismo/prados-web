@@ -18,6 +18,13 @@ import { useGlobal } from "../../../../contexts/UserContext";
 import SelectForm from "../../../../components/SelectForm";
 import FormInputNumber from "../../../../components/FormInputNumber";
 import FormInput from "../../../../components/FormInput";
+import useExcursoes from "../../../../hooks/useExcursao";
+import usePacotes from "../../../../hooks/usePacotes";
+import useExcursaoPassageiro from "../../../../hooks/useExcursaoPassageiros";
+import { useState } from "react";
+import useFormaPagamento from "../../../../hooks/useFormaPagamento";
+import useTransacao from "../../../../hooks/useTransacao";
+import { ITransacao } from "../../../../models/transacao.model";
 
 const handleSubmitRegisterSchema = z.object({
   tipo: z
@@ -42,8 +49,9 @@ const handleSubmitRegisterSchema = z.object({
       required_error: fieldRequired("efetivado")
     }),
   codigoPessoa: z
-    .string()
-    .optional(),
+    .string({
+      required_error: fieldRequired("passageiro")
+    }),
   codigoFornecedor: z
     .string()
     .optional(),
@@ -68,15 +76,24 @@ const handleSubmitRegisterSchema = z.object({
 type IhandleSubmitRegister = z.infer<typeof handleSubmitRegisterSchema>;
 
 interface IModalRecordCollaborator {
-  handleClose: () => void;
+  handleClose: () => void
+  data: ITransacao
 }
 
 const ModalUpdateTransacao = ({
   handleClose,
+  data
 }: IModalRecordCollaborator) => {
   const { user } = useGlobal();
-  const { createProduct } = useProduct();
+  const { updateTransacao } = useTransacao();
+  const { getAllFormaPagamentos } = useFormaPagamento();
+  const { getExcursaoPassageiros } = useExcursaoPassageiro();
+  const { getProducts } = useProduct();
   const { getAllFornecedores } = useFornecedor();
+  const { getExcursoes } = useExcursoes();
+  const { getAllPacotes } = usePacotes();
+
+  const [codigoExcursao, setCodigoExcursao] = useState<string | undefined>(undefined);
 
   const {
     setValue,
@@ -86,15 +103,38 @@ const ModalUpdateTransacao = ({
     formState: { errors },
   } = useForm<IhandleSubmitRegister>({
     resolver: zodResolver(handleSubmitRegisterSchema),
+    defaultValues: {
+      tipo: data.tipo,
+      valor: data.valor,
+      numeroComprovanteBancario: data.numeroComprovanteBancario ?? undefined,
+      data: data.data.split('T')[0],
+      efetivado: data.efetivado ? 1 : 2,
+      codigoPessoa: data.codigoPessoa,
+      codigoFornecedor: data.codigoFornecedor ?? undefined,
+      codigoProduto: data.codigoProduto ?? undefined,
+      codigoExcursao: data.codigoExcursao ?? undefined,
+      codigoPacote: data.codigoPacote ?? undefined,
+      codigoFormaPagamento: data.codigoFormaPagamento,
+      observacao: data.observacao || '',
+    }
   });
-  const { mutate, isLoading } = createProduct(reset, handleClose);
+
+  const { mutate, isLoading } = updateTransacao(reset, handleClose);
+  const {data: dataFormaPagamentos, isLoading: loadingFormaPagamentos } = getAllFormaPagamentos();
+  const { data: dataExcursoes, isLoading: loadingExcursoes } = getExcursoes({ page: 1, size: 100 });
+  const { data: dataPassageiros, isLoading: loadingPassageiros } = getExcursaoPassageiros(codigoExcursao);
+  const { data: dataPacotes, isLoading: loadingPacotes } = getAllPacotes();
   const { data: dataFornecedores, isLoading: loadingFornecedores } = getAllFornecedores();
+  const { data: dataProdutos, isLoading: loadingProdutos } = getProducts({ page: 1, size: 100 });
 
   const handleSubmitRegister = (data: IhandleSubmitRegister) => {
     mutate({
       ...data,
+      id: data.id,
+      efetivado: data.efetivado === 1,
       ativo: true,
-      usuarioCadastro: user?.id
+      dataPrevistaRecebimento: '2024-07-23',
+      usuarioCadastro: user?.id ?? '',
     })
   };
 
@@ -106,61 +146,6 @@ const ModalUpdateTransacao = ({
     {
       id: 2,
       nome: "Crédito"
-    }
-  ]
-
-  const dataPassageiros = [
-    {
-      id: 1,
-      nome: "João"
-    },
-    {
-      id: 2,
-      nome: "Maria"
-    }
-  ]
-
-  const dataProdutos = [
-    {
-      id: 1,
-      nome: "Produto 1"
-    },
-    {
-      id: 2,
-      nome: "Produto 2"
-    }
-  ]
-
-  const dataExcursao = [
-    {
-      id: 1,
-      nome: "Excursão 1"
-    },
-    {
-      id: 2,
-      nome: "Excursão 2"
-    }
-  ]
-
-  const dataPacotes = [
-    {
-      id: 1,
-      nome: "Pacote 1"
-    },
-    {
-      id: 2,
-      nome: "Pacote 2"
-    }
-  ]
-
-  const dataFormaPagamento = [
-    {
-      id: 1,
-      nome: "Forma de pagamento 1"
-    },
-    {
-      id: 2,
-      nome: "Forma de pagamento 2"
     }
   ]
 
@@ -205,6 +190,10 @@ const ModalUpdateTransacao = ({
                 label: tipo?.nome,
                 value: tipo?.id,
               }))}
+            defaultValue={{
+              label: data.tipo == 1 ? "Débito" : "Crédito",
+              value: data.tipo
+            }}
             errors={errors.tipo}
           />
 
@@ -229,11 +218,11 @@ const ModalUpdateTransacao = ({
           label="Forma de Pagamento"
 
           isRequired
-          // isLoading={loadingFornecedores}
+          isLoading={loadingFormaPagamentos}
           handleChange={(option) => {
             setValue("codigoFormaPagamento", option?.value);
           }}
-          options={dataFormaPagamento
+          options={dataFormaPagamentos
             ?.map((codigoFormaPagamento) => ({
               label: codigoFormaPagamento?.nome,
               value: codigoFormaPagamento?.id,
@@ -278,6 +267,10 @@ const ModalUpdateTransacao = ({
                 label: efetivado?.nome,
                 value: efetivado?.id,
               }))}
+            defaultValue={{
+              label: data.efetivado ? "Sim" : "Não",
+              value: data.efetivado
+            }}
             errors={errors.efetivado}
           />
         </Flex>
@@ -290,26 +283,10 @@ const ModalUpdateTransacao = ({
         />
 
         <SelectForm
-          name="codigoExcursao"
-          label="Excursão"
-          minW="20px"
-          // isLoading={loadingFornecedores}
-          handleChange={(option) => {
-            setValue("codigoExcursao", option?.value);
-          }}
-          options={dataExcursao
-            ?.map((codigoExcursao) => ({
-              label: codigoExcursao?.nome,
-              value: codigoExcursao?.id,
-            }))}
-          errors={errors.codigoExcursao}
-        />
-
-        <SelectForm
           name="codigoPacote"
           label="Pacote"
-          minW="20px"
-          // isLoading={loadingFornecedores}
+          minW="200px"
+          isLoading={loadingPacotes}
           handleChange={(option) => {
             setValue("codigoPacote", option?.value);
           }}
@@ -322,9 +299,29 @@ const ModalUpdateTransacao = ({
         />
 
         <SelectForm
+          name="codigoExcursao"
+          label="Excursão"
+          minW="200px"
+          isLoading={loadingExcursoes}
+          handleChange={(option) => {
+            setValue("codigoExcursao", option?.value);
+            setCodigoExcursao(option?.value);
+          }}
+          options={dataExcursoes
+            ?.map((codigoExcursao) => ({
+              label: codigoExcursao?.nome,
+              value: codigoExcursao?.id,
+            }))}
+          errors={errors.codigoExcursao}
+        />
+
+        <SelectForm
           name="codigoPessoa"
+          isRequired
+          placeholder={!codigoExcursao ? "Selecione uma excursão primeiro" : "Selecione"}
           label="Passageiro"
-          minW="20px"
+          minW="200px"
+          isLoading={loadingPassageiros}
           handleChange={(option) => {
             setValue("codigoPessoa", option?.value);
           }}
@@ -339,7 +336,7 @@ const ModalUpdateTransacao = ({
         <SelectForm
           name="codigoFornecedor"
           label="Fornecedor"
-          minW="20px"
+          minW="200px"
           isLoading={loadingFornecedores}
           handleChange={(option) => {
             setValue("codigoFornecedor", option?.value);
@@ -355,8 +352,8 @@ const ModalUpdateTransacao = ({
         <SelectForm
           name="codigoProduto"
           label="Produto"
-          minW="20px"
-          // isLoading={loadingFornecedores}
+          minW="200px"
+          isLoading={loadingProdutos}
           handleChange={(option) => {
             setValue("codigoProduto", option?.value);
           }}

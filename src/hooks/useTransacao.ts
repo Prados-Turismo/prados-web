@@ -2,26 +2,25 @@ import { useMutation, useQuery } from "react-query";
 import { useToastStandalone } from "./useToastStandalone";
 import { apiPrados } from "../services/api";
 import {
-  IExcursaoArgs,
-  IExcursaoResponse,
-  ICreateExcursaoArgs,
-  ICreateExcursaoResponse,
-  IUpdateExcursaoArgs,
-  IUpdateExcursaoResponse,
-  IExcursaoListResponse
-} from "../models/excursao.model";
+  ITransacaoArgs,
+  ITransacaoResponse,
+  ICreateTransacaoArgs,
+  ICreateTransacaoResponse,
+  IUpdateTransacaoArgs,
+  IUpdateTransacaoResponse
+} from "../models/transacao.model";
 import { Warning } from "../errors";
 import { keys, queryClient } from "../services/query";
 
-const getExcursoes = ({ page, size }: IExcursaoArgs): IExcursaoResponse => {
+const getTransacoes = ({ page, size }: ITransacaoArgs): ITransacaoResponse => {
 
   const { data, isLoading } = useQuery(
     [
-      keys.excursao,
+      keys.financeiro,
       page
     ],
     async () => {
-      const path = 'excursao/index';
+      const path = 'financeiro/index';
 
       try {
         const { data } = await apiPrados.get(path, {
@@ -45,44 +44,21 @@ const getExcursoes = ({ page, size }: IExcursaoArgs): IExcursaoResponse => {
   };
 }
 
-const getExcursao = (id: string): IExcursaoListResponse => {
-
-  const { data, isLoading } = useQuery(
-    [keys.excursao],
-    async () => {
-      const path = `excursao/find/${id}`
-      try {
-        const { data } = await apiPrados.get(path)
-
-        return data
-      } catch (error: any) {
-        throw new Warning(error.response.data.message, error.response.status);
-      }
-    }
-  )
-
-  return {
-    data: data || [],
-    isLoading
-  };
-
-}
-
-const createExcursao = (
+const createTransacao = (
   reset: () => void,
   handleClose: () => void
-): ICreateExcursaoResponse => {
+): ICreateTransacaoResponse => {
 
   const { isLoading, mutate } = useMutation(
-    async (data: ICreateExcursaoArgs) => {
-      const urlPath = 'excursao/create'
+    async (data: ICreateTransacaoArgs) => {
+      const urlPath = 'financeiro/create'
 
       try {
         await apiPrados.post(urlPath, data).then(() => {
           reset()
           handleClose()
 
-          queryClient.invalidateQueries([keys.excursao])
+          queryClient.invalidateQueries([keys.financeiro])
 
           useToastStandalone({
             title: "Cadastro concluído!",
@@ -101,20 +77,20 @@ const createExcursao = (
   }
 }
 
-const updateExcursao = (
+const updateTransacao = (
   reset: () => void,
   handleClose: () => void
-): IUpdateExcursaoResponse => {
+): IUpdateTransacaoResponse => {
 
   const { isLoading, mutate } = useMutation(
-    async (data: IUpdateExcursaoArgs) => {
-      const urlPath = `excursao/update/${data.id}`;
+    async (data: IUpdateTransacaoArgs) => {
+      const urlPath = `financeiro/update/${data.id}`;
 
       try {
         await apiPrados.put(urlPath, data).then(() => {
           reset()
           handleClose()
-          queryClient.invalidateQueries([keys.excursao])
+          queryClient.invalidateQueries([keys.financeiro])
 
           useToastStandalone({
             title: "Atualizado com sucesso!",
@@ -133,15 +109,15 @@ const updateExcursao = (
   }
 }
 
-const deleteExcursao = (): IUpdateExcursaoResponse => {
+const deleteTransacao = (): IUpdateTransacaoResponse => {
 
   const { isLoading, mutate } = useMutation(
-    async (id: string) => {
-      const urlPath = `excursao/delete/${id}`
+    async (data: IUpdateTransacaoArgs) => {
+      const urlPath = `financeiro/delete/${data.id}`
 
       try {
         await apiPrados.patch(urlPath).then(function () {
-          queryClient.invalidateQueries([keys.excursao])
+          queryClient.invalidateQueries([keys.financeiro])
 
           useToastStandalone({
             title: "Excluída com sucesso!",
@@ -160,12 +136,11 @@ const deleteExcursao = (): IUpdateExcursaoResponse => {
   }
 }
 
-export default function useExcursoes() {
+export default function useTransacao() {
   return {
-    getExcursoes,
-    getExcursao,
-    createExcursao,
-    updateExcursao,
-    deleteExcursao
+    getTransacoes,
+    createTransacao,
+    updateTransacao,
+    deleteTransacao
   }
 }

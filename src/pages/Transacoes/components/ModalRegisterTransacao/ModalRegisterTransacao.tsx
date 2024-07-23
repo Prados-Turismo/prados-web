@@ -23,6 +23,7 @@ import usePacotes from "../../../../hooks/usePacotes";
 import useExcursaoPassageiro from "../../../../hooks/useExcursaoPassageiros";
 import { useState } from "react";
 import useFormaPagamento from "../../../../hooks/useFormaPagamento";
+import useTransacao from "../../../../hooks/useTransacao";
 
 const handleSubmitRegisterSchema = z.object({
   tipo: z
@@ -47,8 +48,9 @@ const handleSubmitRegisterSchema = z.object({
       required_error: fieldRequired("efetivado")
     }),
   codigoPessoa: z
-    .string()
-    .optional(),
+    .string({
+      required_error: fieldRequired("passageiro")
+    }),
   codigoFornecedor: z
     .string()
     .optional(),
@@ -80,9 +82,10 @@ const ModalRegisterTransacao = ({
   handleClose,
 }: IModalRecordCollaborator) => {
   const { user } = useGlobal();
+  const { createTransacao } = useTransacao();
   const { getAllFormaPagamentos } = useFormaPagamento();
   const { getExcursaoPassageiros } = useExcursaoPassageiro();
-  const { getProducts, createProduct } = useProduct();
+  const { getProducts } = useProduct();
   const { getAllFornecedores } = useFornecedor();
   const { getExcursoes } = useExcursoes();
   const { getAllPacotes } = usePacotes();
@@ -99,7 +102,7 @@ const ModalRegisterTransacao = ({
     resolver: zodResolver(handleSubmitRegisterSchema),
   });
 
-  const { mutate, isLoading } = createProduct(reset, handleClose);
+  const { mutate, isLoading } = createTransacao(reset, handleClose);
   const {data: dataFormaPagamentos, isLoading: loadingFormaPagamentos } = getAllFormaPagamentos();
   const { data: dataExcursoes, isLoading: loadingExcursoes } = getExcursoes({ page: 1, size: 100 });
   const { data: dataPassageiros, isLoading: loadingPassageiros } = getExcursaoPassageiros(codigoExcursao);
@@ -110,8 +113,10 @@ const ModalRegisterTransacao = ({
   const handleSubmitRegister = (data: IhandleSubmitRegister) => {
     mutate({
       ...data,
+      efetivado: data.efetivado === 1,
       ativo: true,
-      usuarioCadastro: user?.id
+      dataPrevistaRecebimento: '2024-07-23',
+      usuarioCadastro: user?.id ?? '',
     })
   };
 
@@ -286,6 +291,7 @@ const ModalRegisterTransacao = ({
 
         <SelectForm
           name="codigoPessoa"
+          isRequired
           placeholder={!codigoExcursao ? "Selecione uma excursão primeiro" : "Selecione"}
           label="Passageiro"
           minW="200px"

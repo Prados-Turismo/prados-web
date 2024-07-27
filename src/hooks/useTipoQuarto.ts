@@ -2,50 +2,26 @@ import { useMutation, useQuery } from "react-query";
 import { useToastStandalone } from "./useToastStandalone";
 import { apiPrados } from "../services/api";
 import {
-  IExcursaoQuartoArgs,
-  IExcursaoQuartoResponse,
-  ICreateExcursaoQuartoArgs,
-  ICreateExcursaoQuartoResponse,
-  IUpdateExcursaoQuartoArgs,
-  IUpdateExcursaoQuartoResponse,
-  IPassageiroExcursaoQuartoResponse
-} from "../models/excursao-quarto.model";
+  ITipoQuartoArgs,
+  ITipoQuartoResponse,
+  ICreateTipoQuartoArgs,
+  ICreateTipoQuartoResponse,
+  IUpdateTipoQuartoArgs,
+  IUpdateTipoQuartoResponse,
+  IDeleteTipoQuartoResponse
+} from "../models/tipo-quarto.model";
 import { Warning } from "../errors";
 import { keys, queryClient } from "../services/query";
 
-
-const listExcursaoPassageirosNoRoom = (idExcursao: string): IPassageiroExcursaoQuartoResponse => {
-  const { data, isLoading } = useQuery(
-    [],
-    async () => {
-      const path = `excursao-passageiros/list-passageiros-no-room/${idExcursao}`;
-
-      try {
-        const { data } = await apiPrados.get(path);
-
-        return data
-      } catch (error: any) {
-        throw new Warning(error.response.data.message, error.response.status);
-      }
-    }
-  );
-
-  return {
-    data: data || [],
-    count: data?.count || 0,
-    isLoading
-  };
-}
-
-const getExcursaoQuarto = ({ page, size }: IExcursaoQuartoArgs): IExcursaoQuartoResponse => {
+const getTipoQuartos = ({ page, size }: ITipoQuartoArgs): ITipoQuartoResponse => {
 
   const { data, isLoading } = useQuery(
     [
-      keys.excursaoQuarto,
+      keys.tipoQuarto,
       page
     ],
     async () => {
-      const path = 'excursao-quartos/index';
+      const path = 'tipo-quarto/index';
 
       try {
         const { data } = await apiPrados.get(path, {
@@ -69,19 +45,47 @@ const getExcursaoQuarto = ({ page, size }: IExcursaoQuartoArgs): IExcursaoQuarto
   };
 }
 
-const createExcursaoQuarto = (
+const getAllTipoQuartos = (): ITipoQuartoResponse => {
+
+  const { data, isLoading } = useQuery(
+    [
+      keys.excursaoQuarto,
+    ],
+    async () => {
+      const path = 'tipo-quarto/findAll';
+
+      try {
+        const { data } = await apiPrados.get(path);
+
+        return data
+      } catch (error: any) {
+        throw new Warning(error.response.data.message, error.response.status);
+      }
+    }
+  )
+
+  return {
+    data: data || [],
+    count: data?.count || 0,
+    isLoading
+  };
+}
+
+const createTipoQuarto = (
   reset: () => void,
   handleClose: () => void
-): ICreateExcursaoQuartoResponse => {
+): ICreateTipoQuartoResponse => {
 
   const { isLoading, mutate } = useMutation(
-    async (data: ICreateExcursaoQuartoArgs) => {
-      const urlPath = 'excursao-quartos/create'
+    async (data: ICreateTipoQuartoArgs) => {
+      const urlPath = 'tipo-quarto/create'
+
       try {
         await apiPrados.post(urlPath, data).then(() => {
           reset()
           handleClose()
-          queryClient.invalidateQueries([keys.excursaoQuarto])
+
+          queryClient.invalidateQueries([keys.tipoQuarto])
 
           useToastStandalone({
             title: "Cadastro concluído!",
@@ -100,19 +104,20 @@ const createExcursaoQuarto = (
   }
 }
 
-const updateExcursaoQuarto = (
+const updateTipoQuarto = (
   reset: () => void,
   handleClose: () => void
-): IUpdateExcursaoQuartoResponse => {
+): IUpdateTipoQuartoResponse => {
 
   const { isLoading, mutate } = useMutation(
-    async (data: IUpdateExcursaoQuartoArgs) => {
-      const urlPath = `excursao-quartos/update/${data.id}`;
+    async (data: IUpdateTipoQuartoArgs) => {
+      const urlPath = `tipo-quarto/update/${data.id}`;
+
       try {
-        await apiPrados.put(urlPath, data).then((data) => {
+        await apiPrados.put(urlPath, data).then(() => {
           reset()
           handleClose()
-          queryClient.invalidateQueries([keys.excursaoQuarto])
+          queryClient.invalidateQueries([keys.tipoQuarto])
 
           useToastStandalone({
             title: "Atualizado com sucesso!",
@@ -131,15 +136,15 @@ const updateExcursaoQuarto = (
   }
 }
 
-const deleteExcursaoQuarto = (): IUpdateExcursaoQuartoResponse => {
+const deleteTipoQuarto = (): IDeleteTipoQuartoResponse => {
 
   const { isLoading, mutate } = useMutation(
     async (id: string) => {
-      const urlPath = `excursao-quartos/delete/${id}`
+      const urlPath = `tipo-quarto/delete/${id}`
 
       try {
-        await apiPrados.delete(urlPath).then(function (data) {
-          queryClient.invalidateQueries([keys.excursaoQuarto])
+        await apiPrados.delete(urlPath).then(function () {
+          queryClient.invalidateQueries([keys.tipoQuarto])
 
           useToastStandalone({
             title: "Excluída com sucesso!",
@@ -158,12 +163,12 @@ const deleteExcursaoQuarto = (): IUpdateExcursaoQuartoResponse => {
   }
 }
 
-export default function useExcursoes() {
+export default function useTipoQuarto() {
   return {
-    listExcursaoPassageirosNoRoom,
-    getExcursaoQuarto,
-    createExcursaoQuarto,
-    updateExcursaoQuarto,
-    deleteExcursaoQuarto
+    getTipoQuartos,
+    getAllTipoQuartos,
+    createTipoQuarto,
+    updateTipoQuarto,
+    deleteTipoQuarto
   }
 }

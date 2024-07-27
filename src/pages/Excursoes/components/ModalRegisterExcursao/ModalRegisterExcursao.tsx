@@ -49,6 +49,11 @@ const handleSubmitRegisterSchema = z.object({
     .min(1, {
       message: fieldRequired("vagas"),
     }),
+  valor: z
+    .number()
+    .min(1, {
+      message: fieldRequired("valor")
+    }),
   observacoes: z
     .string()
     .optional()
@@ -230,6 +235,19 @@ const ModalRegisterExcursao = ({
           maxLength={25}
           isRequired
           errors={errors.vagas}
+        />
+
+        <FormInputNumber
+          height="40px"
+          label="Valor"
+          {...register("valor")}
+          setValue={setValue}
+          isMoneyValue
+          flex="1.01"
+          name="valor"
+          maxLength={25}
+          isRequired
+          errors={errors.valor}
         />
 
         <FormInput

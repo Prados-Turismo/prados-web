@@ -132,6 +132,7 @@ const ExcursaoList = () => {
                       <TD>Pacote</TD>
                       <TD>Data Início</TD>
                       <TD>Data Fim</TD>
+                      <TD>Valor</TD>
                       <TD>Status</TD>
                       <TD></TD>
                     </THead>
@@ -150,6 +151,9 @@ const ExcursaoList = () => {
                           </TD>
                           <TD>
                             {dateFormat(new Date(item.dataFim))}
+                          </TD>
+                          <TD>
+                            {item.valor}
                           </TD>
                           <TD>
                             {item.ativo ? "Ativo" : "Inativo"}

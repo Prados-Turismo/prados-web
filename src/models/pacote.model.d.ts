@@ -6,7 +6,6 @@ export interface IPacoteArgs {
 export interface IDataPacote {
   id: string,
   nome: string,
-  valor: number,
   descricao: string | null,
   ativo: boolean,
   origem: number,

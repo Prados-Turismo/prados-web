@@ -28,11 +28,6 @@ const handleSubmitRegisterSchema = z.object({
     .min(1, {
       message: fieldRequired("nome"),
     }),
-  valor: z
-    .number()
-    .min(1, {
-      message: fieldRequired("valor"),
-    }),
   descricao: z
     .string()
     .optional(),
@@ -81,7 +76,6 @@ const ModalUpdatePacote = ({
     resolver: zodResolver(handleSubmitRegisterSchema),
     defaultValues: {
       nome: data.nome,
-      valor: data.valor,
       descricao: data.descricao || '',
       origem: data.origem,
       tipoTransporte: data.tipoTransporte,
@@ -145,19 +139,6 @@ const ModalUpdatePacote = ({
           />
           {errors.nome && <p className="error">{errors.nome.message}</p>}
         </FieldWrap>
-
-        <FormInputNumber
-          height="40px"
-          label="Valor"
-          setValue={setValue}
-          value={getValues("valor")}
-          isMoneyValue
-          flex="1.01"
-          name="valor"
-          maxLength={25}
-          isRequired
-          errors={errors.valor}
-        />
 
         <FormInput
           id="descricao"

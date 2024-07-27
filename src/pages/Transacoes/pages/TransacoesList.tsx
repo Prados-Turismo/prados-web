@@ -127,7 +127,7 @@ const TransacoesList = () => {
                   <Table>
                     <THead padding="0 30px 0 30px">
                       <TD>Efetivado</TD>
-                      <TD>Data</TD>
+                      <TD>Data Pagamento</TD>
                       <TD>Tipo</TD>
                       <TD>Valor</TD>
                       <TD>Forma de pagamento</TD>

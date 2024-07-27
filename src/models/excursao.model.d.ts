@@ -7,6 +7,7 @@ export interface IExcursao {
   ativo: boolean
   gerouFinanceiro: boolean
   vagas: number
+  valor: number
   codigoPacote: string
   usuarioCadastro: string
   ExcursaoPassageiros: {

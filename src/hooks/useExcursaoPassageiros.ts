@@ -46,29 +46,6 @@ const getAllPassageiros = ({ page, size, localEmbarque }: IExcursaoPassageiroArg
   };
 };
 
-const listExcursaoPassageiros = (idExcursao: string): IExcursaoPassageiroResponse => {
-  const { data, isLoading } = useQuery(
-    [],
-    async () => {
-      const path = `excursao-passageiros/list-passageiros-filtered/${idExcursao}`;
-
-      try {
-        const { data } = await apiPrados.get(path);
-
-        return data
-      } catch (error: any) {
-        throw new Warning(error.response.data.message, error.response.status);
-      }
-    }
-  );
-
-  return {
-    data: data || [],
-    count: data?.count || 0,
-    isLoading
-  };
-}
-
 const getExcursaoPassageiros = (idExcursao?: string): IExcursaoPassageiroResponse => {
   const { data, isLoading } = useQuery(
     [
@@ -192,7 +169,6 @@ const deleteExcursaoPassageiro = (): IDeleteExcursaoPassageiroResponse => {
 export default function useExcursaoPassageiro() {
   return {
     getAllPassageiros,
-    listExcursaoPassageiros,
     getExcursaoPassageiros,
     createExcursaoPassageiro,
     updateExcursaoPassageiro,

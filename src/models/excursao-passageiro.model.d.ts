@@ -60,7 +60,7 @@ export interface IExcursaoPassageiro {
 }
 
 export interface IExcursaoPassageiroResponse {
-  data: IExcursaoPassageiro;
+  data: IExcursaoPassageiro[];
   count: number;
   isLoading: boolean;
 }

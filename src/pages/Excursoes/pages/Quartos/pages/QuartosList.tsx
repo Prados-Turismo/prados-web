@@ -43,6 +43,8 @@ const QuartosList = () => {
     page: currentPage
   });
 
+  debugger
+
   const { mutate: mutateToDeleteExcursaoQuarto } = deleteExcursaoQuarto();
   const [deleteItemId, setDeleteExcursaoQuartoId] = useState('');
 
@@ -155,7 +157,7 @@ const QuartosList = () => {
                       <h2>
                         <AccordionButton>
                           <Box as='span' flex='1' textAlign='left'>
-                            {item.numeroQuarto}
+                            {`${item.numeroQuarto} - ${item.TipoQuarto.nome}`}
                           </Box>
 
                           <Box marginEnd={3}>

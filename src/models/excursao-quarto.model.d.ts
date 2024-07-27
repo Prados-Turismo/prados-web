@@ -11,6 +11,10 @@ export interface IExcursaoQuarto {
   codigoExcursao: string
   numeroQuarto: string
   usuarioCadastro: string
+  TipoQuarto: {
+    id: string
+    nome: string
+  }
 }
 
 export interface IExcursaoQuartoArgs {

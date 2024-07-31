@@ -45,6 +45,8 @@ import PassageirosList from "../pages/Excursoes/pages/Passageiros";
 import Transacoes from "../pages/Transacoes";
 import TipoQuarto from "../pages/TipoQuarto";
 import CategoriaTransacao from "../pages/CategoriaTransacao";
+import ContaBancaria from "../pages/ContaBancaria";
+import FormaPagamento from "../pages/FormaPagamento";
 
 export const AppRoutes = () => {
   const location = useLocation();
@@ -83,6 +85,8 @@ export const AppRoutes = () => {
         <Route path="/transacoes" element={<Transacoes />} />
         <Route path="/tipo-quarto" element={<TipoQuarto />} />
         <Route path="/categoria-transacao" element={<CategoriaTransacao />} />
+        <Route path="/conta-bancaria" element={<ContaBancaria />} />
+        <Route path="/forma-pagamento" element={<FormaPagamento />} />
 
         <Route path="/politica-privacidade" element={<PrivacyPolicy />} />
 

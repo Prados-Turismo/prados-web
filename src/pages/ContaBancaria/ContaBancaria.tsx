@@ -10,17 +10,17 @@ import { IStatus } from "../../models/sidebar.model";
 import { theme } from "../../theme";
 import { useLocation } from "react-router-dom";
 
-const CategoriaTransacao = () => {
+const ContaBancaria = () => {
   const location = useLocation();
   const menuBack =
     parseInt(window.location.href?.split("menu=")[1]?.split("?")[0]) || null;
   const [status, setStatus] = useState<IStatus>({
-    title: "Categoria Transação",
+    title: "Conta Bancaria",
     menu: menuBack || 1,
   });
 
   useEffect(() => {
-    document.title = `${theme.content.project} - Categoria Transação`;
+    document.title = `${theme.content.project} - Conta Bancaria`;
 
     const menuPath = parseInt(
       location.search?.split("menu=")[1]?.split("?")[0],
@@ -28,7 +28,7 @@ const CategoriaTransacao = () => {
 
     if (location?.search) {
       setStatus({
-        title: "Categoria Transação",
+        title: "Conta Bancaria",
         menu: menuPath,
       });
     }
@@ -43,4 +43,4 @@ const CategoriaTransacao = () => {
   );
 };
 
-export default CategoriaTransacao;
+export default ContaBancaria;

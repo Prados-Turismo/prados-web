@@ -24,6 +24,7 @@ import useTransacao from "../../../hooks/useTransacao";
 import { formattingDate } from "../../../utils/formattingDate";
 import { ITransacao } from "../../../models/transacao.model";
 import { IoCheckmarkCircle, IoCheckmarkDoneSharp, IoCloseCircle } from "react-icons/io5";
+import { currencyBRLFormat } from "../../../utils/currencyBRLFormat";
 
 const TransacoesList = () => {
   const { getTransacoes, deleteTransacao } = useTransacao();
@@ -149,7 +150,7 @@ const TransacoesList = () => {
                             {item.tipo === 1 ? "Débito" : "Crédito"}
                           </TD>
                           <TD>
-                            R$ {item.valor}
+                            {currencyBRLFormat(item.valor)}
                           </TD>
                           <TD>
                             {item.FormaPagamento.nome}
@@ -187,7 +188,7 @@ const TransacoesList = () => {
                             </ButtonIcon>
 
                             <ButtonIcon tooltip="Efetivar transação">
-                              <IoCheckmarkCircle 
+                              <IoCheckmarkCircle
                                 size={20}
                                 onClick={() => { }}
                               />

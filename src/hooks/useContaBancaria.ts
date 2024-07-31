@@ -1,56 +1,27 @@
 import { useMutation, useQuery } from "react-query";
+import { useToastStandalone } from "./useToastStandalone";
 import { apiPrados } from "../services/api";
+import {
+  IContaBancariaArgs,
+  IContaBancariaResponse,
+  ICreateContaBancariaArgs,
+  ICreateContaBancariaResponse,
+  IUpdateContaBancariaArgs,
+  IUpdateContaBancariaResponse,
+  IDeleteContaBancariaResponse
+} from "../models/conta-bancaria.model";
 import { Warning } from "../errors";
 import { keys, queryClient } from "../services/query";
-import {
-  ICreateFormaPagamentoArgs,
-  ICreateFormaPagamentoResponse,
-  IDeleteFormaPagamentoResponse,
-  IFormaPagamentoArgs,
-  IFormaPagamentoResponse,
-  IUpdateFormaPagamentoArgs,
-  IUpdateFormaPagamentoResponse
-} from "../models/forma-pagamento.model";
-import { useToastStandalone } from "./useToastStandalone";
 
-const getAllFormaPagamentos = (): IFormaPagamentoResponse => {
-  const { data, isLoading } = useQuery(
-    [
-      keys.formaPagamento
-    ],
-    async () => {
-      const path = 'forma-pagamento/findAll';
-
-      try {
-        const { data } = await apiPrados.get(path, {
-          params: {
-            ativo: true
-          },
-        });
-
-        return data
-      } catch (error: any) {
-        throw new Warning(error.response.data.message, error.response.status);
-      }
-    }
-  );
-
-  return {
-    data: data || [],
-    isLoading,
-    count: data.count || 0
-  };
-}
-
-const getFormaPagamento = ({ page, size }: IFormaPagamentoArgs): IFormaPagamentoResponse => {
+const getContaBancaria = ({ page, size }: IContaBancariaArgs): IContaBancariaResponse => {
 
   const { data, isLoading } = useQuery(
     [
-      keys.formaPagamento,
+      keys.contaBancaria,
       page
     ],
     async () => {
-      const path = 'forma-pagamento/index';
+      const path = 'conta-bancaria/index';
 
       try {
         const { data } = await apiPrados.get(path, {
@@ -74,21 +45,47 @@ const getFormaPagamento = ({ page, size }: IFormaPagamentoArgs): IFormaPagamento
   };
 }
 
-const createFormaPagamento = (
+const getAllContaBancaria = (): IContaBancariaResponse => {
+
+  const { data, isLoading } = useQuery(
+    [
+      keys.excursaoQuarto,
+    ],
+    async () => {
+      const path = 'conta-bancaria/findAll';
+
+      try {
+        const { data } = await apiPrados.get(path);
+
+        return data
+      } catch (error: any) {
+        throw new Warning(error.response.data.message, error.response.status);
+      }
+    }
+  )
+
+  return {
+    data: data || [],
+    count: data?.count || 0,
+    isLoading
+  };
+}
+
+const createContaBancaria = (
   reset: () => void,
   handleClose: () => void
-): ICreateFormaPagamentoResponse => {
+): ICreateContaBancariaResponse => {
 
   const { isLoading, mutate } = useMutation(
-    async (data: ICreateFormaPagamentoArgs) => {
-      const urlPath = 'forma-pagamento/create'
+    async (data: ICreateContaBancariaArgs) => {
+      const urlPath = 'conta-bancaria/create'
 
       try {
         await apiPrados.post(urlPath, data).then(() => {
           reset()
           handleClose()
 
-          queryClient.invalidateQueries([keys.formaPagamento])
+          queryClient.invalidateQueries([keys.contaBancaria])
 
           useToastStandalone({
             title: "Cadastro concluído!",
@@ -107,20 +104,20 @@ const createFormaPagamento = (
   }
 }
 
-const updateFormaPagamento = (
+const updateContaBancaria = (
   reset: () => void,
   handleClose: () => void
-): IUpdateFormaPagamentoResponse => {
+): IUpdateContaBancariaResponse => {
 
   const { isLoading, mutate } = useMutation(
-    async (data: IUpdateFormaPagamentoArgs) => {
-      const urlPath = `forma-pagamento/update/${data.id}`;
+    async (data: IUpdateContaBancariaArgs) => {
+      const urlPath = `conta-bancaria/update/${data.id}`;
 
       try {
         await apiPrados.put(urlPath, data).then(() => {
           reset()
           handleClose()
-          queryClient.invalidateQueries([keys.formaPagamento])
+          queryClient.invalidateQueries([keys.contaBancaria])
 
           useToastStandalone({
             title: "Atualizado com sucesso!",
@@ -139,14 +136,14 @@ const updateFormaPagamento = (
   }
 }
 
-const deleteFormaPagamento = (): IDeleteFormaPagamentoResponse => {
+const deleteContaBancaria = (): IDeleteContaBancariaResponse => {
 
   const { isLoading, mutate } = useMutation(
     async (id: string) => {
-      const urlPath = `forma-pagamento/delete/${id}`
+      const urlPath = `conta-bancaria/delete/${id}`
       try {
         await apiPrados.delete(urlPath).then(function () {
-          queryClient.invalidateQueries([keys.formaPagamento])
+          queryClient.invalidateQueries([keys.contaBancaria])
 
           useToastStandalone({
             title: "Excluída com sucesso!",
@@ -165,12 +162,12 @@ const deleteFormaPagamento = (): IDeleteFormaPagamentoResponse => {
   }
 }
 
-export default function useFormaPagamento() {
+export default function useContaBancaria() {
   return {
-    getAllFormaPagamentos,
-    deleteFormaPagamento,
-    getFormaPagamento,
-    updateFormaPagamento,
-    createFormaPagamento
+    getContaBancaria,
+    getAllContaBancaria,
+    createContaBancaria,
+    updateContaBancaria,
+    deleteContaBancaria
   }
 }

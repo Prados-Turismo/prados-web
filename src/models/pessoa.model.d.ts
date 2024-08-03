@@ -11,7 +11,7 @@ export interface IPessoa {
   contato: string | null
   telefoneContato: string | null
   ativo: boolean
-  dataNascimento: Date | null
+  dataNascimento?: string | null
   usuarioCadastro: string
 }
 
@@ -37,11 +37,11 @@ export interface ICreatePessoaArgs {
   sexo: string
   dataCadastro: Date
   observacoes: string | null
-  telefone: string | null
-  telefoneWpp: string | null
+  telefone?: string | null
+  telefoneWpp?: string | null
   email: string
   contato: string | null
-  telefoneContato: string | null
+  telefoneContato?: string | null
   ativo: boolean
   dataNascimento: Date | null
   usuarioCadastro: string

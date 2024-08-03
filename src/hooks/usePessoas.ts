@@ -12,6 +12,7 @@ import {
   IUpdatePessoaArgs,
   IUpdatePessoaResponse
 } from "../models/pessoa.model";
+import { extractNumbers } from "../utils/fieldValidation";
 
 const getPessoas = ({ page, size }: IPessoaArgs): IPessoaResponse => {
 
@@ -27,7 +28,8 @@ const getPessoas = ({ page, size }: IPessoaArgs): IPessoaResponse => {
         const { data } = await apiPrados.get(path, {
           params: {
             page,
-            size
+            size,
+            orderBy: 'nome'
           },
         });
 
@@ -77,7 +79,12 @@ const createPessoa = (
 
   const { isLoading, mutate } = useMutation(
     async (data: ICreatePessoaArgs) => {
+
       const urlPath = 'pessoas/create'
+      data.telefone = data.telefone ? extractNumbers(data.telefone) : data?.telefone
+      data.telefoneWpp = data.telefoneWpp ? extractNumbers(data.telefoneWpp) : data?.telefone
+      data.telefoneContato = data.telefoneContato ? extractNumbers(data.telefoneContato) : data?.telefone
+      data.dataNascimento = data.dataNascimento ? data.dataNascimento : null
 
       try {
         await apiPrados.post(urlPath, data).then(() => {
@@ -110,7 +117,11 @@ const updatePessoa = (
 
   const { isLoading, mutate } = useMutation(
     async (data: IUpdatePessoaArgs) => {
+
       const urlPath = `pessoas/update/${data.id}`;
+      data.telefone = data.telefone ? extractNumbers(data.telefone) : data?.telefone
+      data.telefoneWpp = data.telefoneWpp ? extractNumbers(data.telefoneWpp) : data?.telefone
+      data.telefoneContato = data.telefoneContato ? extractNumbers(data.telefoneContato) : data?.telefone      
 
       try {
         await apiPrados.put(urlPath, data).then(() => {

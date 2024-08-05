@@ -1,4 +1,4 @@
-import { Button, Flex, TableContainer } from "@chakra-ui/react";
+import { Button, Flex, Input, TableContainer, Tooltip } from "@chakra-ui/react";
 import { useState } from "react";
 import { IoIosAdd } from "react-icons/io";
 import FieldSearch from "../../../components/FieldSearch";
@@ -66,7 +66,7 @@ const TransacoesList = () => {
           <div className="searchWrap">
             <span>Buscar transação</span>
             <FieldSearch
-              placeholder="Nome ou CPF"
+              placeholder="Nome"
               handleSearch={() => {
                 setResetFilter(false);
                 setCurrentPage(1);
@@ -74,7 +74,7 @@ const TransacoesList = () => {
               reset={resetFilter}
             />
           </div>
-          <Flex flexDirection="column" gap="5px" width="300px">
+          <Flex flexDirection="column" gap="5px" width="200px">
             <span>Status</span>
 
             <ReactSelect
@@ -90,14 +90,34 @@ const TransacoesList = () => {
               }}
               options={[
                 {
-                  label: "Completo",
+                  label: "Efetivados",
                   value: 1,
                 },
                 {
-                  label: "Incompleto",
+                  label: "Pendentes",
                   value: 2,
                 },
               ]}
+            />
+          </Flex>
+          <Flex flexDirection="column" gap="5px" width="160px">
+            <span>Data Início</span>
+            <Input
+              type="date"
+              placeholder="dd/mm/aaaa"
+              max="2099-12-31"
+              maxLength={10}
+              onChange={() => {}}
+            />
+          </Flex>
+          <Flex flexDirection="column" gap="5px" width="160px">
+            <span>Data Fim</span>
+            <Input
+              type="date"
+              placeholder="dd/mm/aaaa"
+              max="2099-12-31"
+              maxLength={10}
+              onChange={() => {}}
             />
           </Flex>
           <Button
@@ -125,7 +145,7 @@ const TransacoesList = () => {
                 <TableContainer marginBottom="10px">
                   <Table>
                     <THead padding="0 30px 0 30px">
-                      <TD>Efetivado</TD>
+                      <TD></TD>
                       <TD>Data</TD>
                       <TD>Tipo</TD>
                       <TD>Valor</TD>
@@ -139,7 +159,25 @@ const TransacoesList = () => {
                       {data.map((item) => (
                         <TR key={item.id}>
                           <TD>
-                            {item.efetivado ? "Sim" : "Não"}
+                            {item.efetivado ? (
+                              <Tooltip label="Efetivado" placement="top" hasArrow>
+                                <div style={{
+                                  backgroundColor:"green",
+                                  borderRadius:"50%",
+                                  width:"10px",
+                                  height:"10px"
+                                }} />
+                              </Tooltip>
+                            ) : (
+                              <Tooltip label="Pendente" placement="top" hasArrow>
+                                <div style={{
+                                  backgroundColor:"red",
+                                  borderRadius:"50%",
+                                  width:"10px",
+                                  height:"10px"
+                                }} />
+                              </Tooltip>
+                            )}
                           </TD>
                           <TD>
                             {formattingDate(item.data)}

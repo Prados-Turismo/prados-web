@@ -9,6 +9,7 @@ import Section from "./components/Section";
 import { IStatus } from "../../models/sidebar.model";
 import { theme } from "../../theme";
 import { useLocation } from "react-router-dom";
+import SideBar from "./components/Sidebar/SideBar";
 
 const Transacoes = () => {
   const location = useLocation();
@@ -37,6 +38,7 @@ const Transacoes = () => {
   return (
     <Dashboard menu={<Menu />}>
       <PageWithMenu
+        aside={<SideBar status={status} onStatus={setStatus} />}
         section={<Section menu={status.menu} />}
       />
     </Dashboard>

@@ -44,7 +44,7 @@ export const Aside = chakra(Box, {
   baseStyle: {
     width: "100%",
     maxWidth: {
-      md: "300px",
+      md: "500px",
     },
     display: "flex",
     flexDirection: "column",

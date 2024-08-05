@@ -23,7 +23,7 @@ import { IoHelp } from "react-icons/io5";
 import { customTheme } from "../../theme";
 import { forwardRef } from "react";
 
-const FormInput = forwardRef<HTMLInputElement, IFormInput>(({
+const FormInput = ({
   label,
   placeholder,
   type,
@@ -46,7 +46,7 @@ const FormInput = forwardRef<HTMLInputElement, IFormInput>(({
   helpText,
   maxLengthInpt,
   ...restProps
-}, ref) => {
+}: IFormInput) => {
   const { isOpen, onToggle, onClose } = useDisclosure();
 
   const handleCopyClick = () => {
@@ -112,7 +112,6 @@ const FormInput = forwardRef<HTMLInputElement, IFormInput>(({
       ) : (
         <InputGroup>
           <Input
-            ref={ref} // Forwarding the ref to the input element
             placeholder={placeholder ?? ""}
             type={type || "text"}
             {...restProps}
@@ -134,6 +133,7 @@ const FormInput = forwardRef<HTMLInputElement, IFormInput>(({
             backgroundColor={
               restProps?.isReadOnly ? "#F9F9F9 !important" : "white"
             }
+            {...register?.(name)}
             defaultValue={defaultValue}
           />
           {restProps.onPaste && (
@@ -167,6 +167,6 @@ const FormInput = forwardRef<HTMLInputElement, IFormInput>(({
       </Stack>
     </FieldWrap>
   );
-});
+};
 
 export default FormInput;

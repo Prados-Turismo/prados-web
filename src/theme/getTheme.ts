@@ -9,8 +9,8 @@ const getTheme = (domain: string) => {
       },
       images: {
         favicon: "/images/fiibo/favicon.png",
-        logo: "/images/logos/fiibo.png",
-        logoLogin: "/images/logos/fiibo.png",
+        logo: "/images/logoprados120.png",
+        logoLogin: "/images/logoprados120.png",
         iara: "/images/fiibo/avatar-iara.svg",
         iaraWelcome: "/images/fiibo/iara-welcome-fiibo.png",
         iaraPreuser: "/images/fiibo/iara-userpre-fiibo.png",

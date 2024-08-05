@@ -23,6 +23,8 @@ import ModalUpdateTransacao from "../components/ModalUpdateTransacao";
 import useTransacao from "../../../hooks/useTransacao";
 import { formattingDate } from "../../../utils/formattingDate";
 import { ITransacao } from "../../../models/transacao.model";
+import { IoCheckmarkCircle, IoCheckmarkDoneSharp, IoCloseCircle } from "react-icons/io5";
+import { currencyBRLFormat } from "../../../utils/currencyBRLFormat";
 
 const TransacoesList = () => {
   const { getTransacoes, deleteTransacao } = useTransacao();
@@ -66,7 +68,7 @@ const TransacoesList = () => {
           <div className="searchWrap">
             <span>Buscar transação</span>
             <FieldSearch
-              placeholder="Nome"
+              placeholder=""
               handleSearch={() => {
                 setResetFilter(false);
                 setCurrentPage(1);
@@ -186,7 +188,7 @@ const TransacoesList = () => {
                             {item.tipo === 1 ? "Débito" : "Crédito"}
                           </TD>
                           <TD>
-                            R$ {item.valor}
+                            {currencyBRLFormat(item.valor)}
                           </TD>
                           <TD>
                             {item.FormaPagamento.nome}
@@ -222,6 +224,28 @@ const TransacoesList = () => {
                                 <FiTrash />
                               </Button>
                             </ButtonIcon>
+
+                            <ButtonIcon tooltip="Efetivar transação">
+                              <IoCheckmarkCircle
+                                size={20}
+                                onClick={() => { }}
+                              />
+                            </ButtonIcon>
+
+                            <ButtonIcon tooltip="Desfetivar transação">
+                              <IoCloseCircle
+                                size={20}
+                                onClick={() => { }}
+                              />
+                            </ButtonIcon>
+
+                            <ButtonIcon tooltip="Marcar como visto">
+                              <IoCheckmarkDoneSharp
+                                size={20}
+                                onClick={() => { }}
+                              />
+                            </ButtonIcon>
+
                           </TD>
                         </TR>
                       ))}

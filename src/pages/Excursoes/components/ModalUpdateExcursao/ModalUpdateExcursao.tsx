@@ -50,6 +50,11 @@ const handleSubmitRegisterSchema = z.object({
     .min(1, {
       message: fieldRequired("vagas"),
     }),
+  valor: z
+    .number()
+    .min(1, {
+      message: fieldRequired("valor")
+    }),
   observacoes: z
     .string()
     .optional()
@@ -86,6 +91,7 @@ const ModalUpdateExcursao = ({
     defaultValues: {
       nome: data.nome,
       vagas: data.vagas,
+      valor: data.valor,
       observacoes: data.observacoes || '',
       dataInicio: data.dataInicio.split('T')[0],
       dataFim: data.dataFim.split('T')[0],
@@ -252,6 +258,19 @@ const ModalUpdateExcursao = ({
           maxLength={25}
           isRequired
           errors={errors.vagas}
+        />
+
+        <FormInputNumber
+          height="40px"
+          label="Valor"
+          {...register("valor")}
+          setValue={setValue}
+          isMoneyValue
+          flex="1.01"
+          name="valor"
+          maxLength={25}
+          isRequired
+          errors={errors.valor}
         />
 
         <FormInput

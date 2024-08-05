@@ -111,3 +111,15 @@ export const emailValidation = (email: string) => {
     return false
   }
 }
+
+export const extractNumbers = (string: string) => {
+  if (string === '' || string === null || !string)
+    return;
+
+  var numeros = string.match(/\d/g);
+
+  if (numeros)
+    return numeros.join("");
+  else
+    return null;
+}

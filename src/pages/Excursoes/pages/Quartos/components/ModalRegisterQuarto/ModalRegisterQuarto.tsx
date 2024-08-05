@@ -17,7 +17,7 @@ import { FieldWrap } from "./styled";
 import ReactSelect from "react-select";
 import { useGlobal } from "../../../../../../contexts/UserContext";
 import { useParams } from "react-router-dom";
-import useExcursaoPassageiro from "../../../../../../hooks/useExcursaoPassageiros";
+import useTipoQuarto from "../../../../../../hooks/useTipoQuarto";
 
 const handleSubmitRegisterSchema = z.object({
   passageiros: z
@@ -29,12 +29,17 @@ const handleSubmitRegisterSchema = z.object({
     }),
   numeroQuarto: z
     .string()
-    .min(1)
+    .min(1),
+  idTipoQuarto: z
+    .string()
+    .min(1, {
+      message: fieldRequired("Tipo Quarto")
+    })
 });
 
 type IhandleSubmitRegister = z.infer<typeof handleSubmitRegisterSchema>;
 
-interface IModalRecordCollaborator {
+interface IModalRegisterRoom {
   handleClose: () => void,
   numeroQuarto: string
 }
@@ -42,10 +47,10 @@ interface IModalRecordCollaborator {
 const ModalRegisterQuarto = ({
   handleClose,
   numeroQuarto
-}: IModalRecordCollaborator) => {
+}: IModalRegisterRoom) => {
   const { user } = useGlobal();
-  const { createExcursaoQuarto } = useExcursaoQuarto();
-  const { listExcursaoPassageiros } = useExcursaoPassageiro();
+  const { createExcursaoQuarto, listExcursaoPassageirosNoRoom } = useExcursaoQuarto();
+  const { getAllTipoQuartos } = useTipoQuarto()
   const {
     setValue,
     reset,
@@ -60,7 +65,8 @@ const ModalRegisterQuarto = ({
   });
   const { id: idExcursao } = useParams();
   const { mutate, isLoading } = createExcursaoQuarto(reset, handleClose);
-  const { data: dataPassageiros, isLoading: loadingPassageiros } = listExcursaoPassageiros(idExcursao || '');
+  const { data: dataPassageiros, isLoading: loadingPassageiros } = listExcursaoPassageirosNoRoom(idExcursao || '');
+  const { data: dataTipoQuarto, isLoading: loadingTipoQuarto } = getAllTipoQuartos()
 
   const handleSubmitRegister = (submitData: IhandleSubmitRegister) => {
     mutate({
@@ -96,13 +102,42 @@ const ModalRegisterQuarto = ({
               noOptionsMessage={() => "Não há passageiros cadastrados"}
               options={dataPassageiros
                 .map((passageiro) => ({
-                  label: passageiro?.nome,
+                  label: `${passageiro?.reserva} - ${passageiro?.nome}`,
                   value: passageiro?.id,
                 }))}
               name="passageiros"
               id="passageiros"
               onChange={(option) => {
                 setValue("passageiros", option?.map((item) => item?.value.toString()) || []);
+              }}
+            />
+          </Box>
+          {errors.passageiros && <p className="error">{errors.passageiros.message}</p>}
+        </FieldWrap>
+
+        <FieldWrap>
+          <span>Tipo do Quarto <Asterisk /></span>
+
+          <Box display="flex" gap="10px">
+            <ReactSelect
+              isLoading={loadingTipoQuarto}
+              isMulti={false}
+              className="select-fields multi"
+              classNamePrefix="select"
+              closeMenuOnSelect={true}
+              {...register?.("idTipoQuarto")}
+              isSearchable={true}
+              placeholder="Selecione"
+              noOptionsMessage={() => "Não há tipos cadastrados"}
+              options={dataTipoQuarto
+                .map((tipo) => ({
+                  label: tipo?.nome,
+                  value: tipo?.id,
+                }))}
+              name="idTipoQuarto"
+              id="idTipoQuarto"
+              onChange={(option) => {
+                setValue("idTipoQuarto", option?.value || '');
               }}
             />
           </Box>

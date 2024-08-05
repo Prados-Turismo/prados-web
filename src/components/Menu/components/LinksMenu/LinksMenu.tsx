@@ -82,6 +82,21 @@ const LinksMenu = ({ onClose }: ILinksMenu) => {
               <MenuItem>
                 <Link to="/produtos2">Produtos</Link>
               </MenuItem>
+              <MenuItem>
+                <Link to="/tipo-quarto">Tipos de Quarto</Link>
+              </MenuItem>
+              <MenuItem>
+                <Link to="/categoria-transacao">Categoria Transação</Link>
+              </MenuItem>
+              <MenuItem>
+                <Link to="/conta-bancaria">Conta Bancaria</Link>
+              </MenuItem>
+              <MenuItem>
+                <Link to="/forma-pagamento">Forma Pagamento</Link>
+              </MenuItem>
+              <MenuItem>
+                <Link to="/cliente">Cliente</Link>
+              </MenuItem>
             </MenuList>
           </Box>
         )}

@@ -8,7 +8,6 @@ import Asterisk from "../../../../../../components/Asterisk";
 
 // Hooks
 import useExcursaoQuarto from "../../../../../../hooks/useExcursaoQuarto";
-import useExcursaoPassageiro from "../../../../../../hooks/useExcursaoPassageiros";
 
 import {
   fieldRequired
@@ -35,7 +34,7 @@ const handleSubmitRegisterSchema = z.object({
 
 type IhandleSubmitRegister = z.infer<typeof handleSubmitRegisterSchema>;
 
-interface IModalRecordCollaborator {
+interface IModalUpdateRoom {
   handleClose: () => void;
   data: IExcursaoQuarto
 }
@@ -43,10 +42,10 @@ interface IModalRecordCollaborator {
 const ModalUpdateQuarto = ({
   handleClose,
   data
-}: IModalRecordCollaborator) => {
+}: IModalUpdateRoom) => {
   const { user } = useGlobal();
   const { updateExcursaoQuarto } = useExcursaoQuarto();
-  const { listExcursaoPassageiros } = useExcursaoPassageiro();
+  const { listExcursaoPassageirosNoRoom } = useExcursaoQuarto();
   const {
     setValue,
     reset,
@@ -61,8 +60,12 @@ const ModalUpdateQuarto = ({
   });
   const { id: idExcursao } = useParams();
   const { mutate, isLoading } = updateExcursaoQuarto(reset, handleClose);
-  const { data: dataPassageiros, isLoading: loadingPassageiros } = listExcursaoPassageiros(idExcursao || '');
-  const allOptions = [...dataPassageiros, ...data.Passageiros]
+  const { data: dataPassageiros, isLoading: loadingPassageiros } = listExcursaoPassageirosNoRoom(idExcursao || '');
+
+  let passageiros = data.Passageiros.map((value) => {
+    return { id: value.Pessoa.id, nome: value.Pessoa.nome, reserva: value.reserva }
+  })
+  const allOptions = [...dataPassageiros, ...passageiros]
 
   const handleSubmitRegister = (submitData: IhandleSubmitRegister) => {
     mutate({
@@ -98,7 +101,7 @@ const ModalUpdateQuarto = ({
               noOptionsMessage={() => "Não há passageiros cadastrados"}
               options={allOptions
                 ?.map((passageiro) => ({
-                  label: passageiro?.nome,
+                  label: `${passageiro.reserva} - ${passageiro?.nome}`,
                   value: passageiro?.id,
                 }))}
               name="passageiros"
@@ -108,7 +111,7 @@ const ModalUpdateQuarto = ({
               }}
               defaultValue={
                 data.Passageiros.map((passageiro) => {
-                  return { value: passageiro.id, label: passageiro.nome }
+                  return { value: passageiro.Pessoa.id, label: `${passageiro.reserva} - ${passageiro.Pessoa.nome}` }
                 })}
             />
           </Box>

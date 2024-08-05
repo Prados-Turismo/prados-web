@@ -134,19 +134,6 @@ const ModalRegisterPacote = ({
           {errors.nome && <p className="error">{errors.nome.message}</p>}
         </FieldWrap>
 
-        <FormInputNumber
-          height="40px"
-          label="Valor"
-          {...register("valor")}
-          setValue={setValue}
-          isMoneyValue
-          flex="1.01"
-          name="valor"
-          maxLength={25}
-          isRequired
-          errors={errors.valor}
-        />
-
         <FormInput
           id="descricao"
           label="Descrição"

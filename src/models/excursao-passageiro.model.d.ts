@@ -1,24 +1,3 @@
-export interface IExcursaoPassageiro {
-  Passageiros: [{
-    id: string
-    ativo: boolean
-    contato: string
-    cpf: string
-    dataNascimento?: string
-    email: string
-    nome: string
-    observacoes?: string
-    sexo: string
-    telefone: string
-    telefoneContato?: string
-    telefoneWpp?: string
-    usuarioCadastro: string
-  }]
-  id: string
-  codigoExcursao: string
-  numeroPassageiro: string
-  usuarioCadastro: string
-}
 
 export interface IExcursaoPassageiroArgs {
   page: number;
@@ -26,45 +5,18 @@ export interface IExcursaoPassageiroArgs {
   localEmbarque: string | null
 }
 
-export interface IDataExcursaoPassageiro {
-  id: string
-  dataCadastro: Date
-  reserva: string
-  nome: string
-}
-
-export interface IExcursaoListPassageiro {
-  id: string,
-  nome: string
-}
-
-export interface IExcursaoPassageiroResponse {
-  data: Array<IDataExcursaoPassageiro>;
-  isLoading: boolean;
-}
-
-export interface IExcursaoPassageiroListResponse {
-  data: Array<IDataExcursaoPassageiroLocalPessoa>;
-  isLoading: boolean;
-}
-
 export interface ICreateExcursaoPassageiroArgs {
-  nome: string
-  dataInicio: Date
-  dataFim: Date
-  observacoes: string | null
-  ativo: boolean
-  gerouFinanceiro: boolean
-  vagas: number
-  codigoPacote: string
-  usuarioCadastro: string
+  reserva: string
+  idExcursao: string
+  idPassageiro: string
+  localEmbarque: string
 }
 
-export interface IDataExcursaoPassageiroLocalPessoa extends IDataExcursaoPassageiro {
+export interface IExcursaoPassageiro {
+  id: string
   embarcou: boolean
   hasBoarded: string
   horaEmbarque: string
-  id: string
   LocalEmbarque: {
     id: string
     nome: string
@@ -107,13 +59,13 @@ export interface IDataExcursaoPassageiroLocalPessoa extends IDataExcursaoPassage
   }
 }
 
-export interface IExcursaoPassageiroIndexResponse {
-  data: IDataExcursaoPassageiroLocalPessoa[];
+export interface IExcursaoPassageiroResponse {
+  data: IExcursaoPassageiro[];
   count: number;
   isLoading: boolean;
 }
 
-export interface IUpdateExcursaoPassageiroArgs extends ICreateExcursaoArgs {
+export interface IUpdateExcursaoPassageiroArgs extends ICreateExcursaoPassageiroArgs {
   id: string
 }
 
@@ -125,4 +77,9 @@ export interface ICreateExcursaoPassageiroResponse {
 export interface IUpdateExcursaoPassageiroResponse {
   isLoading: boolean;
   mutate: UseMutateFunction<void, unknown, IUpdateExcursaoPassageiroArgs, unknown>;
+}
+
+export interface IDeleteExcursaoPassageiroResponse {
+  isLoading: boolean;
+  mutate: UseMutateFunction<void, unknown, string, unknown>;
 }

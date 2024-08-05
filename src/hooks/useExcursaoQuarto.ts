@@ -7,10 +7,35 @@ import {
   ICreateExcursaoQuartoArgs,
   ICreateExcursaoQuartoResponse,
   IUpdateExcursaoQuartoArgs,
-  IUpdateExcursaoQuartoResponse
+  IUpdateExcursaoQuartoResponse,
+  IPassageiroExcursaoQuartoResponse
 } from "../models/excursao-quarto.model";
 import { Warning } from "../errors";
 import { keys, queryClient } from "../services/query";
+
+
+const listExcursaoPassageirosNoRoom = (idExcursao: string): IPassageiroExcursaoQuartoResponse => {
+  const { data, isLoading } = useQuery(
+    [],
+    async () => {
+      const path = `excursao-passageiros/list-passageiros-no-room/${idExcursao}`;
+
+      try {
+        const { data } = await apiPrados.get(path);
+
+        return data
+      } catch (error: any) {
+        throw new Warning(error.response.data.message, error.response.status);
+      }
+    }
+  );
+
+  return {
+    data: data || [],
+    count: data?.count || 0,
+    isLoading
+  };
+}
 
 const getExcursaoQuarto = ({ page, size }: IExcursaoQuartoArgs): IExcursaoQuartoResponse => {
 
@@ -135,6 +160,7 @@ const deleteExcursaoQuarto = (): IUpdateExcursaoQuartoResponse => {
 
 export default function useExcursoes() {
   return {
+    listExcursaoPassageirosNoRoom,
     getExcursaoQuarto,
     createExcursaoQuarto,
     updateExcursaoQuarto,

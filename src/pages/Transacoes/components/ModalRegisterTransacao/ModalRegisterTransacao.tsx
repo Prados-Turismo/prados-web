@@ -20,10 +20,10 @@ import FormInputNumber from "../../../../components/FormInputNumber";
 import FormInput from "../../../../components/FormInput";
 import useExcursoes from "../../../../hooks/useExcursao";
 import usePacotes from "../../../../hooks/usePacotes";
-import useExcursaoPassageiro from "../../../../hooks/useExcursaoPassageiros";
 import { useState } from "react";
 import useFormaPagamento from "../../../../hooks/useFormaPagamento";
 import useTransacao from "../../../../hooks/useTransacao";
+import usePessoas from "../../../../hooks/usePessoas";
 
 const handleSubmitRegisterSchema = z.object({
   tipo: z
@@ -83,11 +83,11 @@ const ModalRegisterTransacao = ({
   const { user } = useGlobal();
   const { createTransacao } = useTransacao();
   const { getAllFormaPagamentos } = useFormaPagamento();
-  const { getExcursaoPassageiros } = useExcursaoPassageiro();
   const { getProducts } = useProduct();
   const { getAllFornecedores } = useFornecedor();
   const { getExcursoes } = useExcursoes();
   const { getAllPacotes } = usePacotes();
+  const { getAllPessoas } = usePessoas()
 
   const [codigoExcursao, setCodigoExcursao] = useState<string | undefined>(undefined);
 
@@ -102,9 +102,9 @@ const ModalRegisterTransacao = ({
   });
 
   const { mutate, isLoading } = createTransacao(reset, handleClose);
-  const {data: dataFormaPagamentos, isLoading: loadingFormaPagamentos } = getAllFormaPagamentos();
+  const { data: dataFormaPagamentos, isLoading: loadingFormaPagamentos } = getAllFormaPagamentos();
   const { data: dataExcursoes, isLoading: loadingExcursoes } = getExcursoes({ page: 1, size: 100 });
-  const { data: dataPassageiros, isLoading: loadingPassageiros } = getExcursaoPassageiros(codigoExcursao);
+  const { data: dataClientes, isLoading: loadingClientes } = getAllPessoas();
   const { data: dataPacotes, isLoading: loadingPacotes } = getAllPacotes();
   const { data: dataFornecedores, isLoading: loadingFornecedores } = getAllFornecedores();
   const { data: dataProdutos, isLoading: loadingProdutos } = getProducts({ page: 1, size: 100 });
@@ -216,13 +216,13 @@ const ModalRegisterTransacao = ({
         >
           <FormControl
             isRequired
-            minW = "50%"
+            minW="50%"
             isInvalid={errors.data?.message ? true : false}
           >
             <FormLabel>Data</FormLabel>
             <Input
               type="date"
-              minW = "50%"
+              minW="50%"
               placeholder="dd/mm/aaaa"
               max="2099-12-31"
               maxLength={10}
@@ -234,7 +234,7 @@ const ModalRegisterTransacao = ({
           <SelectForm
             name="efetivado"
             label="Efetivado"
-            minW = "235px"
+            minW="235px"
             // isLoading={loadingFornecedores}
             handleChange={(option) => {
               setValue("efetivado", option?.value);
@@ -289,14 +289,14 @@ const ModalRegisterTransacao = ({
 
         <SelectForm
           name="codigoPessoa"
-          placeholder={!codigoExcursao ? "Selecione uma excursão primeiro" : "Selecione"}
-          label="Passageiro"
+          placeholder="Selecione"
+          label="Cliente"
           minW="200px"
-          isLoading={loadingPassageiros}
+          isLoading={loadingClientes}
           handleChange={(option) => {
             setValue("codigoPessoa", option?.value);
           }}
-          options={dataPassageiros
+          options={dataClientes
             ?.map((codigoPessoa) => ({
               label: codigoPessoa?.nome,
               value: codigoPessoa?.id,

@@ -36,12 +36,14 @@ const QuartosList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [quartoData, setQuartoData] = useState<IExcursaoQuarto | undefined>();
   const registerPerPage = 10;
-  var numeroQuarto: string = ''
+  var numeroQuarto: string = '1'
 
   const { data, count, isLoading } = getExcursaoQuarto({
     size: registerPerPage,
     page: currentPage
   });
+
+  debugger
 
   const { mutate: mutateToDeleteExcursaoQuarto } = deleteExcursaoQuarto();
   const [deleteItemId, setDeleteExcursaoQuartoId] = useState('');
@@ -55,7 +57,7 @@ const QuartosList = () => {
     const result = data.sort((a, b) => a.numeroQuarto.localeCompare(b.numeroQuarto));
 
     let roomName = result.slice(-1)[0].numeroQuarto.split(' ')[1]
-    return `${parseInt(roomName) + 1}`
+    return `${(parseInt(roomName) + 1)}`
   }
 
   if (!isLoading && data.length) {
@@ -155,7 +157,7 @@ const QuartosList = () => {
                       <h2>
                         <AccordionButton>
                           <Box as='span' flex='1' textAlign='left'>
-                            {item.numeroQuarto}
+                            {`${item.numeroQuarto} - ${item.TipoQuarto.nome}`}
                           </Box>
 
                           <Box marginEnd={3}>
@@ -196,7 +198,7 @@ const QuartosList = () => {
                       >
                         <ul>
                           {item.Passageiros.map((pass, index) => (
-                            <li key={pass.id}>{pass.nome}</li>
+                            <li key={pass.Pessoa.id}>{`${pass.reserva} - ${pass.Pessoa.nome}`}</li>
                           ))}
 
                         </ul>

@@ -105,7 +105,14 @@ const ModalUpdateCliente = ({
       telefone: data.telefone ? cellphoneMask(data.telefone) : undefined,
       telefoneWpp: data.telefoneWpp ? cellphoneMask(data.telefoneWpp) : undefined,
       telefoneContato: data.telefoneContato ? cellphoneMask(data.telefoneContato) : undefined,
-      dataNascimento: data.dataNascimento ? data.dataNascimento.split('T')[0] : undefined
+      dataNascimento: data.dataNascimento ? data.dataNascimento.split('T')[0] : undefined,
+      cep: data.Endereco[0]?.cep || '',
+      logradouro: data.Endereco[0]?.logradouro || '',
+      numero: data.Endereco[0]?.numero || '',
+      complemento: data.Endereco[0]?.complemento || '',
+      cidade: data.Endereco[0]?.cidade || '',
+      uf: data.Endereco[0]?.uf || '',
+      bairro: data.Endereco[0]?.bairro || ''
     }
   });
   const { mutate, isLoading } = updatePessoa(reset, handleClose);
@@ -265,7 +272,7 @@ const ModalUpdateCliente = ({
             name="telefone"
             register={register}
             inputArea={false}
-            errors={errors.email}
+            errors={errors.telefone}
             placeholder="Digite o telefone"
             minW="135px"
             setValue={setValue}
@@ -349,7 +356,7 @@ const ModalUpdateCliente = ({
         >
           <FieldWrap>
             <span>
-              CEP <Asterisk />
+              CEP
             </span>
 
             <Input
@@ -369,7 +376,7 @@ const ModalUpdateCliente = ({
 
           <FieldWrap>
             <span>
-              Cidade <Asterisk />
+              Cidade
             </span>
 
             <Input
@@ -385,7 +392,7 @@ const ModalUpdateCliente = ({
 
           <FieldWrap>
             <span>
-              Estado <Asterisk />
+              Estado
             </span>
 
             <Input
@@ -409,7 +416,7 @@ const ModalUpdateCliente = ({
         >
           <FieldWrap>
             <span>
-              Logradouro <Asterisk />
+              Logradouro
             </span>
 
             <Input
@@ -424,7 +431,7 @@ const ModalUpdateCliente = ({
 
           <FieldWrap>
             <span>
-              Bairro <Asterisk />
+              Bairro
             </span>
 
             <Input
@@ -440,7 +447,7 @@ const ModalUpdateCliente = ({
 
           <FieldWrap>
             <span>
-              Nº <Asterisk />
+              Nº
             </span>
 
             <Input

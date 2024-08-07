@@ -32,7 +32,7 @@ const getPessoas = ({ page, size }: IPessoaArgs): IPessoaResponse => {
             orderBy: 'nome'
           },
         });
-
+        
         return data
       } catch (error: any) {
         throw new Warning(error.response.data.message, error.response.status);
@@ -81,9 +81,9 @@ const createPessoa = (
     async (data: ICreatePessoaArgs) => {
 
       const urlPath = 'pessoas/create'
-      data.telefone = data.telefone ? extractNumbers(data.telefone) : data?.telefone
-      data.telefoneWpp = data.telefoneWpp ? extractNumbers(data.telefoneWpp) : data?.telefone
-      data.telefoneContato = data.telefoneContato ? extractNumbers(data.telefoneContato) : data?.telefone
+      data.telefone = data.telefone ? extractNumbers(data.telefone) : null
+      data.telefoneWpp = data.telefoneWpp ? extractNumbers(data.telefoneWpp) : null
+      data.telefoneContato = data.telefoneContato ? extractNumbers(data.telefoneContato) : null
       data.dataNascimento = data.dataNascimento ? data.dataNascimento : null
 
       try {
@@ -119,9 +119,10 @@ const updatePessoa = (
     async (data: IUpdatePessoaArgs) => {
 
       const urlPath = `pessoas/update/${data.id}`;
-      data.telefone = data.telefone ? extractNumbers(data.telefone) : data?.telefone
-      data.telefoneWpp = data.telefoneWpp ? extractNumbers(data.telefoneWpp) : data?.telefone
-      data.telefoneContato = data.telefoneContato ? extractNumbers(data.telefoneContato) : data?.telefone      
+      data.telefone = data.telefone ? extractNumbers(data.telefone) : null
+      data.telefoneWpp = data.telefoneWpp ? extractNumbers(data.telefoneWpp) : null
+      data.telefoneContato = data.telefoneContato ? extractNumbers(data.telefoneContato) : null
+      data.dataNascimento = data.dataNascimento ? data.dataNascimento : null
 
       try {
         await apiPrados.put(urlPath, data).then(() => {

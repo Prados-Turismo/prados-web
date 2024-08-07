@@ -13,6 +13,15 @@ export interface IPessoa {
   ativo: boolean
   dataNascimento?: string | null
   usuarioCadastro: string
+  Endereco: [{
+    logradouro: string
+    numero: string
+    complemento: string | null
+    cep: string
+    cidade: string
+    uf: string
+    bairro: string
+  }]
 }
 
 export interface IPessoaArgs {
@@ -45,6 +54,13 @@ export interface ICreatePessoaArgs {
   ativo: boolean
   dataNascimento: Date | null
   usuarioCadastro: string
+  logradouro: string | null
+  numero: string | null
+  complemento: string | null | null
+  cep: string | null
+  cidade: string | null
+  uf: string | null
+  bairro: string | null
 }
 
 export interface IUpdatePessoaResponse {

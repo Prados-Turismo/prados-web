@@ -7,7 +7,7 @@ import { z } from "zod";
 import Asterisk from "../../../../components/Asterisk";
 
 // Hooks
-import usePessoas from "../../../../hooks/usePessoas";
+import useFornecedor from "../../../../hooks/useFornecedor";
 import useEndereco from "../../../../hooks/useEndereco";
 
 import {
@@ -16,11 +16,11 @@ import {
 
 import { FieldWrap } from "./styled";
 import { useGlobal } from "../../../../contexts/UserContext";
-import SelectForm from "../../../../components/SelectForm";
 import FormInput from "../../../../components/FormInput";
 import { FormEvent, useState } from "react";
-import { cellphoneMask, cellphoneValidation, cepMask, cpfMask } from "../../../../utils/fieldMask";
+import { cellphoneMask, cnpjMask } from "../../../../utils/fieldMask";
 import { IEndereco } from "../../../../models/endereco.model";
+import { IFornecedor } from "../../../../models/fornecedor.model";
 
 const handleSubmitRegisterSchema = z.object({
   nome: z
@@ -28,32 +28,30 @@ const handleSubmitRegisterSchema = z.object({
     .min(1, {
       message: fieldRequired("nome"),
     }),
-  cpf: z
+  cnpj: z
     .string()
     .min(1, {
-      message: fieldRequired('cpf')
+      message: fieldRequired('cnpj')
     }),
   email: z
     .string()
     .min(1, {
       message: fieldRequired('email')
     }),
-  sexo: z
+  fantasia: z
     .string()
     .min(1, {
-      message: fieldRequired('sexo')
+      message: fieldRequired('fantasia')
     }),
-  observacoes: z
+  site: z
     .string(),
   contato: z
     .string(),
   telefone: z
     .string(),
-  telefoneWpp: z
+  observacoes: z
     .string(),
   telefoneContato: z
-    .string(),
-  dataNascimento: z
     .string(),
   cep: z
     .string(),
@@ -73,15 +71,17 @@ const handleSubmitRegisterSchema = z.object({
 
 type IhandleSubmitRegister = z.infer<typeof handleSubmitRegisterSchema>;
 
-interface IModalRegisterCliente {
-  handleClose: () => void;
+interface IModalUpdateFornecedor {
+  handleClose: () => void
+  data: IFornecedor
 }
 
-const ModalRegisterCliente = ({
+const ModalUpdateFornecedor = ({
   handleClose,
-}: IModalRegisterCliente) => {
+  data
+}: IModalUpdateFornecedor) => {
   const { user } = useGlobal();
-  const { createPessoa } = usePessoas();
+  const { updateFornecedor } = useFornecedor();
   const { buscaCep } = useEndereco();
 
   const {
@@ -92,16 +92,33 @@ const ModalRegisterCliente = ({
     formState: { errors },
   } = useForm<IhandleSubmitRegister>({
     resolver: zodResolver(handleSubmitRegisterSchema),
+    defaultValues: {
+      nome: data.nome,
+      cnpj: data.cnpj,
+      email: data.email,
+      observacoes: data?.observacoes || undefined,
+      contato: data?.contato || undefined,
+      telefone: data.telefone ? cellphoneMask(data.telefone) : undefined,
+      telefoneContato: data.telefoneContato ? cellphoneMask(data.telefoneContato) : undefined,
+      site: data.site || '',
+      fantasia: data.fantasia,
+      cep: data.Endereco?.cep || '',
+      logradouro: data.Endereco?.logradouro || '',
+      numero: data.Endereco?.numero || '',
+      complemento: data.Endereco?.complemento || '',
+      cidade: data.Endereco?.cidade || '',
+      uf: data.Endereco?.uf || '',
+      bairro: data.Endereco?.bairro || ''
+    }
   });
-
-  const { mutate, isLoading } = createPessoa(reset, handleClose);
-  const [errorPhone, setErrorPhone] = useState(false);
-  const [cepValue, setCepValue] = useState('');
+  const { mutate, isLoading } = updateFornecedor(reset, handleClose);
   const { mutate: mutateToGetCep, isLoading: isLoadingCep } = buscaCep();
+  const [cepValue, setCepValue] = useState('');
 
   const handleSubmitRegister = (submitData: IhandleSubmitRegister) => {
     mutate({
       ...submitData,
+      id: data.id,
       usuarioCadastro: user?.id
     })
   };
@@ -119,19 +136,6 @@ const ModalRegisterCliente = ({
     }
   };
 
-  const cepMasked = (event: FormEvent<HTMLInputElement>) => {
-    // Remove any non-digit characters
-    const digits = event.currentTarget.value.replace(/\D/g, '');
-
-    // Format the digits into the "00000-000" pattern
-    if (digits.length <= 5) {
-      return digits;
-    } else {
-      return `${digits.slice(0, 5)}-${digits.slice(5, 8)}`;
-    }
-  };
-
-
   const phoneMask = (event: FormEvent<HTMLInputElement>) => {
 
     event.currentTarget.value = cellphoneMask(
@@ -146,9 +150,9 @@ const ModalRegisterCliente = ({
           */
   }
 
-  const cpfMasked = (event: FormEvent<HTMLInputElement>) => {
+  const cnpjMasked = (event: FormEvent<HTMLInputElement>) => {
 
-    event.currentTarget.value = cpfMask(
+    event.currentTarget.value = cnpjMask(
       event.currentTarget.value,
     );
 
@@ -160,17 +164,6 @@ const ModalRegisterCliente = ({
         }
           */
   }
-
-  const dataSexo = [
-    {
-      id: 'M',
-      nome: "Masculino"
-    },
-    {
-      id: 'F',
-      nome: "Feminino"
-    }
-  ]
 
   return (
     <form
@@ -196,6 +189,20 @@ const ModalRegisterCliente = ({
           {errors.nome && <p className="error">{errors.nome.message}</p>}
         </FieldWrap>
 
+        <FieldWrap>
+          <span>
+            Fantasia <Asterisk />
+          </span>
+
+          <Input
+            placeholder="Digite a fantasia"
+            id="fantasia"
+            type="text"
+            {...register("fantasia")}
+          />
+          {errors.fantasia && <p className="error">{errors.fantasia.message}</p>}
+        </FieldWrap>
+
         <Flex
           gap="15px"
           flexDirection={{
@@ -205,45 +212,33 @@ const ModalRegisterCliente = ({
         >
           <FieldWrap>
             <span>
-              CPF <Asterisk />
+              CNPJ <Asterisk />
             </span>
             <Input
-              placeholder="Digite o cpf"
-              id="cpf"
+              placeholder="Digite o CNPJ"
+              id="CNPJ"
               type="text"
-              {...register("cpf")}
-              onInput={cpfMasked}
+              {...register("cnpj")}
+              onInput={cnpjMasked}
+              minW="180px"
+              maxW="180px"
             />
-            {errors.cpf && <p className="error">{errors.cpf.message}</p>}
+            {errors.cnpj && <p className="error">{errors.cnpj.message}</p>}
           </FieldWrap>
 
-          <SelectForm
-            name="sexo"
-            label="Sexo"
-            isRequired
-            handleChange={(option) => {
-              setValue("sexo", option?.value);
-            }}
-            options={dataSexo
-              ?.map((sexo) => ({
-                label: sexo?.nome,
-                value: sexo?.id,
-              }))}
-            errors={errors.sexo}
+          <FormInput
+            id="site"
+            label="Site"
+            type="text"
+            name="site"
+            register={register}
+            inputArea={false}
+            errors={errors.site}
+            placeholder="Digite o site"
+            minW="220px"
+            maxLengthInpt={15}
           />
         </Flex>
-
-        <FormInput
-          id="email"
-          label="E-Mail"
-          type="text"
-          name="email"
-          register={register}
-          inputArea={false}
-          errors={errors.email}
-          placeholder="Digite o E-Mail"
-          isRequired
-        />
 
         <Flex
           gap="15px"
@@ -252,35 +247,34 @@ const ModalRegisterCliente = ({
             lg: "row",
           }}
         >
-          <FieldWrap>
-            <FormInput
-              id="telefone"
-              label="Telefone"
-              type="text"
-              name="telefone"
-              register={register}
-              inputArea={false}
-              errors={errors.telefone}
-              placeholder="Digite o telefone"
-              minW="135px"
-              maxLengthInpt={15}
-              onInput={phoneMask}
-            />
-          </FieldWrap>
 
           <FormInput
-            id="telefoneWpp"
-            label="Whatsapp"
+            id="telefone"
+            label="Telefone"
             type="text"
-            name="telefoneWpp"
+            name="telefone"
             register={register}
             inputArea={false}
-            errors={errors.telefoneWpp}
-            placeholder="Digite o Wpp"
-            minW="135px"
-            onInput={phoneMask}
+            errors={errors.telefone}
+            placeholder="Digite o telefone"
             maxLengthInpt={15}
+            onInput={phoneMask}
+            minW="135px"
           />
+
+          <FormInput
+            id="email"
+            label="E-Mail"
+            type="text"
+            name="email"
+            register={register}
+            inputArea={false}
+            errors={errors.email}
+            placeholder="Digite o E-Mail"
+            isRequired
+            minW="135px"
+          />
+
         </Flex>
 
         <Flex
@@ -318,22 +312,6 @@ const ModalRegisterCliente = ({
           />
 
         </Flex>
-
-        <FormControl
-          minW="50%"
-          isInvalid={errors.dataNascimento?.message ? true : false}
-        >
-          <FormLabel>Data Nascimento</FormLabel>
-          <Input
-            type="date"
-            minW="50%"
-            placeholder="dd/mm/aaaa"
-            max="2099-12-31"
-            maxLength={10}
-            {...register("dataNascimento")}
-          />
-          <FormErrorMessage>{errors.dataNascimento?.message}</FormErrorMessage>
-        </FormControl>
 
         <Flex
           gap="15px"
@@ -490,4 +468,4 @@ const ModalRegisterCliente = ({
   );
 };
 
-export default ModalRegisterCliente;
+export default ModalUpdateFornecedor;

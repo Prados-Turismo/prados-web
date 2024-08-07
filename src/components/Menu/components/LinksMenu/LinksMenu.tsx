@@ -97,6 +97,9 @@ const LinksMenu = ({ onClose }: ILinksMenu) => {
               <MenuItem>
                 <Link to="/cliente">Cliente</Link>
               </MenuItem>
+              <MenuItem>
+                <Link to="/fornecedor">Fornecedor</Link>
+              </MenuItem>
             </MenuList>
           </Box>
         )}

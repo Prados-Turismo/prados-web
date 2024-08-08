@@ -16,7 +16,7 @@ import { ISelect } from "../../../models/generics.model";
 import ModalRecordExcursao from "../components/ModalRegisterExcursao";
 import AlertNoDataFound from "../../../components/AlertNoDataFound";
 import useExcursoes from "../../../hooks/useExcursao";
-import { MdEdit } from "react-icons/md";
+import { MdEdit, MdPublish } from "react-icons/md";
 import ModalUpdateExcursao from "../components/ModalUpdateExcursao";
 import { IExcursao } from "../../../models/excursao.model";
 import ButtonIcon from "../../../components/ButtonIcon";
@@ -24,16 +24,18 @@ import AlertModal from "../../../components/AlertModal";
 import { IoBed } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import { dateFormat } from "../../../utils";
+import { currencyBRLFormat } from "../../../utils/currencyBRLFormat";
 
 const ExcursaoList = () => {
   const navigate = useNavigate();
-  const { getExcursoes, deleteExcursao } = useExcursoes();
+  const { getExcursoes, deleteExcursao, publicarExcursao } = useExcursoes();
 
   const [statusSelected, setStatusSelected] = useState<ISelect | null>();
   const [resetFilter, setResetFilter] = useState(false);
   const [modalRecordExcursao, setModalRecordExcursao] = useState(false);
   const [modalUpdateExcursao, setModalUpdateExcursao] = useState(false);
   const [modalRemoveExcursao, setModalRemoveExcursao] = useState(false);
+  const [modalPublishExcursao, setModalPublishExcursao] = useState(false);
   const [excursaoData, setExcursaoData] = useState<IExcursao | undefined>();
   const [currentPage, setCurrentPage] = useState(1);
   const registerPerPage = 10;
@@ -46,9 +48,17 @@ const ExcursaoList = () => {
   const { mutate: mutateToDeleteExcursao, isLoading: isLoadingDelete } = deleteExcursao();
   const [deleteItemId, setDeleteExcursaoId] = useState('');
 
+  const { mutate: mutateToPublishExcursao, isLoading: isLoadingPublish } = publicarExcursao();
+  const [publishItemId, setPublishExcursaoId] = useState('');
+
   const onConfirmRemoveExcursao = () => {
     mutateToDeleteExcursao(deleteItemId || "");
     setModalRemoveExcursao(false);
+  };
+
+  const onConfirmPublishExcursao = () => {
+    mutateToPublishExcursao(publishItemId || "");
+    setModalPublishExcursao(false);
   };
 
   return (
@@ -134,6 +144,7 @@ const ExcursaoList = () => {
                       <TD>Data Fim</TD>
                       <TD>Valor</TD>
                       <TD>Status</TD>
+                      <TD>Publicada Loja</TD>
                       <TD></TD>
                     </THead>
 
@@ -153,21 +164,36 @@ const ExcursaoList = () => {
                             {dateFormat(new Date(item.dataFim))}
                           </TD>
                           <TD>
-                            {item.valor}
+                            {currencyBRLFormat(item.valor)}
                           </TD>
                           <TD>
                             {item.ativo ? "Ativo" : "Inativo"}
                           </TD>
+                          <TD>{item.publicadoSite ? "Publicada" : "Aguardando Publicação"}</TD>
                           <TD gap={3}>
-                            <MdEdit
-                              size={20}
-                              // color={customTheme.colors.brandSecond.first}
-                              cursor="pointer"
-                              onClick={() => {
-                                setExcursaoData(item)
-                                setModalUpdateExcursao(true)
-                              }}
-                            />
+
+                            <ButtonIcon tooltip="Publicar">
+                              <MdPublish
+                                size={20}
+                                cursor="pointer"
+                                onClick={() => {
+                                  setPublishExcursaoId(item.id)
+                                  setModalPublishExcursao(true)
+                                }}
+                              />
+                            </ButtonIcon>
+
+                            <ButtonIcon tooltip="Editar">
+                              <MdEdit
+                                size={20}
+                                // color={customTheme.colors.brandSecond.first}
+                                cursor="pointer"
+                                onClick={() => {
+                                  setExcursaoData(item)
+                                  setModalUpdateExcursao(true)
+                                }}
+                              />
+                            </ButtonIcon>
 
                             <ButtonIcon tooltip="Ônibus">
                               <IoMdBus
@@ -228,7 +254,7 @@ const ExcursaoList = () => {
             )}
           </>
         )}
-      </Content>
+      </Content >
 
       <SimpleModal
         title="Excursão"
@@ -241,34 +267,55 @@ const ExcursaoList = () => {
         />
       </SimpleModal>
 
-      {excursaoData && (
-        <SimpleModal
-          title="Excursão"
-          size="xl"
-          isOpen={modalUpdateExcursao}
-          handleModal={setModalUpdateExcursao}
-        >
-          <ModalUpdateExcursao
-            handleClose={() => setModalUpdateExcursao(false)}
-            data={excursaoData}
-          />
-        </SimpleModal>
-      )}
+      {
+        excursaoData && (
+          <SimpleModal
+            title="Excursão"
+            size="xl"
+            isOpen={modalUpdateExcursao}
+            handleModal={setModalUpdateExcursao}
+          >
+            <ModalUpdateExcursao
+              handleClose={() => setModalUpdateExcursao(false)}
+              data={excursaoData}
+            />
+          </SimpleModal>
+        )
+      }
 
-      {!isLoadingDelete && (
-        <>
-          {modalRemoveExcursao && (
-            <AlertModal
-              title="Remover Excursão"
-              question="Deseja realmente remover esta excursão?"
-              request={onConfirmRemoveExcursao}
-              showModal={modalRemoveExcursao}
-              setShowModal={setModalRemoveExcursao}
-              size="md"
-            ></AlertModal>
-          )}
-        </>
-      )}
+      {
+        !isLoadingDelete && (
+          <>
+            {modalRemoveExcursao && (
+              <AlertModal
+                title="Remover Excursão"
+                question="Deseja realmente remover esta excursão?"
+                request={onConfirmRemoveExcursao}
+                showModal={modalRemoveExcursao}
+                setShowModal={setModalRemoveExcursao}
+                size="md"
+              ></AlertModal>
+            )}
+          </>
+        )
+      }
+
+      {
+        !isLoadingPublish && (
+          <>
+            {modalPublishExcursao && (
+              <AlertModal
+                title="Publicar Excursão"
+                question="Deseja realmente publicar esta excursão?"
+                request={onConfirmPublishExcursao}
+                showModal={modalPublishExcursao}
+                setShowModal={setModalPublishExcursao}
+                size="md"
+              ></AlertModal>
+            )}
+          </>
+        )
+      }
     </>
   );
 };

@@ -63,82 +63,13 @@ const SideBar = ({ status }: ISidebar) => {
                     {currencyBRLFormat(item.confirmado)}
                   </Td>
                   <Td fontSize="0.9rem">
-                  {currencyBRLFormat(item.projetado)}
+                    {currencyBRLFormat(item.projetado)}
                   </Td>
                 </Tr>
               ))}
             </Tbody>
           </Table>
         </TableContainer>
-
-        <Wrap>
-          <h2 className="title">
-            <span>Resultados (R$)</span>
-          </h2>
-
-          <div className="menu">
-            <TableContainer>
-              <Table>
-                <Thead padding="0 30px 0 30px">
-                  <Td minWidth={250}></Td>
-                  <Td></Td>
-                </Thead>
-
-                <Tbody>
-                  <Tr letterSpacing={1}>
-                    <Td fontSize="0.9rem" fontWeight="bold">
-                      Entradas
-                    </Td>
-                    <Td fontSize="0.9rem">
-                      {currencyBRLFormat(0)}
-                    </Td>
-                  </Tr>
-                  <Tr>
-                    <Td fontSize="0.9rem">
-                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Receitas
-                    </Td>
-                    <Td fontSize="0.9rem">
-                      {currencyBRLFormat(0)}
-                    </Td>
-                  </Tr>
-                  <Tr>
-                    <Td fontSize="0.9rem">
-                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Transferências
-                    </Td>
-                    <Td fontSize="0.9rem">
-                      {currencyBRLFormat(0)}
-                    </Td>
-                  </Tr>
-
-                  <Tr>
-                    <Td fontSize="0.9rem" fontWeight="bold">
-                      Saídas
-                    </Td>
-                    <Td fontSize="0.9rem">
-                      {currencyBRLFormat(0)}
-                    </Td>
-                  </Tr>
-                  <Tr>
-                    <Td fontSize="0.9rem">
-                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Despesas
-                    </Td>
-                    <Td fontSize="0.9rem">
-                      {currencyBRLFormat(0)}
-                    </Td>
-                  </Tr>
-                  <Tr>
-                    <Td fontSize="0.9rem">
-                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Transferências
-                    </Td>
-                    <Td fontSize="0.9rem">
-                      {currencyBRLFormat(0)}
-                    </Td>
-                  </Tr>
-                </Tbody>
-              </Table>
-            </TableContainer>
-          </div>
-        </Wrap>
       </Aside>
     </>
   );

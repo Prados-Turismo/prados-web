@@ -121,7 +121,7 @@ const ModalRegisterExcursao = ({
         </FieldWrap>
 
         <FieldWrap>
-          <span>Pacote</span>
+          <span>Pacote <Asterisk /></span>
 
           <Box display="flex" gap="10px">
             <ReactSelect

@@ -5,6 +5,7 @@ export interface IExcursao {
   dataFim: string
   observacoes: string | null
   ativo: boolean
+  publicadoSite: boolean
   gerouFinanceiro: boolean
   vagas: number
   valor: number

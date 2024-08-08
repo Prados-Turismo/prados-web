@@ -160,12 +160,40 @@ const deleteExcursao = (): IUpdateExcursaoResponse => {
   }
 }
 
+const publicarExcursao = (): IUpdateExcursaoResponse => {
+
+  const { isLoading, mutate } = useMutation(
+    async (id: string) => {
+      const urlPath = `excursao/publish/${id}`
+
+      try {
+        await apiPrados.patch(urlPath).then(function () {
+          queryClient.invalidateQueries([keys.excursao])
+
+          useToastStandalone({
+            title: "Excursão publicada com sucesso!",
+            status: "success"
+          })
+        })
+      } catch (error: any) {
+        throw new Warning(error.response.data.message, error?.response?.status);
+      }
+    }
+  )
+
+  return {
+    isLoading,
+    mutate
+  }
+}
+
 export default function useExcursoes() {
   return {
     getExcursoes,
     getExcursao,
     createExcursao,
     updateExcursao,
-    deleteExcursao
+    deleteExcursao,
+    publicarExcursao
   }
 }

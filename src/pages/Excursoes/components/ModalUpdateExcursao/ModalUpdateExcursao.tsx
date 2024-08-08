@@ -95,7 +95,7 @@ const ModalUpdateExcursao = ({
       observacoes: data.observacoes || '',
       dataInicio: data.dataInicio.split('T')[0],
       dataFim: data.dataFim.split('T')[0],
-      codigoPacote: data.codigoPacote
+      codigoPacote: data.codigoPacote,
     }
   });
 
@@ -136,7 +136,7 @@ const ModalUpdateExcursao = ({
         </FieldWrap>
 
         <FieldWrap>
-          <span>Pacote</span>
+          <span>Pacote <Asterisk /></span>
 
           <Box display="flex" gap="10px">
             <ReactSelect
@@ -271,6 +271,7 @@ const ModalUpdateExcursao = ({
           maxLength={25}
           isRequired
           errors={errors.valor}
+          value={getValues('valor')}
         />
 
         <FormInput

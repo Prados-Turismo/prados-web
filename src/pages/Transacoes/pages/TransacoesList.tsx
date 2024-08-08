@@ -31,9 +31,9 @@ const TransacoesList = () => {
   const [statusSelected, setStatusSelected] = useState<ISelect | null>();
   const [resetFilter, setResetFilter] = useState(false);
   const [modalRecordTransacao, setModalRecordProduct] = useState(false);
-  const [modalUpdateProduct, setModalUpdateTransacao] = useState(false);
-  const [modalRemoveProduto, setModalRemoveProduto] = useState(false);
-  const [productData, setProductData] = useState<ITransacao | undefined>();
+  const [modalUpdateTransacao, setModalUpdateTransacao] = useState(false);
+  const [modalRemoveTransacao, setModalRemoveTransacao] = useState(false);
+  const [transacaoData, setTransacaoData] = useState<ITransacao | undefined>();
   const [currentPage, setCurrentPage] = useState(1);
   const registerPerPage = 10;
 
@@ -47,7 +47,7 @@ const TransacoesList = () => {
 
   const onConfirmRemoveProduto = () => {
     mutateToDeleteTransacao(deleteItemId || "");
-    setModalRemoveProduto(false);
+    setModalRemoveTransacao(false);
   };
 
   return (
@@ -205,7 +205,7 @@ const TransacoesList = () => {
                               // color={customTheme.colors.brandSecond.first}
                               cursor="pointer"
                               onClick={() => {
-                                setProductData(item)
+                                setTransacaoData(item)
                                 setModalUpdateTransacao(true)
                               }}
                             />
@@ -217,7 +217,7 @@ const TransacoesList = () => {
                                 alignItems="center"
                                 colorScheme="red"
                                 onClick={() => {
-                                  setModalRemoveProduto(true)
+                                  setModalRemoveTransacao(true)
                                   setDeleteTransacaoId(item.id)
                                 }}
                               >
@@ -280,27 +280,27 @@ const TransacoesList = () => {
         />
       </SimpleModal>
 
-      {productData && (
+      {transacaoData && (
         <SimpleModal
           title="Transação"
           size="xl"
-          isOpen={modalUpdateProduct}
+          isOpen={modalUpdateTransacao}
           handleModal={setModalUpdateTransacao}
         >
           <ModalUpdateTransacao
             handleClose={() => setModalUpdateTransacao(false)}
-            data={productData}
+            data={transacaoData}
           />
         </SimpleModal>
       )}
 
-      {modalRemoveProduto && (
+      {modalRemoveTransacao && (
         <AlertModal
           title="Remover transação"
           question="Deseja realmente remover esta transação?"
           request={onConfirmRemoveProduto}
-          showModal={modalRemoveProduto}
-          setShowModal={setModalRemoveProduto}
+          showModal={modalRemoveTransacao}
+          setShowModal={setModalRemoveTransacao}
           size="md"
         ></AlertModal>
       )}

@@ -29,6 +29,28 @@ const handleSubmitRegisterSchema = z.object({
     .min(0, {
       message: fieldRequired('taxa')
     }),
+  taxa2x: z
+    .number(),
+  taxa3x: z
+    .number(),
+  taxa4x: z
+    .number(),
+  taxa5x: z
+    .number(),
+  taxa6x: z
+    .number(),
+  taxa7x: z
+    .number(),
+  taxa8x: z
+    .number(),
+  taxa9x: z
+    .number(),
+  taxa10x: z
+    .number(),
+  taxa11x: z
+    .number(),
+  taxa12x: z
+    .number(),
   ativo: z
     .boolean()
     .refine(value => value != undefined, {
@@ -113,20 +135,6 @@ const ModalRegisterFormaPagamento = ({
             lg: "row",
           }}
         >
-          <FormInputNumber
-            height="40px"
-            label="Taxa"
-            minWidth="200px"
-            {...register("taxa")}
-            setValue={setValue}
-            flex="1.01"
-            name="taxa"
-            maxLength={25}
-            isRequired
-            dontAllowNegative
-            errors={errors.taxa}
-            prefix="percentual"
-          />
 
           <FormInputNumber
             height="40px"
@@ -141,14 +149,7 @@ const ModalRegisterFormaPagamento = ({
             dontAllowNegative
             errors={errors.qtdDiasRecebimento}
           />
-        </Flex>
 
-        <Flex
-          gap="15px"
-          flexDirection={{
-            base: "column",
-            lg: "row",
-          }}>
           <SelectForm
             name="ativo"
             label="Status"
@@ -163,6 +164,210 @@ const ModalRegisterFormaPagamento = ({
               }))}
             errors={errors.ativo}
           />
+        </Flex>
+
+        <Flex
+          gap="15px"
+          flexDirection={{
+            base: "column",
+            lg: "row",
+          }}>
+
+          <FormInputNumber
+            label="Taxa"
+            {...register("taxa")}
+            setValue={setValue}
+            flex="1.01"
+            name="taxa"
+            maxLength={25}
+            isRequired
+            dontAllowNegative
+            errors={errors.taxa}
+            prefix="percentual"
+            minWidth="90px"
+            maxWidth="33%"
+          />
+
+          <FormInputNumber
+            label="Taxa 2x"
+            {...register("taxa2x")}
+            setValue={setValue}
+            flex="1.01"
+            name="taxa2x"
+            maxLength={25}
+            dontAllowNegative
+            errors={errors.taxa}
+            prefix="percentual"
+            minWidth="90px"
+            maxWidth="33%"
+          />
+
+          <FormInputNumber
+            label="Taxa 3x"
+            {...register("taxa3x")}
+            setValue={setValue}
+            flex="1.01"
+            name="taxa3x"
+            maxLength={25}
+            dontAllowNegative
+            errors={errors.taxa}
+            prefix="percentual"
+            minWidth="90px"
+            maxWidth="33%"
+          />
+        </Flex>
+
+        <Flex
+          gap="15px"
+          flexDirection={{
+            base: "column",
+            lg: "row",
+          }}>
+
+          <FormInputNumber
+            label="Taxa 4x"
+            {...register("taxa4x")}
+            setValue={setValue}
+            flex="1.01"
+            name="taxa4x"
+            maxLength={25}
+            dontAllowNegative
+            errors={errors.taxa}
+            prefix="percentual"
+            minWidth="90px"
+            maxWidth="33%"
+          />
+
+          <FormInputNumber
+            label="Taxa 5x"
+            {...register("taxa5x")}
+            setValue={setValue}
+            flex="1.01"
+            name="taxa5x"
+            maxLength={25}
+            dontAllowNegative
+            errors={errors.taxa}
+            prefix="percentual"
+            minWidth="90px"
+            maxWidth="33%"
+          />
+
+          <FormInputNumber
+            label="Taxa 6x"
+            {...register("taxa6x")}
+            setValue={setValue}
+            flex="1.01"
+            name="taxa6x"
+            maxLength={25}
+            dontAllowNegative
+            errors={errors.taxa}
+            prefix="percentual"
+            minWidth="90px"
+            maxWidth="33%"
+          />
+
+        </Flex>
+
+        <Flex
+          gap="15px"
+          flexDirection={{
+            base: "column",
+            lg: "row",
+          }}>
+
+          <FormInputNumber
+            label="Taxa 7x"
+            {...register("taxa7x")}
+            setValue={setValue}
+            flex="1.01"
+            name="taxa7x"
+            maxLength={25}
+            dontAllowNegative
+            errors={errors.taxa}
+            prefix="percentual"
+            minWidth="90px"
+            maxWidth="33%"
+          />
+
+          <FormInputNumber
+            label="Taxa 8x"
+            {...register("taxa8x")}
+            setValue={setValue}
+            flex="1.01"
+            name="taxa8x"
+            maxLength={25}
+            dontAllowNegative
+            errors={errors.taxa}
+            prefix="percentual"
+            minWidth="90px"
+            maxWidth="33%"
+          />
+
+          <FormInputNumber
+            label="Taxa 9x"
+            {...register("taxa9x")}
+            setValue={setValue}
+            flex="1.01"
+            name="taxa9x"
+            maxLength={25}
+            dontAllowNegative
+            errors={errors.taxa}
+            prefix="percentual"
+            minWidth="90px"
+            maxWidth="33%"
+          />
+
+        </Flex>
+
+        <Flex
+          gap="15px"
+          flexDirection={{
+            base: "column",
+            lg: "row",
+          }}>
+
+          <FormInputNumber
+            label="Taxa 10x"
+            {...register("taxa10x")}
+            setValue={setValue}
+            flex="1.01"
+            name="taxa10x"
+            maxLength={25}
+            dontAllowNegative
+            errors={errors.taxa}
+            prefix="percentual"
+            minWidth="90px"
+            maxWidth="33%"
+          />
+
+          <FormInputNumber
+            label="Taxa 11x"
+            {...register("taxa11x")}
+            setValue={setValue}
+            flex="1.01"
+            name="taxa11x"
+            maxLength={25}
+            dontAllowNegative
+            errors={errors.taxa}
+            prefix="percentual"
+            minWidth="90px"
+            maxWidth="33%"
+          />
+
+          <FormInputNumber
+            label="Taxa 12x"
+            {...register("taxa12x")}
+            setValue={setValue}
+            flex="1.01"
+            name="taxa12x"
+            maxLength={25}
+            dontAllowNegative
+            errors={errors.taxa}
+            prefix="percentual"
+            minWidth="90px"
+            maxWidth="33%"
+          />
+
         </Flex>
 
         <Flex justifyContent="flex-end" gap="15px">

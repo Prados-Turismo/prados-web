@@ -45,7 +45,7 @@ const getAllFornecedores = (): IFornecedorResponse => {
 
   return {
     data: data || [],
-    count: data.count || 0,
+    count: 0,
     isLoading
   };
 }
@@ -68,7 +68,7 @@ const getFornecedores = ({ page, size }: IFornecedorArgs): IFornecedorResponse =
             orderBy: 'nome'
           },
         });
-        
+
         return data
       } catch (error: any) {
         throw new Warning(error.response.data.message, error.response.status);

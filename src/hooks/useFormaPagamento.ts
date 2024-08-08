@@ -38,7 +38,7 @@ const getAllFormaPagamentos = (): IFormaPagamentoResponse => {
   return {
     data: data || [],
     isLoading,
-    count: data.count || 0
+    count: 0
   };
 }
 

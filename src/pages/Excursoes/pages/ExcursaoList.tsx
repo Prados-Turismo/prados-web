@@ -144,6 +144,7 @@ const ExcursaoList = () => {
                       <TD>Data Fim</TD>
                       <TD>Valor</TD>
                       <TD>Status</TD>
+                      <TD>Vagas</TD>
                       <TD>Publicada Loja</TD>
                       <TD></TD>
                     </THead>
@@ -169,7 +170,12 @@ const ExcursaoList = () => {
                           <TD>
                             {item.ativo ? "Ativo" : "Inativo"}
                           </TD>
-                          <TD>{item.publicadoSite ? "Publicada" : "Aguardando Publicação"}</TD>
+                          <TD>
+                            {item.vagas}
+                          </TD>
+                          <TD>
+                            {item.publicadoSite ? "Publicada" : "Aguardando Publicação"}
+                          </TD>
                           <TD gap={3}>
 
                             <ButtonIcon tooltip="Publicar">

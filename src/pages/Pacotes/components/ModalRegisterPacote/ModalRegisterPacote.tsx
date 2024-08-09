@@ -27,11 +27,6 @@ const handleSubmitRegisterSchema = z.object({
     .min(1, {
       message: fieldRequired("nome"),
     }),
-  valor: z
-    .number()
-    .min(1, {
-      message: fieldRequired("valor"),
-    }),
   descricao: z
     .string()
     .optional(),

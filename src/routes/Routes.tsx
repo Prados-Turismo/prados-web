@@ -49,6 +49,7 @@ import ContaBancaria from "../pages/ContaBancaria";
 import FormaPagamento from "../pages/FormaPagamento";
 import Clientes from "../pages/Clientes";
 import Fornecedor from "../pages/Fornecedor";
+import Reservas from "../pages/Reservas";
 
 export const AppRoutes = () => {
   const location = useLocation();
@@ -91,6 +92,7 @@ export const AppRoutes = () => {
         <Route path="/forma-pagamento" element={<FormaPagamento />} />
         <Route path="/cliente" element={<Clientes />} />
         <Route path="/fornecedor" element={<Fornecedor />} />
+        <Route path="/reservas" element={<Reservas />} />
 
         <Route path="/politica-privacidade" element={<PrivacyPolicy />} />
 

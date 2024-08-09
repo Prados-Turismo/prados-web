@@ -43,8 +43,6 @@ const QuartosList = () => {
     page: currentPage
   });
 
-  debugger
-
   const { mutate: mutateToDeleteExcursaoQuarto } = deleteExcursaoQuarto();
   const [deleteItemId, setDeleteExcursaoQuartoId] = useState('');
 

@@ -17,6 +17,10 @@ export interface IExcursaoPassageiro {
   embarcou: boolean
   hasBoarded: string
   horaEmbarque: string
+  Reservas: {
+    reserva: string
+  },
+  dataCadastro: string
   LocalEmbarque: {
     id: string
     nome: string

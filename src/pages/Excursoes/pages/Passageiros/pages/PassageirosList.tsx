@@ -35,7 +35,8 @@ const PassageirosList = () => {
 
   const { data, count, isLoading } = getAllPassageiros({
     size: registerPerPage,
-    page: currentPage
+    page: currentPage,
+    localEmbarque: null
   }, _id || '');
 
   return (
@@ -131,7 +132,7 @@ const PassageirosList = () => {
                             {item.Pessoa.nome}
                           </TD>
                           <TD>
-                            {item.reserva}
+                            {item.Reservas.reserva}
                           </TD>
                           <TD>
                             {phoneMask(item.Pessoa.telefoneWpp || '')}

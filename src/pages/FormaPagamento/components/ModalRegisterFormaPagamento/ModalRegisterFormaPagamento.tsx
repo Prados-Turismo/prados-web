@@ -30,27 +30,38 @@ const handleSubmitRegisterSchema = z.object({
       message: fieldRequired('taxa')
     }),
   taxa2x: z
-    .number(),
+    .number()
+    .optional(),
   taxa3x: z
-    .number(),
+    .number()
+    .optional(),
   taxa4x: z
-    .number(),
+    .number()
+    .optional(),
   taxa5x: z
-    .number(),
+    .number()
+    .optional(),
   taxa6x: z
-    .number(),
+    .number()
+    .optional(),
   taxa7x: z
-    .number(),
+    .number()
+    .optional(),
   taxa8x: z
-    .number(),
+    .number()
+    .optional(),
   taxa9x: z
-    .number(),
+    .number()
+    .optional(),
   taxa10x: z
-    .number(),
+    .number()
+    .optional(),
   taxa11x: z
-    .number(),
+    .number()
+    .optional(),
   taxa12x: z
-    .number(),
+    .number()
+    .optional(),
   ativo: z
     .boolean()
     .refine(value => value != undefined, {
@@ -189,6 +200,7 @@ const ModalRegisterFormaPagamento = ({
           />
 
           <FormInputNumber
+            isRequired={false}
             label="Taxa 2x"
             {...register("taxa2x")}
             setValue={setValue}
@@ -196,13 +208,14 @@ const ModalRegisterFormaPagamento = ({
             name="taxa2x"
             maxLength={25}
             dontAllowNegative
-            errors={errors.taxa}
+            errors={errors.taxa2x}
             prefix="percentual"
             minWidth="90px"
             maxWidth="33%"
           />
 
           <FormInputNumber
+            isRequired={false}
             label="Taxa 3x"
             {...register("taxa3x")}
             setValue={setValue}
@@ -210,7 +223,7 @@ const ModalRegisterFormaPagamento = ({
             name="taxa3x"
             maxLength={25}
             dontAllowNegative
-            errors={errors.taxa}
+            errors={errors.taxa3x}
             prefix="percentual"
             minWidth="90px"
             maxWidth="33%"
@@ -225,6 +238,7 @@ const ModalRegisterFormaPagamento = ({
           }}>
 
           <FormInputNumber
+            isRequired={false}
             label="Taxa 4x"
             {...register("taxa4x")}
             setValue={setValue}
@@ -232,13 +246,14 @@ const ModalRegisterFormaPagamento = ({
             name="taxa4x"
             maxLength={25}
             dontAllowNegative
-            errors={errors.taxa}
+            errors={errors.taxa4x}
             prefix="percentual"
             minWidth="90px"
             maxWidth="33%"
           />
 
           <FormInputNumber
+            isRequired={false}
             label="Taxa 5x"
             {...register("taxa5x")}
             setValue={setValue}
@@ -246,13 +261,14 @@ const ModalRegisterFormaPagamento = ({
             name="taxa5x"
             maxLength={25}
             dontAllowNegative
-            errors={errors.taxa}
+            errors={errors.taxa5x}
             prefix="percentual"
             minWidth="90px"
             maxWidth="33%"
           />
 
           <FormInputNumber
+            isRequired={false}
             label="Taxa 6x"
             {...register("taxa6x")}
             setValue={setValue}
@@ -260,7 +276,7 @@ const ModalRegisterFormaPagamento = ({
             name="taxa6x"
             maxLength={25}
             dontAllowNegative
-            errors={errors.taxa}
+            errors={errors.taxa6x}
             prefix="percentual"
             minWidth="90px"
             maxWidth="33%"
@@ -276,6 +292,7 @@ const ModalRegisterFormaPagamento = ({
           }}>
 
           <FormInputNumber
+            isRequired={false}
             label="Taxa 7x"
             {...register("taxa7x")}
             setValue={setValue}
@@ -283,13 +300,14 @@ const ModalRegisterFormaPagamento = ({
             name="taxa7x"
             maxLength={25}
             dontAllowNegative
-            errors={errors.taxa}
+            errors={errors.taxa7x}
             prefix="percentual"
             minWidth="90px"
             maxWidth="33%"
           />
 
           <FormInputNumber
+            isRequired={false}
             label="Taxa 8x"
             {...register("taxa8x")}
             setValue={setValue}
@@ -297,13 +315,14 @@ const ModalRegisterFormaPagamento = ({
             name="taxa8x"
             maxLength={25}
             dontAllowNegative
-            errors={errors.taxa}
+            errors={errors.taxa8x}
             prefix="percentual"
             minWidth="90px"
             maxWidth="33%"
           />
 
           <FormInputNumber
+            isRequired={false}
             label="Taxa 9x"
             {...register("taxa9x")}
             setValue={setValue}
@@ -311,7 +330,7 @@ const ModalRegisterFormaPagamento = ({
             name="taxa9x"
             maxLength={25}
             dontAllowNegative
-            errors={errors.taxa}
+            errors={errors.taxa9x}
             prefix="percentual"
             minWidth="90px"
             maxWidth="33%"
@@ -327,6 +346,7 @@ const ModalRegisterFormaPagamento = ({
           }}>
 
           <FormInputNumber
+            isRequired={false}
             label="Taxa 10x"
             {...register("taxa10x")}
             setValue={setValue}
@@ -334,13 +354,14 @@ const ModalRegisterFormaPagamento = ({
             name="taxa10x"
             maxLength={25}
             dontAllowNegative
-            errors={errors.taxa}
+            errors={errors.taxa10x}
             prefix="percentual"
             minWidth="90px"
             maxWidth="33%"
           />
 
           <FormInputNumber
+            isRequired={false}
             label="Taxa 11x"
             {...register("taxa11x")}
             setValue={setValue}
@@ -348,13 +369,14 @@ const ModalRegisterFormaPagamento = ({
             name="taxa11x"
             maxLength={25}
             dontAllowNegative
-            errors={errors.taxa}
+            errors={errors.taxa11x}
             prefix="percentual"
             minWidth="90px"
             maxWidth="33%"
           />
 
           <FormInputNumber
+            isRequired={false}
             label="Taxa 12x"
             {...register("taxa12x")}
             setValue={setValue}
@@ -362,7 +384,7 @@ const ModalRegisterFormaPagamento = ({
             name="taxa12x"
             maxLength={25}
             dontAllowNegative
-            errors={errors.taxa}
+            errors={errors.taxa12x}
             prefix="percentual"
             minWidth="90px"
             maxWidth="33%"

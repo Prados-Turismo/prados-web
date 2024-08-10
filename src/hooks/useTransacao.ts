@@ -118,10 +118,120 @@ const deleteTransacao = (): IDeleteTransacaoResponse => {
 
       try {
         await apiPrados.patch(urlPath).then(function () {
-          queryClient.invalidateQueries([keys.financeiro])
+          queryClient.invalidateQueries([keys.financeiro, keys.contaBancaria])
 
           useToastStandalone({
             title: "Excluída com sucesso!",
+            status: "success"
+          })
+        })
+      } catch (error: any) {
+        throw new Warning(error.response.data.message, error?.response?.status);
+      }
+    }
+  )
+
+  return {
+    isLoading,
+    mutate
+  }
+}
+
+const efetivarTransacao = (): IDeleteTransacaoResponse => {
+
+  const { isLoading, mutate } = useMutation(
+    async (id: string) => {
+      const urlPath = `financeiro/efetivar-transacao/${id}`
+
+      try {
+        await apiPrados.patch(urlPath).then(function () {
+          queryClient.invalidateQueries([keys.financeiro])
+          queryClient.invalidateQueries([keys.contaBancaria])
+
+          useToastStandalone({
+            title: "Efetivada com sucesso!",
+            status: "success"
+          })
+        })
+      } catch (error: any) {
+        throw new Warning(error.response.data.message, error?.response?.status);
+      }
+    }
+  )
+
+  return {
+    isLoading,
+    mutate
+  }
+}
+
+const desefetivarTransacao = (): IDeleteTransacaoResponse => {
+
+  const { isLoading, mutate } = useMutation(
+    async (id: string) => {
+      const urlPath = `financeiro/des-efetivar/${id}`
+
+      try {
+        await apiPrados.patch(urlPath).then(function () {
+          queryClient.invalidateQueries([keys.financeiro])
+          queryClient.invalidateQueries([keys.contaBancaria])
+
+          useToastStandalone({
+            title: "Desefetivada com sucesso!",
+            status: "success"
+          })
+        })
+      } catch (error: any) {
+        throw new Warning(error.response.data.message, error?.response?.status);
+      }
+    }
+  )
+
+  return {
+    isLoading,
+    mutate
+  }
+}
+
+const setVistoTransacao = (): IDeleteTransacaoResponse => {
+
+  const { isLoading, mutate } = useMutation(
+    async (id: string) => {
+      const urlPath = `financeiro/set-visto-admin/${id}`
+
+      try {
+        await apiPrados.patch(urlPath, { visto: true }).then(function () {
+          queryClient.invalidateQueries([keys.financeiro])
+
+          useToastStandalone({
+            title: "Marcada como vista com sucesso!",
+            status: "success"
+          })
+        })
+      } catch (error: any) {
+        throw new Warning(error.response.data.message, error?.response?.status);
+      }
+    }
+  )
+
+  return {
+    isLoading,
+    mutate
+  }
+}
+
+const removeVistoTransacao = (): IDeleteTransacaoResponse => {
+
+  const { isLoading, mutate } = useMutation(
+    async (id: string) => {
+      const urlPath = `financeiro/set-visto-admin/${id}`
+
+      try {
+        await apiPrados.patch(urlPath, { visto: false }).then(function () {
+          queryClient.invalidateQueries([keys.financeiro])
+
+          useToastStandalone({
+            title: "Marcada como vista com sucesso!",
             status: "success"
           })
         })
@@ -142,6 +252,10 @@ export default function useTransacao() {
     getTransacoes,
     createTransacao,
     updateTransacao,
-    deleteTransacao
+    deleteTransacao,
+    efetivarTransacao,
+    desefetivarTransacao,
+    setVistoTransacao,
+    removeVistoTransacao
   }
 }

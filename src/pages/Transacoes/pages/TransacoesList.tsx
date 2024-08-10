@@ -24,30 +24,65 @@ import useTransacao from "../../../hooks/useTransacao";
 import { formattingDate } from "../../../utils/formattingDate";
 import { ITransacao } from "../../../models/transacao.model";
 import { IoCheckmarkCircle, IoCheckmarkDoneSharp, IoCloseCircle } from "react-icons/io5";
+import { IoMdClose } from "react-icons/io";
 import { currencyBRLFormat } from "../../../utils/currencyBRLFormat";
 
 const TransacoesList = () => {
-  const { getTransacoes, deleteTransacao } = useTransacao();
+  const { getTransacoes,
+    deleteTransacao,
+    efetivarTransacao,
+    desefetivarTransacao,
+    setVistoTransacao,
+    removeVistoTransacao } = useTransacao();
   const [statusSelected, setStatusSelected] = useState<ISelect | null>();
   const [resetFilter, setResetFilter] = useState(false);
   const [modalRecordTransacao, setModalRecordProduct] = useState(false);
   const [modalUpdateTransacao, setModalUpdateTransacao] = useState(false);
   const [modalRemoveTransacao, setModalRemoveTransacao] = useState(false);
+  const [modalEfetivaTransacao, setModalEfetivaTransacao] = useState(false);
+  const [modalDesfetivaTransacao, setModalDesfetivaTransacao] = useState(false);
+  const [modalSetVistoTransacao, setModalSetVistoTransacao] = useState(false);
+  const [modalRemoveVistoTransacao, setModalRemoveVistoTransacao] = useState(false);
   const [transacaoData, setTransacaoData] = useState<ITransacao | undefined>();
   const [currentPage, setCurrentPage] = useState(1);
   const registerPerPage = 10;
 
   const { mutate: mutateToDeleteTransacao } = deleteTransacao();
-  const [deleteItemId, setDeleteTransacaoId] = useState('');
+  const [transacaoId, setTransacaoId] = useState('');
+
+  const { mutate: mutateToEfetivarTransacao } = efetivarTransacao();
+  const { mutate: mutateToDesefetivarTransacao } = desefetivarTransacao();
+  const { mutate: mutateToSetVistoTransacao } = setVistoTransacao();
+  const { mutate: mutateToRemoveVistoTransacao } = removeVistoTransacao();
 
   const { data, count, isLoading } = getTransacoes({
     size: registerPerPage,
     page: currentPage
   });
 
-  const onConfirmRemoveProduto = () => {
-    mutateToDeleteTransacao(deleteItemId || "");
+  const onConfirmRemoveTransacao = () => {
+    mutateToDeleteTransacao(transacaoId || "");
     setModalRemoveTransacao(false);
+  };
+
+  const onConfirmEfetivaTransacao = () => {
+    mutateToEfetivarTransacao(transacaoId || "");
+    setModalEfetivaTransacao(false);
+  };
+
+  const onConfirmDesefetivaTransacao = () => {
+    mutateToDesefetivarTransacao(transacaoId || "");
+    setModalDesfetivaTransacao(false);
+  };
+
+  const onConfirmSetVistoTransacao = () => {
+    mutateToSetVistoTransacao(transacaoId || "");
+    setModalSetVistoTransacao(false);
+  };
+
+  const onConfirmRemoveVistoTransacao = () => {
+    mutateToRemoveVistoTransacao(transacaoId || "");
+    setModalRemoveVistoTransacao(false);
   };
 
   return (
@@ -109,7 +144,7 @@ const TransacoesList = () => {
               placeholder="dd/mm/aaaa"
               max="2099-12-31"
               maxLength={10}
-              onChange={() => {}}
+              onChange={() => { }}
             />
           </Flex>
           <Flex flexDirection="column" gap="5px" width="160px">
@@ -119,7 +154,7 @@ const TransacoesList = () => {
               placeholder="dd/mm/aaaa"
               max="2099-12-31"
               maxLength={10}
-              onChange={() => {}}
+              onChange={() => { }}
             />
           </Flex>
           <Button
@@ -151,6 +186,7 @@ const TransacoesList = () => {
                       <TD>Data</TD>
                       <TD>Tipo</TD>
                       <TD>Valor</TD>
+                      <TD>Conta</TD>
                       <TD>Forma de pagamento</TD>
                       <TD>Recebimento</TD>
                       <TD>Visto</TD>
@@ -164,19 +200,19 @@ const TransacoesList = () => {
                             {item.efetivado ? (
                               <Tooltip label="Efetivado" placement="top" hasArrow>
                                 <div style={{
-                                  backgroundColor:"green",
-                                  borderRadius:"50%",
-                                  width:"10px",
-                                  height:"10px"
+                                  backgroundColor: "green",
+                                  borderRadius: "50%",
+                                  width: "10px",
+                                  height: "10px"
                                 }} />
                               </Tooltip>
                             ) : (
                               <Tooltip label="Pendente" placement="top" hasArrow>
                                 <div style={{
-                                  backgroundColor:"red",
-                                  borderRadius:"50%",
-                                  width:"10px",
-                                  height:"10px"
+                                  backgroundColor: "red",
+                                  borderRadius: "50%",
+                                  width: "10px",
+                                  height: "10px"
                                 }} />
                               </Tooltip>
                             )}
@@ -191,6 +227,9 @@ const TransacoesList = () => {
                             {currencyBRLFormat(item.valor)}
                           </TD>
                           <TD>
+                            {item.ContaBancaria?.nome}
+                          </TD>
+                          <TD>
                             {item.FormaPagamento.nome}
                           </TD>
                           <TD>
@@ -200,15 +239,18 @@ const TransacoesList = () => {
                             {item.vistoAdmin ? "Sim" : "Não"}
                           </TD>
                           <TD gap={3}>
-                            <MdEdit
-                              size={20}
-                              // color={customTheme.colors.brandSecond.first}
-                              cursor="pointer"
-                              onClick={() => {
-                                setTransacaoData(item)
-                                setModalUpdateTransacao(true)
-                              }}
-                            />
+
+                            <ButtonIcon tooltip="Editar">
+                              <MdEdit
+                                size={20}
+                                // color={customTheme.colors.brandSecond.first}
+                                cursor="pointer"
+                                onClick={() => {
+                                  setTransacaoData(item)
+                                  setModalUpdateTransacao(true)
+                                }}
+                              />
+                            </ButtonIcon>
 
                             <ButtonIcon tooltip="Excluir transação">
                               <Button
@@ -218,33 +260,60 @@ const TransacoesList = () => {
                                 colorScheme="red"
                                 onClick={() => {
                                   setModalRemoveTransacao(true)
-                                  setDeleteTransacaoId(item.id)
+                                  setTransacaoId(item.id)
                                 }}
                               >
                                 <FiTrash />
                               </Button>
                             </ButtonIcon>
 
-                            <ButtonIcon tooltip="Efetivar transação">
-                              <IoCheckmarkCircle
-                                size={20}
-                                onClick={() => { }}
-                              />
-                            </ButtonIcon>
+                            {!item.efetivado && (
+                              <ButtonIcon tooltip="Efetivar transação">
+                                <IoCheckmarkCircle
+                                  size={20}
+                                  onClick={() => {
+                                    setModalEfetivaTransacao(true)
+                                    setTransacaoId(item.id)
+                                  }}
+                                />
+                              </ButtonIcon>
+                            )}
 
-                            <ButtonIcon tooltip="Desfetivar transação">
-                              <IoCloseCircle
-                                size={20}
-                                onClick={() => { }}
-                              />
-                            </ButtonIcon>
+                            {item.efetivado && (
+                              <ButtonIcon tooltip="Desfetivar transação">
+                                <IoCloseCircle
+                                  size={20}
+                                  onClick={() => {
+                                    setModalDesfetivaTransacao(true)
+                                    setTransacaoId(item.id)
+                                  }}
+                                />
+                              </ButtonIcon>
+                            )}
 
-                            <ButtonIcon tooltip="Marcar como visto">
-                              <IoCheckmarkDoneSharp
-                                size={20}
-                                onClick={() => { }}
-                              />
-                            </ButtonIcon>
+                            {!item.vistoAdmin && (
+                              <ButtonIcon tooltip="Marcar como visto">
+                                <IoCheckmarkDoneSharp
+                                  size={20}
+                                  onClick={() => {
+                                    setModalSetVistoTransacao(true)
+                                    setTransacaoId(item.id)
+                                  }}
+                                />
+                              </ButtonIcon>
+                            )}
+
+                            {item.vistoAdmin && (
+                              <ButtonIcon tooltip="Desmarcar como visto">
+                                <IoMdClose
+                                  size={20}
+                                  onClick={() => {
+                                    setModalRemoveVistoTransacao(true)
+                                    setTransacaoId(item.id)
+                                  }}
+                                />
+                              </ButtonIcon>
+                            )}
 
                           </TD>
                         </TR>
@@ -298,9 +367,53 @@ const TransacoesList = () => {
         <AlertModal
           title="Remover transação"
           question="Deseja realmente remover esta transação?"
-          request={onConfirmRemoveProduto}
+          request={onConfirmRemoveTransacao}
           showModal={modalRemoveTransacao}
           setShowModal={setModalRemoveTransacao}
+          size="md"
+        ></AlertModal>
+      )}
+
+      {modalEfetivaTransacao && (
+        <AlertModal
+          title="Efetivar transação"
+          question="Deseja realmente efetivar esta transação?"
+          request={onConfirmEfetivaTransacao}
+          showModal={modalEfetivaTransacao}
+          setShowModal={setModalEfetivaTransacao}
+          size="md"
+        ></AlertModal>
+      )}
+
+      {modalDesfetivaTransacao && (
+        <AlertModal
+          title="Desefetivar transação"
+          question="Deseja realmente desefetivar esta transação?"
+          request={onConfirmDesefetivaTransacao}
+          showModal={modalDesfetivaTransacao}
+          setShowModal={setModalDesfetivaTransacao}
+          size="md"
+        ></AlertModal>
+      )}
+
+      {modalSetVistoTransacao && (
+        <AlertModal
+          title="Visto transação"
+          question="Deseja realmente marcar como vista esta transação?"
+          request={onConfirmSetVistoTransacao}
+          showModal={modalSetVistoTransacao}
+          setShowModal={setModalSetVistoTransacao}
+          size="md"
+        ></AlertModal>
+      )}
+
+      {modalRemoveVistoTransacao && (
+        <AlertModal
+          title="Visto transação"
+          question="Deseja realmente desmarcar como vista esta transação?"
+          request={onConfirmRemoveVistoTransacao}
+          showModal={modalRemoveVistoTransacao}
+          setShowModal={setModalRemoveVistoTransacao}
           size="md"
         ></AlertModal>
       )}

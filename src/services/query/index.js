@@ -1,6 +1,7 @@
 import { queryClient, generateQueryClient } from "./queryClient";
 
 const keys = {
+  subCategoriaTransacao: "subCategoriaTransacao",
   reserva: "reserva",
   contaBancaria: "contaBancaria",
   categoriaTransacao: "categoriaTransacao",

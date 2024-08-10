@@ -25,6 +25,8 @@ import useFormaPagamento from "../../../../hooks/useFormaPagamento";
 import useTransacao from "../../../../hooks/useTransacao";
 import { ITransacao } from "../../../../models/transacao.model";
 import usePessoas from "../../../../hooks/usePessoas";
+import useContaBancaria from "../../../../hooks/useContaBancaria";
+import useCategoriaTransacao from "../../../../hooks/useCategoriaTransacao";
 
 const handleSubmitRegisterSchema = z.object({
   tipo: z
@@ -40,13 +42,17 @@ const handleSubmitRegisterSchema = z.object({
       required_error: fieldRequired("número do comprovante bancário")
     })
     .optional(),
-  data: z
-    .string({
-      required_error: fieldRequired("data")
-    }),
   efetivado: z
     .number({
       required_error: fieldRequired("efetivado")
+    }),
+  codigoContaBancaria: z
+    .string({
+      required_error: fieldRequired("Conta Bancária")
+    }),
+  codigoCategoria: z
+    .string({
+      required_error: fieldRequired('Categoria')
     }),
   codigoPessoa: z
     .string()
@@ -91,6 +97,8 @@ const ModalUpdateTransacao = ({
   const { getExcursoes } = useExcursoes();
   const { getAllPacotes } = usePacotes();
   const { getAllPessoas } = usePessoas()
+  const { getAllContaBancaria } = useContaBancaria()
+  const { getAllCategoriaTransacao } = useCategoriaTransacao()
 
   const [codigoExcursao, setCodigoExcursao] = useState<string | undefined>(undefined);
 
@@ -107,7 +115,6 @@ const ModalUpdateTransacao = ({
       tipo: data.tipo,
       valor: data.valor,
       numeroComprovanteBancario: data.numeroComprovanteBancario ?? undefined,
-      data: data.data.split('T')[0],
       efetivado: data.efetivado ? 1 : 2,
       codigoPessoa: data.codigoPessoa ?? undefined,
       codigoFornecedor: data.codigoFornecedor ?? undefined,
@@ -116,6 +123,8 @@ const ModalUpdateTransacao = ({
       codigoPacote: data.codigoPacote ?? undefined,
       codigoFormaPagamento: data.codigoFormaPagamento,
       observacao: data.observacao || '',
+      codigoContaBancaria: data.ContaBancaria?.id,
+      codigoCategoria: data.CategoriaTransacao?.id
     }
   });
 
@@ -126,6 +135,8 @@ const ModalUpdateTransacao = ({
   const { data: dataPacotes, isLoading: loadingPacotes } = getAllPacotes();
   const { data: dataFornecedores, isLoading: loadingFornecedores } = getAllFornecedores();
   const { data: dataProdutos, isLoading: loadingProdutos } = getProducts({ page: 1, size: 100 });
+  const { data: dataContaBancaria, isLoading: isLoadingContaBancaria } = getAllContaBancaria();
+  const { data: dataCategoria, isLoading: isLoadingCategoria } = getAllCategoriaTransacao()
 
   const handleSubmitRegister = (dataSubmit: IhandleSubmitRegister) => {
     mutate({
@@ -133,7 +144,6 @@ const ModalUpdateTransacao = ({
       id: data.id,
       efetivado: dataSubmit.efetivado === 1,
       ativo: true,
-      dataPrevistaRecebimento: '2024-07-23',
       usuarioCadastro: user?.id ?? '',
     })
   };
@@ -214,26 +224,56 @@ const ModalUpdateTransacao = ({
           />
         </Flex>
 
-        <SelectForm
-          name="codigoFormaPagamento"
-          label="Forma de Pagamento"
+        <Flex
+          gap="15px"
+          flexDirection={{
+            base: "column",
+            lg: "row",
+          }}
+        >
 
-          isRequired
-          isLoading={loadingFormaPagamentos}
-          handleChange={(option) => {
-            setValue("codigoFormaPagamento", option?.value);
-          }}
-          options={dataFormaPagamentos
-            ?.map((codigoFormaPagamento) => ({
-              label: codigoFormaPagamento?.nome,
-              value: codigoFormaPagamento?.id,
-            }))}
-          defaultValue={{
-            label: data.FormaPagamento?.nome,
-            value: data.FormaPagamento?.id
-          }}
-          errors={errors.codigoFormaPagamento}
-        />
+          <SelectForm
+            name="codigoFormaPagamento"
+            label="Forma de Pagamento"
+            minW="135px"
+            isRequired
+            isLoading={loadingFormaPagamentos}
+            handleChange={(option) => {
+              setValue("codigoFormaPagamento", option?.value);
+            }}
+            options={dataFormaPagamentos
+              ?.map((codigoFormaPagamento) => ({
+                label: codigoFormaPagamento?.nome,
+                value: codigoFormaPagamento?.id,
+              }))}
+            defaultValue={{
+              label: data.FormaPagamento?.nome,
+              value: data.FormaPagamento?.id
+            }}
+            errors={errors.codigoFormaPagamento}
+          />
+
+          <SelectForm
+            name="codigoCategoria"
+            label="Categoria"
+            minW="135px"
+            isRequired
+            isLoading={isLoadingCategoria}
+            handleChange={(option) => {
+              setValue("codigoCategoria", option?.value);
+            }}
+            options={dataCategoria
+              ?.map((codigoCategoria) => ({
+                label: `${codigoCategoria?.nome} / ${codigoCategoria.SubCategoria.nome}`,
+                value: codigoCategoria?.id,
+              }))}
+            defaultValue={{
+              label: data.CategoriaTransacao?.nome,
+              value: data.CategoriaTransacao?.id
+            }}
+            errors={errors.codigoCategoria}
+          />
+        </Flex>
 
         <Flex
           gap="15px"
@@ -242,28 +282,31 @@ const ModalUpdateTransacao = ({
             lg: "row",
           }}
         >
-          <FormControl
-            isRequired
-            minW="50%"
-            isInvalid={errors.data?.message ? true : false}
-          >
-            <FormLabel>Data</FormLabel>
-            <Input
-              type="date"
-              minW="50%"
-              placeholder="dd/mm/aaaa"
-              max="2099-12-31"
-              maxLength={10}
-              {...register("data")}
-            />
-            <FormErrorMessage>{errors.data?.message}</FormErrorMessage>
-          </FormControl>
+
+          <SelectForm
+            name="codigoContaBancaria"
+            label="Conta Bancária"
+            minW="135px"
+            isLoading={isLoadingContaBancaria}
+            handleChange={(option) => {
+              setValue("codigoContaBancaria", option?.value);
+            }}
+            options={dataContaBancaria
+              ?.map((codigoContaBancaria) => ({
+                label: codigoContaBancaria?.nome,
+                value: codigoContaBancaria?.id,
+              }))}
+            defaultValue={{
+              label: data.ContaBancaria?.nome,
+              value: data.ContaBancaria?.id
+            }}
+            errors={errors.efetivado}
+          />
 
           <SelectForm
             name="efetivado"
             label="Efetivado"
-            minW="235px"
-            // isLoading={loadingFornecedores}
+            minW="135px"
             handleChange={(option) => {
               setValue("efetivado", option?.value);
             }}

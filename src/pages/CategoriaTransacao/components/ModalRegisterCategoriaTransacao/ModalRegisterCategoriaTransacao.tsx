@@ -16,6 +16,7 @@ import {
 import { FieldWrap } from "./styled";
 import { useGlobal } from "../../../../contexts/UserContext";
 import ReactSelect from "react-select";
+import useSubCategoriaTransacao from "../../../../hooks/useSubCategoriaTransacao";
 
 const handleSubmitRegisterSchema = z.object({
   nome: z
@@ -27,20 +28,26 @@ const handleSubmitRegisterSchema = z.object({
     .number()
     .min(1, {
       message: fieldRequired('tipo')
+    }),
+  codigoSubCategoria: z
+    .string()
+    .min(1, {
+      message: fieldRequired("Subcategoria")
     })
 });
 
 type IhandleSubmitRegister = z.infer<typeof handleSubmitRegisterSchema>;
 
-interface IModalRegisterTipoQuarto {
+interface IModalRegisterCategoriaTransacao {
   handleClose: () => void;
 }
 
-const ModalRegisterTipoQuarto = ({
+const ModalRegisterCategoriaTransacao = ({
   handleClose,
-}: IModalRegisterTipoQuarto) => {
+}: IModalRegisterCategoriaTransacao) => {
   const { user } = useGlobal();
   const { createCategoriaTransacao } = useCategoriaTransacao();
+  const { getAllSubCategoriaTransacao } = useSubCategoriaTransacao()
 
   const {
     setValue,
@@ -52,6 +59,7 @@ const ModalRegisterTipoQuarto = ({
     resolver: zodResolver(handleSubmitRegisterSchema),
   });
   const { mutate, isLoading } = createCategoriaTransacao(reset, handleClose);
+  const { data: dataSubCategoria, isLoading: isLoadingSubCategoria } = getAllSubCategoriaTransacao()
 
   const handleSubmitRegister = (submitData: IhandleSubmitRegister) => {
     mutate({
@@ -106,16 +114,42 @@ const ModalRegisterTipoQuarto = ({
               {...register?.("tipo")}
               isSearchable={true}
               placeholder="Selecione"
-              noOptionsMessage={() => "Não há origem cadastrado"}
+              noOptionsMessage={() => "Não há tipo cadastrado"}
               options={dataTipo
                 ?.map((tipo) => ({
                   label: tipo?.nome,
                   value: tipo?.id,
                 }))}
-              name="origem"
-              id="origem"
+              name="tipo"
+              id="tipo"
               onChange={(option) => {
                 setValue("tipo", option?.value || 1);
+              }}
+            />
+          </Box>
+        </FieldWrap>
+
+        <FieldWrap>
+          <span>Subcategoria <Asterisk /></span>
+
+          <Box display="flex" gap="10px">
+            <ReactSelect
+              className="select-fields large"
+              classNamePrefix="select"
+              closeMenuOnSelect={true}
+              {...register?.("codigoSubCategoria")}
+              isSearchable={true}
+              placeholder="Selecione"
+              noOptionsMessage={() => "Não há subcategoria cadastrada"}
+              options={dataSubCategoria
+                ?.map((subcategoria) => ({
+                  label: subcategoria?.nome,
+                  value: subcategoria?.id,
+                }))}
+              name="codigoSubCategoria"
+              id="codigoSubCategoria"
+              onChange={(option) => {
+                setValue("codigoSubCategoria", option?.value || '');
               }}
             />
           </Box>
@@ -137,4 +171,4 @@ const ModalRegisterTipoQuarto = ({
   );
 };
 
-export default ModalRegisterTipoQuarto;
+export default ModalRegisterCategoriaTransacao;

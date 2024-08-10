@@ -27,7 +27,8 @@ const getContaBancaria = ({ page, size }: IContaBancariaArgs): IContaBancariaRes
         const { data } = await apiPrados.get(path, {
           params: {
             page,
-            size
+            size,
+            orderBy: 'nome'
           },
         });
 
@@ -49,7 +50,7 @@ const getAllContaBancaria = (): IContaBancariaResponse => {
 
   const { data, isLoading } = useQuery(
     [
-      keys.excursaoQuarto,
+      keys.contaBancaria,
     ],
     async () => {
       const path = 'conta-bancaria/findAll';

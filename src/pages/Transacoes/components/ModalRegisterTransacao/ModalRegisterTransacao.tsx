@@ -24,6 +24,8 @@ import { useState } from "react";
 import useFormaPagamento from "../../../../hooks/useFormaPagamento";
 import useTransacao from "../../../../hooks/useTransacao";
 import usePessoas from "../../../../hooks/usePessoas";
+import useContaBancaria from "../../../../hooks/useContaBancaria";
+import useCategoriaTransacao from "../../../../hooks/useCategoriaTransacao";
 
 const handleSubmitRegisterSchema = z.object({
   tipo: z
@@ -39,13 +41,17 @@ const handleSubmitRegisterSchema = z.object({
       required_error: fieldRequired("número do comprovante bancário")
     })
     .optional(),
-  data: z
-    .string({
-      required_error: fieldRequired("data")
-    }),
   efetivado: z
     .number({
       required_error: fieldRequired("efetivado")
+    }),
+  codigoContaBancaria: z
+    .string({
+      required_error: fieldRequired("Conta Bancária")
+    }),
+  codigoCategoria: z
+    .string({
+      required_error: fieldRequired('Categoria')
     }),
   codigoPessoa: z
     .string()
@@ -73,13 +79,13 @@ const handleSubmitRegisterSchema = z.object({
 
 type IhandleSubmitRegister = z.infer<typeof handleSubmitRegisterSchema>;
 
-interface IModalRecordCollaborator {
+interface IModalRecordTransacao {
   handleClose: () => void;
 }
 
 const ModalRegisterTransacao = ({
   handleClose,
-}: IModalRecordCollaborator) => {
+}: IModalRecordTransacao) => {
   const { user } = useGlobal();
   const { createTransacao } = useTransacao();
   const { getAllFormaPagamentos } = useFormaPagamento();
@@ -88,6 +94,8 @@ const ModalRegisterTransacao = ({
   const { getExcursoes } = useExcursoes();
   const { getAllPacotes } = usePacotes();
   const { getAllPessoas } = usePessoas()
+  const { getAllContaBancaria } = useContaBancaria()
+  const { getAllCategoriaTransacao } = useCategoriaTransacao()
 
   const [codigoExcursao, setCodigoExcursao] = useState<string | undefined>(undefined);
 
@@ -108,13 +116,14 @@ const ModalRegisterTransacao = ({
   const { data: dataPacotes, isLoading: loadingPacotes } = getAllPacotes();
   const { data: dataFornecedores, isLoading: loadingFornecedores } = getAllFornecedores();
   const { data: dataProdutos, isLoading: loadingProdutos } = getProducts({ page: 1, size: 100 });
+  const { data: dataContaBancaria, isLoading: isLoadingContaBancaria } = getAllContaBancaria();
+  const { data: dataCategoria, isLoading: isLoadingCategoria } = getAllCategoriaTransacao()
 
   const handleSubmitRegister = (data: IhandleSubmitRegister) => {
     mutate({
       ...data,
       efetivado: data.efetivado === 1,
       ativo: true,
-      dataPrevistaRecebimento: '2024-07-23',
       usuarioCadastro: user?.id ?? '',
     })
   };
@@ -190,22 +199,48 @@ const ModalRegisterTransacao = ({
           />
         </Flex>
 
-        <SelectForm
-          name="codigoFormaPagamento"
-          label="Forma de Pagamento"
-
-          isRequired
-          isLoading={loadingFormaPagamentos}
-          handleChange={(option) => {
-            setValue("codigoFormaPagamento", option?.value);
+        <Flex
+          gap="15px"
+          flexDirection={{
+            base: "column",
+            lg: "row",
           }}
-          options={dataFormaPagamentos
-            ?.map((codigoFormaPagamento) => ({
-              label: codigoFormaPagamento?.nome,
-              value: codigoFormaPagamento?.id,
-            }))}
-          errors={errors.codigoFormaPagamento}
-        />
+        >
+
+          <SelectForm
+            name="codigoFormaPagamento"
+            label="Forma de Pagamento"
+            minW="135px"
+            isRequired
+            isLoading={loadingFormaPagamentos}
+            handleChange={(option) => {
+              setValue("codigoFormaPagamento", option?.value);
+            }}
+            options={dataFormaPagamentos
+              ?.map((codigoFormaPagamento) => ({
+                label: codigoFormaPagamento?.nome,
+                value: codigoFormaPagamento?.id,
+              }))}
+            errors={errors.codigoFormaPagamento}
+          />
+
+          <SelectForm
+            name="codigoCategoria"
+            label="Categoria"
+            minW="135px"
+            isRequired
+            isLoading={isLoadingCategoria}
+            handleChange={(option) => {
+              setValue("codigoCategoria", option?.value);
+            }}
+            options={dataCategoria
+              ?.map((codigoCategoria) => ({
+                label: `${codigoCategoria?.nome} / ${codigoCategoria.SubCategoria.nome}`,
+                value: codigoCategoria?.id,
+              }))}
+            errors={errors.codigoCategoria}
+          />
+        </Flex>
 
         <Flex
           gap="15px"
@@ -214,27 +249,27 @@ const ModalRegisterTransacao = ({
             lg: "row",
           }}
         >
-          <FormControl
+          <SelectForm
+            name="codigoContaBancaria"
+            label="Conta Bancária"
+            minW="135px"
             isRequired
-            minW="50%"
-            isInvalid={errors.data?.message ? true : false}
-          >
-            <FormLabel>Data</FormLabel>
-            <Input
-              type="date"
-              minW="50%"
-              placeholder="dd/mm/aaaa"
-              max="2099-12-31"
-              maxLength={10}
-              {...register("data")}
-            />
-            <FormErrorMessage>{errors.data?.message}</FormErrorMessage>
-          </FormControl>
+            isLoading={isLoadingContaBancaria}
+            handleChange={(option) => {
+              setValue("codigoContaBancaria", option?.value);
+            }}
+            options={dataContaBancaria
+              ?.map((codigoContaBancaria) => ({
+                label: codigoContaBancaria?.nome,
+                value: codigoContaBancaria?.id,
+              }))}
+            errors={errors.codigoContaBancaria}
+          />
 
           <SelectForm
             name="efetivado"
             label="Efetivado"
-            minW="235px"
+            minW="135px"
             // isLoading={loadingFornecedores}
             handleChange={(option) => {
               setValue("efetivado", option?.value);

@@ -111,13 +111,25 @@ export interface ITransacao {
     ativo: boolean
     codigoContaBancaria: string
     usuarioCadastro: string
-    ContaBancaria: {
+  }
+  ContaBancaria: {
+    id: string
+    nome: string
+    ativo: boolean
+    saldo: number
+    dataCadastro: Date
+    usuarioCadastro: string
+  }
+  CategoriaTransacao: {
+    id: string
+    nome: string
+    tipo: number
+    codigoUsuario: string
+    codigoSubCategoria: string
+    SubCategoria: {
       id: string
       nome: string
-      ativo: boolean
-      saldo: number
-      dataCadastro: Date
-      usuarioCadastro: string
+      codigoUsuario: string
     }
   }
 }
@@ -137,12 +149,10 @@ export interface ICreateTransacaoArgs {
   tipo: number
   valor: number
   vistoAdmin?: boolean
-  data: string
   efetivado?: boolean
   observacao?: string
   ativo: boolean
   numeroComprovanteBancario?: string
-  dataPrevistaRecebimento: string
   idWP?: number
   codigoPessoa?: string
   codigoFornecedor?: string

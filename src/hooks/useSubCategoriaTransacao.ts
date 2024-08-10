@@ -2,26 +2,26 @@ import { useMutation, useQuery } from "react-query";
 import { useToastStandalone } from "./useToastStandalone";
 import { apiPrados } from "../services/api";
 import {
-  ICategoriaTransacaoArgs,
-  ICategoriaTransacaoResponse,
-  ICreateCategoriaTransacaoArgs,
-  ICreateCategoriaTransacaoResponse,
-  IUpdateCategoriaTransacaoArgs,
-  IUpdateCategoriaTransacaoResponse,
-  IDeleteCategoriaTransacaoResponse
-} from "../models/categoria-transacao.model";
+  ISubCategoriaTransacaoArgs,
+  ISubCategoriaTransacaoResponse,
+  ICreateSubCategoriaTransacaoArgs,
+  ICreateSubCategoriaTransacaoResponse,
+  IUpdateSubCategoriaTransacaoArgs,
+  IUpdateSubCategoriaTransacaoResponse,
+  IDeleteSubCategoriaTransacaoResponse
+} from "../models/subcategoria-transacao.model";
 import { Warning } from "../errors";
 import { keys, queryClient } from "../services/query";
 
-const getCategoriaTransacao = ({ page, size }: ICategoriaTransacaoArgs): ICategoriaTransacaoResponse => {
+const getSubCategoriaTransacao = ({ page, size }: ISubCategoriaTransacaoArgs): ISubCategoriaTransacaoResponse => {
 
   const { data, isLoading } = useQuery(
     [
-      keys.categoriaTransacao,
+      keys.subCategoriaTransacao,
       page
     ],
     async () => {
-      const path = 'categoria-transacao/index';
+      const path = 'sub-categoria/index';
 
       try {
         const { data } = await apiPrados.get(path, {
@@ -45,14 +45,14 @@ const getCategoriaTransacao = ({ page, size }: ICategoriaTransacaoArgs): ICatego
   };
 }
 
-const getAllCategoriaTransacao = (): ICategoriaTransacaoResponse => {
+const getAllSubCategoriaTransacao = (): ISubCategoriaTransacaoResponse => {
 
   const { data, isLoading } = useQuery(
     [
-      keys.categoriaTransacao,
+      keys.subCategoriaTransacao,
     ],
     async () => {
-      const path = 'categoria-transacao/findAll';
+      const path = 'sub-categoria/findAll';
 
       try {
         const { data } = await apiPrados.get(path);
@@ -71,21 +71,21 @@ const getAllCategoriaTransacao = (): ICategoriaTransacaoResponse => {
   };
 }
 
-const createCategoriaTransacao = (
+const createSubCategoriaTransacao = (
   reset: () => void,
   handleClose: () => void
-): ICreateCategoriaTransacaoResponse => {
+): ICreateSubCategoriaTransacaoResponse => {
 
   const { isLoading, mutate } = useMutation(
-    async (data: ICreateCategoriaTransacaoArgs) => {
-      const urlPath = 'categoria-transacao/create'
+    async (data: ICreateSubCategoriaTransacaoArgs) => {
+      const urlPath = 'sub-categoria/create'
 
       try {
         await apiPrados.post(urlPath, data).then(() => {
           reset()
           handleClose()
 
-          queryClient.invalidateQueries([keys.categoriaTransacao])
+          queryClient.invalidateQueries([keys.subCategoriaTransacao])
 
           useToastStandalone({
             title: "Cadastro concluído!",
@@ -104,20 +104,20 @@ const createCategoriaTransacao = (
   }
 }
 
-const updateCategoriaTransacao = (
+const updateSubCategoriaTransacao = (
   reset: () => void,
   handleClose: () => void
-): IUpdateCategoriaTransacaoResponse => {
+): IUpdateSubCategoriaTransacaoResponse => {
 
   const { isLoading, mutate } = useMutation(
-    async (data: IUpdateCategoriaTransacaoArgs) => {
-      const urlPath = `categoria-transacao/update/${data.id}`;
+    async (data: IUpdateSubCategoriaTransacaoArgs) => {
+      const urlPath = `sub-categoria/update/${data.id}`;
 
       try {
         await apiPrados.put(urlPath, data).then(() => {
           reset()
           handleClose()
-          queryClient.invalidateQueries([keys.categoriaTransacao])
+          queryClient.invalidateQueries([keys.subCategoriaTransacao])
 
           useToastStandalone({
             title: "Atualizado com sucesso!",
@@ -136,15 +136,15 @@ const updateCategoriaTransacao = (
   }
 }
 
-const deleteCategoriaTransacao = (): IDeleteCategoriaTransacaoResponse => {
+const deleteSubCategoriaTransacao = (): IDeleteSubCategoriaTransacaoResponse => {
 
   const { isLoading, mutate } = useMutation(
     async (id: string) => {
-      const urlPath = `categoria-transacao/delete/${id}`
+      const urlPath = `sub-categoria/delete/${id}`
 
       try {
         await apiPrados.delete(urlPath).then(function () {
-          queryClient.invalidateQueries([keys.categoriaTransacao])
+          queryClient.invalidateQueries([keys.subCategoriaTransacao])
 
           useToastStandalone({
             title: "Excluída com sucesso!",
@@ -163,12 +163,12 @@ const deleteCategoriaTransacao = (): IDeleteCategoriaTransacaoResponse => {
   }
 }
 
-export default function useCategoriaTransacao() {
+export default function useSubCategoriaTransacao() {
   return {
-    getCategoriaTransacao,
-    getAllCategoriaTransacao,
-    createCategoriaTransacao,
-    updateCategoriaTransacao,
-    deleteCategoriaTransacao
+    getSubCategoriaTransacao,
+    getAllSubCategoriaTransacao,
+    createSubCategoriaTransacao,
+    updateSubCategoriaTransacao,
+    deleteSubCategoriaTransacao
   }
 }

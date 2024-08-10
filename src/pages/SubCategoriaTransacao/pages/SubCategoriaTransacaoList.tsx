@@ -13,38 +13,38 @@ import { Content, SectionTop } from "./styled";
 import ReactSelect from "react-select";
 import SimpleModal from "../../../components/SimpleModal";
 import { ISelect } from "../../../models/generics.model";
-import ModalRegisterCategoriaTransacao from "../components/ModalRegisterCategoriaTransacao";
-import ModalUpdateCategoriaTransacao from "../components/ModalUpdateCategoriaTransacao";
+import ModalRegisterSubCategoriaTransacao from "../components/ModalRegisterSubCategoriaTransacao";
+import ModalUpdateSubCategoriaTransacao from "../components/ModalUpdateSubCategoriaTransacao";
 import AlertNoDataFound from "../../../components/AlertNoDataFound";
 import { MdEdit } from "react-icons/md";
 import ButtonIcon from "../../../components/ButtonIcon";
 import { FiTrash } from "react-icons/fi";
 import AlertModal from "../../../components/AlertModal";
-import useCategoriaTransacao from "../../../hooks/useCategoriaTransacao";
-import { ICategoriaTransacao } from "../../../models/categoria-transacao.model";
+import useSubCategoriaTransacao from "../../../hooks/useSubCategoriaTransacao";
+import { ISubCategoriaTransacao } from "../../../models/subcategoria-transacao.model";
 
-const CategoriaTransacaoList = () => {
-    const { getCategoriaTransacao, deleteCategoriaTransacao } = useCategoriaTransacao();
+const SubCategoriaTransacaoList = () => {
+    const { getSubCategoriaTransacao, deleteSubCategoriaTransacao } = useSubCategoriaTransacao();
     const [statusSelected, setStatusSelected] = useState<ISelect | null>();
     const [resetFilter, setResetFilter] = useState(false);
-    const [modalRegisterCategoriaTransacao, setModalRegisterCategoriaTransacao] = useState(false);
-    const [modalUpdateCategoriaTransacao, setModalUpdateCategoriaTransacao] = useState(false);
-    const [modalRemoveCategoriaTransacao, setModalRemoveCategoriaTransacao] = useState(false);
-    const [categoriaTransacaoData, setCategoriaTransacaoData] = useState<ICategoriaTransacao | undefined>();
+    const [modalRegisterSubCategoriaTransacao, setModalRegisterSubCategoriaTransacao] = useState(false);
+    const [modalUpdateSubCategoriaTransacao, setModalUpdateSubCategoriaTransacao] = useState(false);
+    const [modalRemoveSubCategoriaTransacao, setModalRemoveSubCategoriaTransacao] = useState(false);
+    const [subCategoriaTransacaoData, setSubCategoriaTransacaoData] = useState<ISubCategoriaTransacao | undefined>();
     const [currentPage, setCurrentPage] = useState(1);
     const registerPerPage = 10;
 
-    const { mutate: mutateToDeleteCategoriaTransacao } = deleteCategoriaTransacao();
-    const [deleteItemId, setDeleteCategoriaTransacaoId] = useState('');
+    const { mutate: mutateToDeleteSubCategoriaTransacao } = deleteSubCategoriaTransacao();
+    const [deleteItemId, setDeleteSubCategoriaTransacaoId] = useState('');
 
-    const { data, count, isLoading } = getCategoriaTransacao({
+    const { data, count, isLoading } = getSubCategoriaTransacao({
         size: registerPerPage,
         page: currentPage
     });
 
-    const onConfirmRemoveCategoria = () => {
-        mutateToDeleteCategoriaTransacao(deleteItemId || "");
-        setModalRemoveCategoriaTransacao(false);
+    const onConfirmRemoveSubCategoria = () => {
+        mutateToDeleteSubCategoriaTransacao(deleteItemId || "");
+        setModalRemoveSubCategoriaTransacao(false);
     };
 
     return (
@@ -53,17 +53,17 @@ const CategoriaTransacaoList = () => {
                 <Button
                     leftIcon={<IoIosAdd />}
                     onClick={() => {
-                        setModalRegisterCategoriaTransacao(true);
+                        setModalRegisterSubCategoriaTransacao(true);
                     }}
                 >
-                    Cadastrar Categoria Transação
+                    Cadastrar Subcategoria Transação
                 </Button>
             </SectionTop>
 
             <Content className="contentMain">
                 <Flex width="100%" gap="15px" alignItems="flex-end" flexWrap="wrap">
                     <div className="searchWrap">
-                        <span>Buscar Categoria Transação</span>
+                        <span>Buscar Subcategoria Transação</span>
                         <FieldSearch
                             placeholder="Nome"
                             handleSearch={() => {
@@ -125,7 +125,7 @@ const CategoriaTransacaoList = () => {
                                     <Table>
                                         <THead padding="0 30px 0 30px">
                                             <TD>Nome</TD>
-                                            <TD>Subcategoria</TD>
+                                            <TD>Categoria</TD>
                                             <TD></TD>
                                         </THead>
 
@@ -136,28 +136,27 @@ const CategoriaTransacaoList = () => {
                                                         {item.nome}
                                                     </TD>
                                                     <TD>
-                                                        {item.SubCategoria.nome}
+                                                        {item.CategoriaTransacao[0]?.nome || ''}
                                                     </TD>
                                                     <TD gap={3}>
                                                         <MdEdit
                                                             size={20}
-                                                            // color={customTheme.colors.brandSecond.first}
                                                             cursor="pointer"
                                                             onClick={() => {
-                                                                setCategoriaTransacaoData(item)
-                                                                setModalUpdateCategoriaTransacao(true)
+                                                                setSubCategoriaTransacaoData(item)
+                                                                setModalUpdateSubCategoriaTransacao(true)
                                                             }}
                                                         />
 
-                                                        <ButtonIcon tooltip="Excluir Categoria Transação">
+                                                        <ButtonIcon tooltip="Excluir Subcategoria Transação">
                                                             <Button
                                                                 variant="unstyled"
                                                                 display="flex"
                                                                 alignItems="center"
                                                                 colorScheme="red"
                                                                 onClick={() => {
-                                                                    setModalRemoveCategoriaTransacao(true)
-                                                                    setDeleteCategoriaTransacaoId(item.id)
+                                                                    setModalRemoveSubCategoriaTransacao(true)
+                                                                    setDeleteSubCategoriaTransacaoId(item.id)
                                                                 }}
                                                             >
                                                                 <FiTrash />
@@ -180,44 +179,44 @@ const CategoriaTransacaoList = () => {
                         )}
 
                         {data.length === 0 && (
-                            <AlertNoDataFound title="Nenhuma categoria encontrada" />
+                            <AlertNoDataFound title="Nenhuma subcategoria encontrada" />
                         )}
                     </>
                 )}
             </Content>
 
             <SimpleModal
-                title="Categoria Transação"
+                title="Subcategoria Transação"
                 size="xl"
-                isOpen={modalRegisterCategoriaTransacao}
-                handleModal={setModalRegisterCategoriaTransacao}
+                isOpen={modalRegisterSubCategoriaTransacao}
+                handleModal={setModalRegisterSubCategoriaTransacao}
             >
-                <ModalRegisterCategoriaTransacao
-                    handleClose={() => setModalRegisterCategoriaTransacao(false)}
+                <ModalRegisterSubCategoriaTransacao
+                    handleClose={() => setModalRegisterSubCategoriaTransacao(false)}
                 />
             </SimpleModal>
 
-            {categoriaTransacaoData && (
+            {subCategoriaTransacaoData && (
                 <SimpleModal
-                    title="Categoria Transação"
+                    title="Subcategoria Transação"
                     size="xl"
-                    isOpen={modalUpdateCategoriaTransacao}
-                    handleModal={setModalUpdateCategoriaTransacao}
+                    isOpen={modalUpdateSubCategoriaTransacao}
+                    handleModal={setModalUpdateSubCategoriaTransacao}
                 >
-                    <ModalUpdateCategoriaTransacao
-                        handleClose={() => setModalUpdateCategoriaTransacao(false)}
-                        data={categoriaTransacaoData}
+                    <ModalUpdateSubCategoriaTransacao
+                        handleClose={() => setModalUpdateSubCategoriaTransacao(false)}
+                        data={subCategoriaTransacaoData}
                     />
                 </SimpleModal>
             )}
 
-            {modalRemoveCategoriaTransacao && (
+            {modalRemoveSubCategoriaTransacao && (
                 <AlertModal
-                    title="Remover Categoria Transação"
-                    question="Deseja realmente remover essa categoria transação?"
-                    request={onConfirmRemoveCategoria}
-                    showModal={modalRemoveCategoriaTransacao}
-                    setShowModal={setModalRemoveCategoriaTransacao}
+                    title="Remover Subcategoria Transação"
+                    question="Deseja realmente remover essa subcategoria transação?"
+                    request={onConfirmRemoveSubCategoria}
+                    showModal={modalRemoveSubCategoriaTransacao}
+                    setShowModal={setModalRemoveSubCategoriaTransacao}
                     size="md"
                 ></AlertModal>
             )}
@@ -225,4 +224,4 @@ const CategoriaTransacaoList = () => {
     );
 };
 
-export default CategoriaTransacaoList;
+export default SubCategoriaTransacaoList;

@@ -7,6 +7,10 @@ export interface ICategoriaTransacao {
   id: string,
   nome: string
   tipo: number
+  SubCategoria: {
+    id: string
+    nome: string
+  }
 }
 
 export interface ICategoriaTransacaoResponse {

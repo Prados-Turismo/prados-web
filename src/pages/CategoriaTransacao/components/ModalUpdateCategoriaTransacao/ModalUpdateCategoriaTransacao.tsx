@@ -17,6 +17,7 @@ import { FieldWrap } from "./styled";
 import { useGlobal } from "../../../../contexts/UserContext";
 import ReactSelect from "react-select";
 import { ICategoriaTransacao } from "../../../../models/categoria-transacao.model";
+import useSubCategoriaTransacao from "../../../../hooks/useSubCategoriaTransacao";
 
 const handleSubmitRegisterSchema = z.object({
   nome: z
@@ -28,6 +29,11 @@ const handleSubmitRegisterSchema = z.object({
     .number()
     .min(1, {
       message: fieldRequired('tipo')
+    }),
+  codigoSubCategoria: z
+    .string()
+    .min(1, {
+      message: fieldRequired("Subcategoria")
     })
 });
 
@@ -44,6 +50,7 @@ const ModalUpdateCategoriaTransacao = ({
 }: IModalUpdateCategoriaTransacao) => {
   const { user } = useGlobal();
   const { updateCategoriaTransacao } = useCategoriaTransacao();
+  const { getAllSubCategoriaTransacao } = useSubCategoriaTransacao()
 
   const {
     setValue,
@@ -59,6 +66,7 @@ const ModalUpdateCategoriaTransacao = ({
     }
   });
   const { mutate, isLoading } = updateCategoriaTransacao(reset, handleClose);
+  const { data: dataSubCategoria, isLoading: isLoadingSubCategoria } = getAllSubCategoriaTransacao()
 
   const handleSubmitRegister = (submitData: IhandleSubmitRegister) => {
     mutate({
@@ -128,6 +136,36 @@ const ModalUpdateCategoriaTransacao = ({
               defaultValue={{
                 label: data.tipo == 1 ? 'Débito' : 'Crédito',
                 value: data.tipo
+              }}
+            />
+          </Box>
+        </FieldWrap>
+
+        <FieldWrap>
+          <span>Subcategoria <Asterisk /></span>
+
+          <Box display="flex" gap="10px">
+            <ReactSelect
+              className="select-fields large"
+              classNamePrefix="select"
+              closeMenuOnSelect={true}
+              {...register?.("codigoSubCategoria")}
+              isSearchable={true}
+              placeholder="Selecione"
+              noOptionsMessage={() => "Não há subcategoria cadastrada"}
+              options={dataSubCategoria
+                ?.map((subcategoria) => ({
+                  label: subcategoria?.nome,
+                  value: subcategoria?.id,
+                }))}
+              name="codigoSubCategoria"
+              id="codigoSubCategoria"
+              onChange={(option) => {
+                setValue("codigoSubCategoria", option?.value || '');
+              }}
+              defaultValue={{
+                label: data.SubCategoria.nome,
+                value: data.SubCategoria.id
               }}
             />
           </Box>

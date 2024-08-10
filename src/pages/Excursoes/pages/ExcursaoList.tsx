@@ -177,17 +177,20 @@ const ExcursaoList = () => {
                             {item.publicadoSite ? "Publicada" : "Aguardando Publicação"}
                           </TD>
                           <TD gap={3}>
-
-                            <ButtonIcon tooltip="Publicar">
-                              <MdPublish
-                                size={20}
-                                cursor="pointer"
-                                onClick={() => {
-                                  setPublishExcursaoId(item.id)
-                                  setModalPublishExcursao(true)
-                                }}
-                              />
-                            </ButtonIcon>
+                           
+                            {!item.publicadoSite && !isLoadingPublish && (
+                              <ButtonIcon tooltip="Publicar">
+                                <MdPublish
+                                  size={20}
+                                  cursor="pointer"
+                                  onClick={() => {
+                                    setPublishExcursaoId(item.id)
+                                    setModalPublishExcursao(true)
+                                  }}
+                                />
+                              </ButtonIcon>
+                            )
+                            }
 
                             <ButtonIcon tooltip="Editar">
                               <MdEdit

@@ -8,7 +8,26 @@ export interface IReserva {
   reserva: string
   codigoUsuario: string | null
   codigoFinanceiro: string
+  dataCadastro: string
   Transacao: {
+    id: string
+    tipo: number
+    valor: number
+    vistoAdmin?: boolean
+    data: string
+    efetivado?: boolean
+    observacao?: string | null
+    ativo: boolean
+    numeroComprovanteBancario?: string | null
+    dataPrevistaRecebimento: string
+    idWP?: number | null
+    codigoPessoa?: string | null
+    codigoFornecedor?: string | null
+    codigoExcursao?: string | null
+    codigoProduto?: string | null
+    codigoPacote?: string | null
+    codigoFormaPagamento: string
+    usuarioCadastro: string
     Pessoas?: {
       id: string
       nome: string

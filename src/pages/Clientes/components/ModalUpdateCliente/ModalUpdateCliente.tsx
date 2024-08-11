@@ -70,6 +70,9 @@ const handleSubmitRegisterSchema = z.object({
     .string(),
   complemento: z
     .string(),
+  rg: z
+    .string()
+    .optional()
 });
 
 type IhandleSubmitRegister = z.infer<typeof handleSubmitRegisterSchema>;
@@ -112,7 +115,8 @@ const ModalUpdateCliente = ({
       complemento: data.Endereco[0]?.complemento || '',
       cidade: data.Endereco[0]?.cidade || '',
       uf: data.Endereco[0]?.uf || '',
-      bairro: data.Endereco[0]?.bairro || ''
+      bairro: data.Endereco[0]?.bairro || '',
+      rg: data.rg || ''
     }
   });
   const { mutate, isLoading } = updatePessoa(reset, handleClose);
@@ -331,21 +335,43 @@ const ModalUpdateCliente = ({
 
         </Flex>
 
-        <FormControl
-          minW="50%"
-          isInvalid={errors.dataNascimento?.message ? true : false}
+        <Flex
+          gap="15px"
+          flexDirection={{
+            base: "column",
+            lg: "row",
+          }}
         >
-          <FormLabel>Data Nascimento</FormLabel>
-          <Input
-            type="date"
-            minW="50%"
-            placeholder="dd/mm/aaaa"
-            max="2099-12-31"
-            maxLength={10}
-            {...register("dataNascimento")}
+
+          <FormControl
+            isInvalid={errors.dataNascimento?.message ? true : false}
+          >
+            <FormLabel>Data Nascimento</FormLabel>
+            <Input
+              type="date"
+              maxWidth="300px"
+              placeholder="dd/mm/aaaa"
+              max="2099-12-31"
+              maxLength={10}
+              {...register("dataNascimento")}
+            />
+            <FormErrorMessage>{errors.dataNascimento?.message}</FormErrorMessage>
+          </FormControl>
+
+          <FormInput
+            id="rg"
+            label="RG"
+            type="text"
+            name="rg"
+            register={register}
+            inputArea={false}
+            errors={errors.telefoneContato}
+            placeholder="Digite o RG"
+            maxWidth="300px"
+            setValue={setValue}
+            maxLengthInpt={15}
           />
-          <FormErrorMessage>{errors.dataNascimento?.message}</FormErrorMessage>
-        </FormControl>
+        </Flex>
 
         <Flex
           gap="15px"

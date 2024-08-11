@@ -1,6 +1,6 @@
-import { Button, Flex, TableContainer } from "@chakra-ui/react";
+import { Button, Flex, TableContainer, Tooltip, Text } from "@chakra-ui/react";
 import { useState } from "react";
-import { IoIosAdd } from "react-icons/io";
+import { IoIosAdd, IoMdClose } from "react-icons/io";
 import FieldSearch from "../../../components/FieldSearch";
 import Loading from "../../../components/Loading";
 import Pagination from "../../../components/Pagination";
@@ -23,6 +23,9 @@ import AlertModal from "../../../components/AlertModal";
 import useReservas from "../../../hooks/useReservas";
 import { IReserva } from "../../../models/reservas.model";
 import { IoTicket } from "react-icons/io5";
+import { AiFillPrinter } from "react-icons/ai";
+import { MdOutgoingMail } from "react-icons/md";
+import { formattingDate } from "../../../utils/formattingDate";
 
 const ReservasList = () => {
     const { getReserva, deleteReserva } = useReservas();
@@ -50,17 +53,26 @@ const ReservasList = () => {
 
     return (
         <>
-            <SectionTop className="contentTop">
-                <Button
-                    leftIcon={<IoIosAdd />}
-                    onClick={() => {
-                        setModalRegisterReserva(true);
-                    }}
-                >
-                    Cadastrar Reserva
-                </Button>
-            </SectionTop>
+            <Flex>
+                <SectionTop className="contentTop" gap="30px">
+                    <Flex gap="10px" flexWrap="wrap">
+                        <Text fontSize="2xl" fontWeight="bold">
+                            Reservas
+                        </Text>
+                    </Flex>
+                </SectionTop>
 
+                <SectionTop className="contentTop">
+                    <Button
+                        leftIcon={<IoIosAdd />}
+                        onClick={() => {
+                            setModalRegisterReserva(true);
+                        }}
+                    >
+                        Cadastrar Reserva
+                    </Button>
+                </SectionTop>
+            </Flex>
             <Content className="contentMain">
                 <Flex width="100%" gap="15px" alignItems="flex-end" flexWrap="wrap">
                     <div className="searchWrap">
@@ -125,15 +137,38 @@ const ReservasList = () => {
                                 <TableContainer marginBottom="10px">
                                     <Table>
                                         <THead padding="0 30px 0 30px">
+                                            <TD>Situação</TD>
                                             <TD>Reseva</TD>
                                             <TD>Cliente</TD>
                                             <TD>Excursão</TD>
+                                            <TD>Data / Hora</TD>
                                             <TD></TD>
                                         </THead>
 
                                         <TBody>
                                             {data.map((item) => (
                                                 <TR key={item.id}>
+                                                    <TD>
+                                                        {item.Transacao.efetivado ? (
+                                                            <Tooltip label="Efetivado" placement="top" hasArrow>
+                                                                <div style={{
+                                                                    backgroundColor: "green",
+                                                                    borderRadius: "50%",
+                                                                    width: "10px",
+                                                                    height: "10px"
+                                                                }} />
+                                                            </Tooltip>
+                                                        ) : (
+                                                            <Tooltip label="Pendente" placement="top" hasArrow>
+                                                                <div style={{
+                                                                    backgroundColor: "red",
+                                                                    borderRadius: "50%",
+                                                                    width: "10px",
+                                                                    height: "10px"
+                                                                }} />
+                                                            </Tooltip>
+                                                        )}
+                                                    </TD>
                                                     <TD>
                                                         {item.reserva}
                                                     </TD>
@@ -143,11 +178,38 @@ const ReservasList = () => {
                                                     <TD>
                                                         {item.Transacao.Excursao?.nome}
                                                     </TD>
+                                                    <TD>
+                                                        {formattingDate(item.dataCadastro, true)}
+                                                    </TD>
                                                     <TD gap={3}>
+
                                                         <ButtonIcon tooltip="Ver Voucher">
                                                             <IoTicket
                                                                 size={20}
                                                                 onClick={() => { }}
+                                                            />
+                                                        </ButtonIcon>
+
+                                                        <ButtonIcon tooltip="Imprimir Detalhes Reserva">
+                                                            <AiFillPrinter
+                                                                size={20}
+                                                                onClick={() => { }}
+                                                            />
+                                                        </ButtonIcon>
+
+                                                        <ButtonIcon tooltip="Enviar E-mail com voucher">
+                                                            <MdOutgoingMail
+                                                                size={20}
+                                                                onClick={() => { }}
+                                                            />
+                                                        </ButtonIcon>
+
+                                                        <ButtonIcon tooltip="Cancelar reserva">
+                                                            <IoMdClose
+                                                                size={20}
+                                                                onClick={() => {
+
+                                                                }}
                                                             />
                                                         </ButtonIcon>
                                                     </TD>

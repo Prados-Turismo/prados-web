@@ -1,4 +1,4 @@
-import { Button, Flex, TableContainer } from "@chakra-ui/react";
+import { Button, Flex, TableContainer, Text } from "@chakra-ui/react";
 import { useState } from "react";
 import { IoIosAdd } from "react-icons/io";
 import FieldSearch from "../../../components/FieldSearch";
@@ -49,16 +49,26 @@ const FormaPagamentoList = () => {
 
     return (
         <>
-            <SectionTop className="contentTop">
-                <Button
-                    leftIcon={<IoIosAdd />}
-                    onClick={() => {
-                        setModalRegisterFormaPagamento(true);
-                    }}
-                >
-                    Cadastrar Forma Pagamento
-                </Button>
-            </SectionTop>
+            <Flex>
+                <SectionTop className="contentTop" gap="30px">
+                    <Flex gap="10px" flexWrap="wrap">
+                        <Text fontSize="2xl" fontWeight="bold">
+                            Formas de Pagamento
+                        </Text>
+                    </Flex>
+                </SectionTop>
+
+                <SectionTop className="contentTop">
+                    <Button
+                        leftIcon={<IoIosAdd />}
+                        onClick={() => {
+                            setModalRegisterFormaPagamento(true);
+                        }}
+                    >
+                        Cadastrar Forma Pagamento
+                    </Button>
+                </SectionTop>
+            </Flex>
 
             <Content className="contentMain">
                 <Flex width="100%" gap="15px" alignItems="flex-end" flexWrap="wrap">

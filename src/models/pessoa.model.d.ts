@@ -13,6 +13,7 @@ export interface IPessoa {
   ativo: boolean
   dataNascimento?: string | null
   usuarioCadastro: string
+  rg: string | null
   Endereco: [{
     logradouro: string
     numero: string

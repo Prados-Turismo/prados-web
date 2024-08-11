@@ -1,4 +1,4 @@
-import { Button, Flex, TableContainer } from "@chakra-ui/react";
+import { Button, Flex, TableContainer, Text } from "@chakra-ui/react";
 import { useState } from "react";
 import { IoIosAdd, IoIosPeople, IoMdBus, IoMdPaper, IoMdTrash } from "react-icons/io";
 import FieldSearch from "../../../components/FieldSearch";
@@ -63,16 +63,26 @@ const ExcursaoList = () => {
 
   return (
     <>
-      <SectionTop className="contentTop">
-        <Button
-          leftIcon={<IoIosAdd />}
-          onClick={() => {
-            setModalRecordExcursao(true);
-          }}
-        >
-          Cadastrar excursão
-        </Button>
-      </SectionTop>
+      <Flex>
+        <SectionTop className="contentTop" gap="30px">
+          <Flex gap="10px" flexWrap="wrap">
+            <Text fontSize="2xl" fontWeight="bold">
+              Excursões
+            </Text>
+          </Flex>
+        </SectionTop>
+
+        <SectionTop className="contentTop">
+          <Button
+            leftIcon={<IoIosAdd />}
+            onClick={() => {
+              setModalRecordExcursao(true);
+            }}
+          >
+            Cadastrar excursão
+          </Button>
+        </SectionTop>
+      </Flex>
 
       <Content className="contentMain">
         <Flex width="100%" gap="15px" alignItems="flex-end" flexWrap="wrap">
@@ -177,7 +187,7 @@ const ExcursaoList = () => {
                             {item.publicadoSite ? "Publicada" : "Aguardando Publicação"}
                           </TD>
                           <TD gap={3}>
-                           
+
                             {!item.publicadoSite && !isLoadingPublish && (
                               <ButtonIcon tooltip="Publicar">
                                 <MdPublish

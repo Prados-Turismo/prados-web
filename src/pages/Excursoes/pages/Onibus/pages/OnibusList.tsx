@@ -1,96 +1,71 @@
 import { useState } from 'react';
-import { Box, Button, Flex, Text } from '@chakra-ui/react';
-import SeatMap from '../components/SeatMap';
-import PassengerList from '../components/PassengerList';
+import { Box, Button, Flex, Grid, Text } from '@chakra-ui/react';
 import { Content, SectionTop } from './styled';
 import { useNavigate, useParams } from 'react-router-dom';
-import { IoIosAdd } from 'react-icons/io';
-import useExcursaoPassageiro from '../../../../../hooks/useExcursaoPassageiros';
 import useExcursoes from '../../../../../hooks/useExcursao';
-import { z } from "zod"
+import Loading from '../../../../../components/Loading';
+import useExcursaoOnibus from '../../../../../hooks/useExcursaoOnibus';
+import useExcursaoQuarto from "../../../../../hooks/useExcursaoQuarto";
+import { z } from 'zod';
 import { fieldRequired } from '../../../../../utils/messagesError';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useGlobal } from '../../../../../contexts/UserContext';
+import SelectForm from '../../../../../components/SelectForm';
+
+const handleSubmitRegisterSchema = z.object({
+  codigoPassageiro: z
+    .string()
+    .min(1, {
+      message: fieldRequired("local de embarque"),
+    }),
+  numeroCadeira: z
+    .string()
+    .min(1, {
+      message: fieldRequired("Cadeira")
+    })
+
+});
+
+type IhandleSubmitRegister = z.infer<typeof handleSubmitRegisterSchema>;
 
 function OnibusList() {
   const navigate = useNavigate();
+  const { user } = useGlobal();
   const { id: _id } = useParams();
-  const { getExcursaoPassageiros } = useExcursaoPassageiro();
+  const { listExcursaoPassageirosNoRoom } = useExcursaoQuarto();
   const { getExcursao } = useExcursoes();
-  const { data, isLoading } = getExcursaoPassageiros(_id || '');
-  const passengers = data.map((d) => { return { id: d.Pessoa.id, nome: d.Pessoa.nome } })
-  const [selectedPassenger, setSelectedPassenger] = useState('');
-  const [seatAssignments, setSeatAssignments] = useState({});
+  const { getAcentos, createExcursaoOnibus } = useExcursaoOnibus();
   const { data: dataExcursao, isLoading: loadingExcursao } = getExcursao(_id || '');
+  const { data: dataPassageiros, isLoading: loadingPassageiros } = listExcursaoPassageirosNoRoom(_id || '');
+  const registerPerPage = 10
+  const [currentPage, setCurrentPage] = useState(1);
+  const [acentos, setAcentoName] = useState('')
+  const { mutate: mutateTocreateOnibus, isLoading: isLoadingOnibus } = createExcursaoOnibus();
 
-  const handleSubmitRegisterSchema = z.object({
-    nome: z
-      .string()
-      .min(1, {
-        message: fieldRequired("nome"),
-      }),
-    codigoPacote: z
-      .string()
-      .min(1, {
-        message: fieldRequired("pacote"),
-      }),
-    dataInicio: z
-      .string()
-      .min(1, {
-        message: fieldRequired("data de início"),
-      }),
-    dataFim: z
-      .string()
-      .min(1, {
-        message: fieldRequired("data de fim"),
-      }),
-    vagas: z
-      .number()
-      .min(1, {
-        message: fieldRequired("vagas"),
-      }),
-    observacoes: z
-      .string()
-      .optional()
+  const {
+    setValue,
+    reset,
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<IhandleSubmitRegister>({
+    resolver: zodResolver(handleSubmitRegisterSchema)
   });
 
-  const handleSelectPassenger = (passenger) => {
-    setSelectedPassenger(passenger);
+  const { data, count, isLoading } = getAcentos({
+    size: registerPerPage,
+    page: currentPage
+  }, _id || '');
+
+  const saveAcentoOnibus = async (passageiro: string, acento: string) => {
+    mutateTocreateOnibus({
+      numeroCadeira: acento,
+      codigoExcursao: _id || '',
+      codigoPassageiro: passageiro,
+      usuarioCadastro: user?.id,
+    })
   };
-
-  const handleSelectSeat = (seatNumber) => {
-    if (selectedPassenger) {
-      setSeatAssignments((prevAssignments) => {
-        const newAssignments = { ...prevAssignments };
-
-        // Encontre o assento atual do passageiro selecionado
-        const currentSeat = Object.keys(newAssignments).find(
-          (seat) => newAssignments[seat] === selectedPassenger
-        );
-
-        if (currentSeat) {
-          delete newAssignments[currentSeat];
-        }
-
-        if (newAssignments[seatNumber] === selectedPassenger) {
-          delete newAssignments[seatNumber];
-        } else {
-          newAssignments[seatNumber] = selectedPassenger;
-        }
-
-        return newAssignments;
-      });
-    }
-  };
-
-  const selectedSeats = Object.keys(seatAssignments).map(Number);
-  const highlightedSeat = Number(Object.keys(seatAssignments).find(
-    (seat) => seatAssignments[seat] === selectedPassenger
-  ));
-
-  // Reverter a estrutura do objeto para obter o assento de cada passageiro
-  const passengerSeatAssignments = {};
-  Object.keys(seatAssignments).forEach((seat) => {
-    passengerSeatAssignments[seatAssignments[seat]] = seat;
-  });
 
   return (
     <>
@@ -113,41 +88,65 @@ function OnibusList() {
             </Text>
           </Flex>
         </SectionTop>
-
-        <SectionTop className="contentTop" gap="30px" justifyContent="end">
-          <Button
-            isLoading={isLoading}
-            onClick={() => { }}
-            width={100}
-          >
-            Salvar
-          </Button>
-        </SectionTop>
       </Flex>
 
       <Content className="contentMain">
-        <Box textAlign="center" maxWidth="1200px" margin="auto" p={4}>
-          <Text fontSize="2xl" fontWeight="bold" mb={6}>
-            Assentos
-          </Text>
-          <Box display="flex" justifyContent="center" mb={4}>
-            <SeatMap
-              selectedSeats={selectedSeats}
-              highlightedSeat={highlightedSeat}
-              onSelectSeat={handleSelectSeat}
-            />
-          </Box>
-          <Text fontSize="2xl" fontWeight="bold" mb={6}>
-            Passageiros
-          </Text>
-          <PassengerList
-            passengers={passengers}
-            seatAssignments={passengerSeatAssignments}
-            onSelectPassenger={handleSelectPassenger}
-            selectedPassenger={selectedPassenger}
-          />
-        </Box>
-      </Content>
+        {isLoading && (
+          <Flex h="100%" alignItems="center">
+            <Loading />
+          </Flex>
+        )}
+        {!isLoading && (
+          <>
+            <Flex width="100%">
+              <Grid templateColumns={`repeat(5, 1fr)`} gap={5}>
+                {data.map((item, index) => (
+                  <h2>
+                    <Box as='span' flex='1' textAlign='left'>
+                      <Flex
+                        gap="15px"
+                        flexDirection={{
+                          base: "column",
+                          lg: "row",
+                        }}>
+                        <Text fontSize="1xl">
+                          Poltrona Nº {currentPage == 1 ? `${index + 1}` : `${currentPage - 1}${index}`}
+                        </Text>
+
+                        <SelectForm
+                          name="codigoPassageiro"
+                          maxW='100px'
+                          isRequired
+                          handleChange={(option) => {
+                            debugger
+                            setValue("codigoPassageiro", option?.value);
+                            saveAcentoOnibus(option.value || '', option.data.index)
+                          }}
+                          options={dataPassageiros
+                            ?.map((passageiro) => ({
+                              label: passageiro?.nome,
+                              value: passageiro?.id,
+                              data: {
+                                index: currentPage == 1 ? `${index + 1}` : `${currentPage - 1}${index}`
+                              }
+                            }))}
+                          defaultValue={{
+                            label: item.Pessoa.nome,
+                            value: item.Pessoa.id
+                          }}
+                          errors={errors.codigoPassageiro}
+                        />
+                      </Flex>
+                    </Box>
+                  </h2>
+
+                ))}
+              </Grid>
+            </Flex>
+          </>
+        )}
+      </Content >
+
     </>
   );
 }

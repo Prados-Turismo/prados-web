@@ -1,4 +1,4 @@
-import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box, Button, Flex, Text } from "@chakra-ui/react";
+import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box, Button, Flex, Input, Text } from "@chakra-ui/react";
 import { useState } from "react";
 import Loading from "../../../../../components/Loading";
 import Pagination from "../../../../../components/Pagination";
@@ -21,6 +21,7 @@ import ModalRegisterQuarto from "../components/ModalRegisterQuarto";
 import ModalUpdateQuarto from "../components/ModalUpdateQuarto";
 import { IExcursaoQuarto } from "../../../../../models/excursao-quarto.model";
 import AlertModal from "../../../../../components/AlertModal";
+import { FieldWrap } from "../components/ModalRegisterQuarto/styled";
 
 const QuartosList = () => {
   const { id: _id } = useParams();
@@ -38,10 +39,12 @@ const QuartosList = () => {
   const registerPerPage = 10;
   var numeroQuarto: string = '1'
 
-  const { data, count, isLoading } = getExcursaoQuarto({
+  const { data, count, isLoading, summary } = getExcursaoQuarto({
     size: registerPerPage,
     page: currentPage
   });
+
+  debugger
 
   const { mutate: mutateToDeleteExcursaoQuarto } = deleteExcursaoQuarto();
   const [deleteItemId, setDeleteExcursaoQuartoId] = useState('');
@@ -204,6 +207,18 @@ const QuartosList = () => {
                     </AccordionItem>
                   ))}
                 </Accordion>
+
+                <h1>Quantidade Por Tipo de Quarto</h1>
+
+                {summary && (
+                  <>
+                    {summary.map((value) => (
+                      <>
+                        <span>{`${value.nome}: ${value.count}`}</span>
+                      </>
+                    ))}
+                  </>
+                )}
 
                 <Pagination
                   registerPerPage={registerPerPage}

@@ -16,7 +16,7 @@ import { keys, queryClient } from "../services/query";
 
 const listExcursaoPassageirosNoRoom = (idExcursao: string): IPassageiroExcursaoQuartoResponse => {
   const { data, isLoading } = useQuery(
-    [],
+    [keys.excursaoQuartoPassageiro],
     async () => {
       const path = `excursao-passageiros/list-passageiros-no-room/${idExcursao}`;
 
@@ -54,7 +54,7 @@ const getExcursaoQuarto = ({ page, size }: IExcursaoQuartoArgs): IExcursaoQuarto
             size
           },
         });
-
+        
         return data
       } catch (error: any) {
         throw new Warning(error.response.data.message, error.response.status);
@@ -63,9 +63,10 @@ const getExcursaoQuarto = ({ page, size }: IExcursaoQuartoArgs): IExcursaoQuarto
   )
 
   return {
-    data: data?.rows || [],
-    count: data?.count || 0,
-    isLoading
+    data: data?.quartos?.rows || [],
+    count: data?.quartos?.count || 0,
+    isLoading,
+    summary: data?.summary || null
   };
 }
 
@@ -82,6 +83,7 @@ const createExcursaoQuarto = (
           reset()
           handleClose()
           queryClient.invalidateQueries([keys.excursaoQuarto])
+          queryClient.invalidateQueries([keys.excursaoQuartoPassageiro])
 
           useToastStandalone({
             title: "Cadastro concluído!",

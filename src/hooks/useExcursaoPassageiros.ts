@@ -40,7 +40,7 @@ const getAllPassageiros = ({ page, size, localEmbarque }: IExcursaoPassageiroArg
   );
 
   return {
-    data: data?.rows || [],
+    data: data || [],
     count: data?.count || 0,
     isLoading
   };

@@ -38,6 +38,7 @@ export interface IExcursaoQuartoResponse {
   data: IExcursaoQuarto[];
   count: number;
   isLoading: boolean;
+  summary?: IExcursaoQuartoSummary[]
 }
 
 export interface ICreateExcursaoQuartoArgs {
@@ -64,4 +65,10 @@ export interface IUpdateExcursaoQuartoResponse {
 export interface IDeleteExcursaoQuartoResponse {
   isLoading: boolean;
   mutate: UseMutateFunction<void, unknown, string, unknown>;
+}
+
+export interface IExcursaoQuartoSummary {
+  id: string
+  nome: string
+  count: number
 }

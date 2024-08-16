@@ -5,7 +5,9 @@ export interface IExcursaoQuarto {
       nome: string
     }
     id: string,
-    reserva: string
+    Reservas: {
+      reserva: number
+    }
   }]
   id: string
   codigoExcursao: string

@@ -99,7 +99,7 @@ function OnibusList() {
         {!isLoading && (
           <>
             <Flex width="100%">
-              <Grid templateColumns={`repeat(5, 1fr)`} gap={5}>
+              <Grid templateColumns={`repeat(1, 1fr)`} gap={5}>
                 {data.map((item, index) => (
                   <h2>
                     <Box as='span' flex='1' textAlign='left'>

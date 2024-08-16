@@ -21,7 +21,6 @@ import ModalRegisterQuarto from "../components/ModalRegisterQuarto";
 import ModalUpdateQuarto from "../components/ModalUpdateQuarto";
 import { IExcursaoQuarto } from "../../../../../models/excursao-quarto.model";
 import AlertModal from "../../../../../components/AlertModal";
-import { FieldWrap } from "../components/ModalRegisterQuarto/styled";
 
 const QuartosList = () => {
   const { id: _id } = useParams();
@@ -43,8 +42,6 @@ const QuartosList = () => {
     size: registerPerPage,
     page: currentPage
   });
-
-  debugger
 
   const { mutate: mutateToDeleteExcursaoQuarto } = deleteExcursaoQuarto();
   const [deleteItemId, setDeleteExcursaoQuartoId] = useState('');
@@ -199,7 +196,7 @@ const QuartosList = () => {
                       >
                         <ul>
                           {item.Passageiros.map((pass, index) => (
-                            <li key={pass.Pessoa.id}>{`${pass.reserva} - ${pass.Pessoa.nome}`}</li>
+                            <li key={pass.Pessoa.id}>{`${pass.Reservas.reserva} - ${pass.Pessoa.nome}`}</li>
                           ))}
 
                         </ul>
@@ -214,7 +211,7 @@ const QuartosList = () => {
                   <>
                     {summary.map((value) => (
                       <>
-                        <span>{`${value.nome}: ${value.count}`}</span>
+                        <span><b>{`${value.nome}:`}</b> {`${value.count}`}</span>
                       </>
                     ))}
                   </>

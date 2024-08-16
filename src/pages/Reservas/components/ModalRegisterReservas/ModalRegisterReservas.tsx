@@ -17,6 +17,10 @@ import { FieldWrap } from "./styled";
 import { useGlobal } from "../../../../contexts/UserContext";
 import FormInputNumber from "../../../../components/FormInputNumber";
 import SelectForm from "../../../../components/SelectForm";
+import useExcursoes from "../../../../hooks/useExcursao";
+import { FormEvent } from "react";
+import { cpfMask } from "../../../../utils";
+import usePessoas from "../../../../hooks/usePessoas";
 
 const handleSubmitRegisterSchema = z.object({
   nome: z
@@ -47,6 +51,8 @@ const ModalRegisterContabancaria = ({
 }: IModalRegisterReserva) => {
   const { user } = useGlobal();
   const { createReserva } = useReservas();
+  const { getExcursoes } = useExcursoes()
+  const { getAllPessoas } = usePessoas()
 
   const {
     setValue,
@@ -58,6 +64,8 @@ const ModalRegisterContabancaria = ({
     resolver: zodResolver(handleSubmitRegisterSchema),
   });
   const { mutate, isLoading } = createReserva(reset, handleClose);
+  const { data: dataExcursoes, isLoading: loadingExcursoes } = getExcursoes({ page: 1, size: 100 });
+
 
   const handleSubmitRegister = (submitData: IhandleSubmitRegister) => {
     mutate({
@@ -66,16 +74,20 @@ const ModalRegisterContabancaria = ({
     })
   };
 
-  const dataAtivo = [
-    {
-      id: true,
-      nome: "Ativo"
-    },
-    {
-      id: false,
-      nome: "Inativo"
-    }
-  ]
+  const cpfMasked = (event: FormEvent<HTMLInputElement>) => {
+
+    event.currentTarget.value = cpfMask(
+      event.currentTarget.value,
+    );
+
+    /*
+        if (cellphoneValidation(event.currentTarget.value)) {
+          setErrorPhone(false);
+        } else {
+          setErrorPhone(true);
+        }
+          */
+  }
 
   return (
     <form
@@ -87,19 +99,41 @@ const ModalRegisterContabancaria = ({
           (<Asterisk />) indica os campos obrigatórios
         </span>
 
-        <FieldWrap>
-          <span>
-            Nome <Asterisk />
-          </span>
+        <Flex
+          gap="15px"
+          flexDirection={{
+            base: "column",
+            lg: "row",
+          }}
+        >
+          <FieldWrap>
+            <span>
+              CPF <Asterisk />
+            </span>
+            <Input
+              placeholder="Digite o cpf"
+              id="cpf"
+              type="text"
+              onInput={cpfMasked}
+              onBlur={() => {
+              }}
+            />
+          </FieldWrap>
 
-          <Input
-            placeholder="Digite o nome"
-            id="nome"
-            type="text"
-            {...register("nome")}
-          />
-          {errors.nome && <p className="error">{errors.nome.message}</p>}
-        </FieldWrap>
+          <FieldWrap>
+            <span>
+              Passageiro <Asterisk />
+            </span>
+
+            <Input
+              placeholder="Digite CPF ou Nome"
+              id="nome"
+              type="text"
+              readOnly={true}
+              minWidth="300px"
+            />
+          </FieldWrap>
+        </Flex>
 
         <Flex
           gap="15px"
@@ -125,15 +159,15 @@ const ModalRegisterContabancaria = ({
 
           <SelectForm
             name="ativo"
-            label="Status"
+            label="Excursão"
             isRequired
             handleChange={(option) => {
               setValue("ativo", option?.value);
             }}
-            options={dataAtivo
-              ?.map((ativo) => ({
-                label: ativo?.nome,
-                value: ativo?.id,
+            options={dataExcursoes
+              ?.map((Excursao) => ({
+                label: Excursao?.nome,
+                value: Excursao?.id,
               }))}
             errors={errors.ativo}
           />

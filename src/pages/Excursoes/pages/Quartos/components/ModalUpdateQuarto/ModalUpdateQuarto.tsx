@@ -26,7 +26,7 @@ const handleSubmitRegisterSchema = z.object({
       z.string()
     )
     .min(1, {
-      message: fieldRequired("local de embarque"),
+      message: fieldRequired("Passageiro"),
     }),
   numeroQuarto: z
     .string()
@@ -63,7 +63,7 @@ const ModalUpdateQuarto = ({
   const { data: dataPassageiros, isLoading: loadingPassageiros } = listExcursaoPassageirosNoRoom(idExcursao || '');
 
   let passageiros = data.Passageiros.map((value) => {
-    return { id: value.Pessoa.id, nome: value.Pessoa.nome, reserva: value.reserva }
+    return { id: value.Pessoa.id, nome: value.Pessoa.nome, reserva: value.Reservas.reserva }
   })
   const allOptions = [...dataPassageiros, ...passageiros]
 
@@ -111,7 +111,7 @@ const ModalUpdateQuarto = ({
               }}
               defaultValue={
                 data.Passageiros.map((passageiro) => {
-                  return { value: passageiro.Pessoa.id, label: `${passageiro.reserva} - ${passageiro.Pessoa.nome}` }
+                  return { value: passageiro.Pessoa.id, label: `${passageiro.Reservas.reserva} - ${passageiro.Pessoa.nome}` }
                 })}
             />
           </Box>

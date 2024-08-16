@@ -160,6 +160,29 @@ const deleteExcursao = (): IUpdateExcursaoResponse => {
   }
 }
 
+const findExcursao = (): IUpdateExcursaoResponse => {
+
+  const { isLoading, mutate } = useMutation(
+    async (id: string) => {
+      const urlPath = `excursao/find/${id}`
+
+      try {
+        const { data } = await apiPrados.get(urlPath)
+        queryClient.invalidateQueries([keys.excursao])
+        
+        return data
+      } catch (error: any) {
+        throw new Warning(error.response.data.message, error?.response?.status);
+      }
+    }
+  )
+
+  return {
+    isLoading,
+    mutate
+  }
+}
+
 const publicarExcursao = (): IUpdateExcursaoResponse => {
 
   const { isLoading, mutate } = useMutation(
@@ -194,6 +217,7 @@ export default function useExcursoes() {
     createExcursao,
     updateExcursao,
     deleteExcursao,
-    publicarExcursao
+    publicarExcursao,
+    findExcursao
   }
 }

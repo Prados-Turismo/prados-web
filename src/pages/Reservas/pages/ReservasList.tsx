@@ -149,7 +149,7 @@ const ReservasList = () => {
                                             {data.map((item) => (
                                                 <TR key={item.id}>
                                                     <TD>
-                                                        {item.Transacao.efetivado ? (
+                                                        {item.status ? (
                                                             <Tooltip label="Efetivado" placement="top" hasArrow>
                                                                 <div style={{
                                                                     backgroundColor: "green",
@@ -173,10 +173,10 @@ const ReservasList = () => {
                                                         {item.reserva}
                                                     </TD>
                                                     <TD>
-                                                        {item.Transacao.Pessoas?.nome}
+                                                        {item.Pessoa[0]?.nome}
                                                     </TD>
                                                     <TD>
-                                                        {item.Transacao.Excursao?.nome}
+                                                        {item.Excursao?.nome}
                                                     </TD>
                                                     <TD>
                                                         {formattingDate(item.dataCadastro, true)}

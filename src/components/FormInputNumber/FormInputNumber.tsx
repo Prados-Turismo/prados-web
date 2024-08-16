@@ -44,7 +44,8 @@ const FormInputNumber = ({
   isDisabled,
   prefix = "money",
   dontAllowNegative,
-  marginLabelBottom = "4px"
+  marginLabelBottom = "4px",
+  placeholder
 }: IFormInput) => {
   const { isOpen, onToggle, onClose } = useDisclosure()
 
@@ -125,8 +126,10 @@ const FormInputNumber = ({
             onValueChange={({ floatValue }) => {
               if (!readOnly) {
                 if (isStateForm) {
+                  debugger
                   setValue(floatValue || "")
                 } else {
+                  debugger
                   setValue(name, floatValue || "")
                 }
               }
@@ -143,6 +146,7 @@ const FormInputNumber = ({
             width={width}
             customInput={Input}
             maxLength={maxLength}
+            placeholder={placeholder}
             sx={{
               borderColor: errors ? "brand.500" : "inherit",
               height: "40px",
@@ -154,6 +158,7 @@ const FormInputNumber = ({
             value={value}
             defaultValue={defaultValue}
             onValueChange={({ value }) => {
+              debugger
               if (isStateForm) {
                 setValue(Number(value) || "")
               } else {

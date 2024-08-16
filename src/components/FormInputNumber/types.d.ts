@@ -9,8 +9,8 @@ export interface IFormInput extends InputProps {
   errors?: formstate.FieldError | undefined
   name: string
   setValue:
-    | UseFormSetValue<FieldValues>
-    | React.Dispatch<React.SetStateAction<string | null>>
+  | UseFormSetValue<FieldValues>
+  | React.Dispatch<React.SetStateAction<string | null>>
   value?: string | number
   format?: FormatInputValueFunction | undefined
   isStateForm?: boolean
@@ -29,4 +29,5 @@ export interface IFormInput extends InputProps {
   prefix?: "money" | "percentual"
   dontAllowNegative?: boolean
   marginLabelBottom?: string
+  placeholder?: string
 }

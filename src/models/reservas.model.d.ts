@@ -5,10 +5,16 @@ export interface IReservaArgs {
 
 export interface IReserva {
   id: string
-  reserva: string
-  codigoUsuario: string | null
-  codigoFinanceiro: string
+  reserva: number,
+  status: boolean,
+  codigoUsuario: string | null,
   dataCadastro: string
+  Pessoa: {
+    nome: string
+  }[]
+  Excursao: {
+    nome: string
+  }
   Transacao: {
     id: string
     tipo: number

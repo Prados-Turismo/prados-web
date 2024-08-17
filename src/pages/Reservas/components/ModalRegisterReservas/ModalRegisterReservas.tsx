@@ -26,6 +26,7 @@ import { IOption } from "../../../../components/SelectForm/types";
 import useFormaPagamento from "../../../../hooks/useFormaPagamento";
 import useContaBancaria from "../../../../hooks/useContaBancaria";
 import { IExcursao } from "../../../../models/excursao.model";
+import useLocalEmbarque from "../../../../hooks/useLocalEmbarque";
 
 const handleSubmitRegisterSchema = z.object({
   passageiros: z
@@ -81,12 +82,14 @@ const ModalRegisterReservas = ({
   const { getAllPessoas } = usePessoas()
   const { getAllFormaPagamentos } = useFormaPagamento()
   const { getAllContaBancaria } = useContaBancaria()
+  const { getLocalEmbarque } = useLocalEmbarque()
 
   const { data: dataClientes, isLoading: loadingClientes } = getAllPessoas();
   const { data: dataExcursoes, isLoading: loadingExcursoes } = getExcursoes({ page: 1, size: 100 });
   const { data: dataFormaPagamentos, isLoading: loadingFormaPagamentos } = getAllFormaPagamentos();
   const { data: dataContaBancaria, isLoading: isLoadingContaBancaria } = getAllContaBancaria();
   const { mutate: mutateToGetExcursao, isLoading: isLoadingExcursao } = findExcursao();
+  const { data: localEmbarqueData, isLoading: isLoadingLocalEmbarque } = getLocalEmbarque()
   const [subTotal, setSubtotal] = useState(0);
   const [quantidade, setQuantidade] = useState(0);
   const [desconto, setDesconto] = useState(0);
@@ -107,7 +110,6 @@ const ModalRegisterReservas = ({
 
 
   const handleSubmitRegister = (submitData: IhandleSubmitRegister) => {
-    debugger
     mutate({
       ...submitData,
       codigoUsuario: user?.id
@@ -269,7 +271,7 @@ const ModalRegisterReservas = ({
             <span>Desconto %</span>
             <Input
               height="40px"
-              {...register("desconto")}
+              {...register("desconto", { valueAsNumber: true })}
               placeholder="Desconto %"
               flex="1.01"
               type="number"
@@ -289,6 +291,7 @@ const ModalRegisterReservas = ({
                 calculateTotal(quantidade, subTotal, getValues("desconto") || 0)
               }}
               minW="250px"
+              defaultValue={0}
             />
           </FieldWrap>
 
@@ -307,6 +310,26 @@ const ModalRegisterReservas = ({
             errors={errors.criancasColo}
           />
         </Flex>
+
+        <FieldWrap>
+          <span>Local De Embarque</span>
+          <ReactSelect
+            className="select-fields"
+            classNamePrefix="select"
+            closeMenuOnSelect={true}
+            isSearchable={true}
+            // value={localEmbarqueSelected}
+            placeholder="Selecionar"
+            noOptionsMessage={() => "Nenhum local encontrado"}
+            onChange={(item) => {
+              // setLocalEmbarqueSelected(item);
+            }}
+            options={localEmbarqueData.map((local) => {
+              return { value: local.id, label: local.nome }
+            })}
+          />
+
+        </FieldWrap>
 
         <Flex
           gap="15px"

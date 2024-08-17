@@ -26,6 +26,9 @@ import { IoTicket } from "react-icons/io5";
 import { AiFillPrinter } from "react-icons/ai";
 import { MdOutgoingMail } from "react-icons/md";
 import { formattingDate } from "../../../utils/formattingDate";
+import { FaShoppingCart } from "react-icons/fa";
+import { GrSystem } from "react-icons/gr";
+import { useNavigate } from "react-router-dom";
 
 const ReservasList = () => {
     const { getReserva, deleteReserva } = useReservas();
@@ -37,6 +40,7 @@ const ReservasList = () => {
     const [reservaData, setReservaData] = useState<IReserva | undefined>();
     const [currentPage, setCurrentPage] = useState(1);
     const registerPerPage = 10;
+    const navigate = useNavigate()
 
     const { mutate: mutateToDeleteReserva } = deleteReserva();
     const [deleteItemId, setDeleteReservaId] = useState('');
@@ -139,7 +143,8 @@ const ReservasList = () => {
                                         <THead padding="0 30px 0 30px">
                                             <TD>Situação</TD>
                                             <TD>Reseva</TD>
-                                            <TD>Cliente</TD>
+                                            <TD>Vouchers</TD>
+                                            <TD>Detalhes</TD>
                                             <TD>Excursão</TD>
                                             <TD>Data / Hora</TD>
                                             <TD></TD>
@@ -173,7 +178,19 @@ const ReservasList = () => {
                                                         {item.reserva}
                                                     </TD>
                                                     <TD>
-                                                        {item.Pessoa[0]?.nome}
+                                                        {item.Pessoa?.length}
+                                                    </TD>
+                                                    <TD>
+                                                        {item.plataforma == 1 ? (
+                                                            <ButtonIcon tooltip="Loja">
+                                                                <FaShoppingCart />
+                                                            </ButtonIcon>
+
+                                                        ) : (
+                                                            <ButtonIcon tooltip={`Sistema Por: ${item.Usuario.nome}`}>
+                                                                <GrSystem />
+                                                            </ButtonIcon>
+                                                        )}
                                                     </TD>
                                                     <TD>
                                                         {item.Excursao?.nome}
@@ -186,7 +203,7 @@ const ReservasList = () => {
                                                         <ButtonIcon tooltip="Ver Voucher">
                                                             <IoTicket
                                                                 size={20}
-                                                                onClick={() => { }}
+                                                                onClick={() => { navigate(`/reservas/${item.id}/voucher`) }}
                                                             />
                                                         </ButtonIcon>
 

@@ -8,7 +8,8 @@ import {
   ICreateReservaResponse,
   IUpdateReservaArgs,
   IUpdateReservaResponse,
-  IDeleteReservaResponse
+  IDeleteReservaResponse,
+  IReservaFindResponse,
 } from "../models/reservas.model";
 import { Warning } from "../errors";
 import { keys, queryClient } from "../services/query";
@@ -45,11 +46,37 @@ const getReserva = ({ page, size }: IReservaArgs): IReservaResponse => {
   };
 }
 
+const findReserva = (id: string): IReservaFindResponse => {
+
+  const { data, isLoading } = useQuery(
+    [
+    ],
+    async () => {
+      const path = `reserva/find/${id}`;
+      queryClient.invalidateQueries([keys.reserva])
+      
+      try {
+        const { data } = await apiPrados.get(path);
+
+        return data
+      } catch (error: any) {
+        throw new Warning(error.response.data.message, error.response.status);
+      }
+    }
+  )
+
+  return {
+    data: data || [],
+    count: data?.count || 0,
+    isLoading,
+  };
+}
+
 const getAllReserva = (): IReservaResponse => {
 
   const { data, isLoading } = useQuery(
     [
-      keys.excursaoQuarto,
+      keys.reserva,
     ],
     async () => {
       const path = 'reserva/findAll';
@@ -79,7 +106,7 @@ const createReserva = (
   const { isLoading, mutate } = useMutation(
     async (data: ICreateReservaArgs) => {
       const urlPath = 'reserva/create'
-      debugger
+      data.plataforma = 2
 
       try {
         await apiPrados.post(urlPath, data).then(() => {
@@ -169,6 +196,7 @@ export default function useReserva() {
     getAllReserva,
     createReserva,
     updateReserva,
-    deleteReserva
+    deleteReserva,
+    findReserva
   }
 }

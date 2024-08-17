@@ -207,12 +207,12 @@ const ReservasList = () => {
                                                             />
                                                         </ButtonIcon>
 
-                                                        <ButtonIcon tooltip="Imprimir Detalhes Reserva">
+                                                        {/* <ButtonIcon tooltip="Imprimir Detalhes Reserva">
                                                             <AiFillPrinter
                                                                 size={20}
                                                                 onClick={() => { window.open(`/reservas/${item.id}/ticket`, '_blank') }}
                                                             />
-                                                        </ButtonIcon>
+                                                        </ButtonIcon> */}
 
                                                         <ButtonIcon tooltip="Enviar E-mail com voucher">
                                                             <MdOutgoingMail

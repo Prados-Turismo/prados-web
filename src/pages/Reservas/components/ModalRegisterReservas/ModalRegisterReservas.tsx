@@ -21,7 +21,7 @@ import useExcursoes from "../../../../hooks/useExcursao";
 import { FormEvent, useState } from "react";
 import { cpfMask } from "../../../../utils";
 import usePessoas from "../../../../hooks/usePessoas";
-import ReactSelect, { GroupBase } from "react-select";
+import ReactSelect from "react-select";
 import { IOption } from "../../../../components/SelectForm/types";
 import useFormaPagamento from "../../../../hooks/useFormaPagamento";
 import useContaBancaria from "../../../../hooks/useContaBancaria";
@@ -64,7 +64,12 @@ const handleSubmitRegisterSchema = z.object({
     .optional(),
   valorDesconto: z
     .number()
-    .optional()
+    .optional(),
+  localEmbarqueId: z
+    .string()
+    .min(1, {
+      message: fieldRequired('Local de embarque')
+    })
 });
 
 type IhandleSubmitRegister = z.infer<typeof handleSubmitRegisterSchema>;
@@ -314,15 +319,16 @@ const ModalRegisterReservas = ({
         <FieldWrap>
           <span>Local De Embarque</span>
           <ReactSelect
+            {...register('localEmbarqueId')}
+            name="localEmbarqueId"
             className="select-fields"
             classNamePrefix="select"
             closeMenuOnSelect={true}
             isSearchable={true}
-            // value={localEmbarqueSelected}
             placeholder="Selecionar"
             noOptionsMessage={() => "Nenhum local encontrado"}
             onChange={(item) => {
-              // setLocalEmbarqueSelected(item);
+              setValue('localEmbarqueId', item?.value || '')
             }}
             options={localEmbarqueData.map((local) => {
               return { value: local.id, label: local.nome }

@@ -53,6 +53,8 @@ import Reservas from "../pages/Reservas";
 import SubCategoriaTransacao from "../pages/SubCategoriaTransacao";
 import Voucher from "../pages/Reservas/pages/Voucher";
 import Ticket from "../pages/Reservas/pages/Ticket";
+import LocalEmbarque from "../pages/LocalEmbarque";
+import Usuarios from "../pages/Usuarios";
 
 export const AppRoutes = () => {
   const location = useLocation();
@@ -99,6 +101,8 @@ export const AppRoutes = () => {
         <Route path="/reservas/:id/voucher" element={<Voucher />} />
         <Route path="/reservas/:id/ticket" element={<Ticket />} />
         <Route path="/subcategoria-transacao" element={<SubCategoriaTransacao />} />
+        <Route path="/local-embarque" element={<LocalEmbarque />} />
+        <Route path="/usuarios" element={<Usuarios />} />
 
         <Route path="/politica-privacidade" element={<PrivacyPolicy />} />
 

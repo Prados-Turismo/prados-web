@@ -2,57 +2,34 @@ import { useMutation, useQuery } from "react-query";
 import { useToastStandalone } from "./useToastStandalone";
 import { apiPrados } from "../services/api";
 import {
-  ICreateLocalEmbarqueArgs,
-  ICreateLocalEmbarqueResponse,
-  IDeleteLocalEmbarqueResponse,
-  ILocalEmbarqueArgs,
-  ILocalEmbarqueResponse,
-  IUpdateLocalEmbarqueArgs,
-  IUpdateLocalEmbarqueResponse
-} from "../models/local-embarque.model";
+  IUsuarioArgs,
+  IUsuarioResponse,
+  ICreateUsuarioArgs,
+  ICreateUsuarioResponse,
+  IUpdateUsuarioArgs,
+  IUpdateUsuarioResponse,
+  IDeleteUsuarioResponse
+} from "../models/usuarios.model";
 import { Warning } from "../errors";
 import { keys, queryClient } from "../services/query";
 
-const getLocalEmbarque = (): ILocalEmbarqueResponse => {
-  const { data, isLoading } = useQuery(
-    [
-      keys.localEmbarque
-    ],
-    async () => {
-      const urlPath = 'local-embarque/findAll'
-
-      try {
-        const { data } = await apiPrados.get(urlPath)
-
-        return data;
-      } catch (error: any) {
-        throw new Warning(error.response.data.message, error?.response?.status);
-      }
-    }
-  )
-
-  return {
-    data: data || [],
-    isLoading,
-    count: data?.count || 0
-  };
-}
-
-const getAllLocalEmbarque = ({ page, size }: ILocalEmbarqueArgs): ILocalEmbarqueResponse => {
+const getUsuario = ({ page, size }: IUsuarioArgs): IUsuarioResponse => {
 
   const { data, isLoading } = useQuery(
     [
-      keys.localEmbarque,
+      keys.usuario,
+      page
     ],
     async () => {
-      const path = 'local-embarque/index';
+      const path = 'usuarios/index';
 
       try {
         const { data } = await apiPrados.get(path, {
           params: {
             page,
-            size
-          }
+            size,
+            orderBy: 'nome'
+          },
         });
 
         return data
@@ -69,21 +46,47 @@ const getAllLocalEmbarque = ({ page, size }: ILocalEmbarqueArgs): ILocalEmbarque
   };
 }
 
-const createLocalEmbarque = (
+const getAllUsuario = (): IUsuarioResponse => {
+
+  const { data, isLoading } = useQuery(
+    [
+      keys.usuario,
+    ],
+    async () => {
+      const path = 'usuarios/findAll';
+
+      try {
+        const { data } = await apiPrados.get(path);
+
+        return data
+      } catch (error: any) {
+        throw new Warning(error.response.data.message, error.response.status);
+      }
+    }
+  )
+
+  return {
+    data: data || [],
+    count: data?.count || 0,
+    isLoading
+  };
+}
+
+const createUsuario = (
   reset: () => void,
   handleClose: () => void
-): ICreateLocalEmbarqueResponse => {
+): ICreateUsuarioResponse => {
 
   const { isLoading, mutate } = useMutation(
-    async (data: ICreateLocalEmbarqueArgs) => {
-      const urlPath = 'local-embarque/create'
+    async (data: ICreateUsuarioArgs) => {
+      const urlPath = 'usuarios/create'
 
       try {
         await apiPrados.post(urlPath, data).then(() => {
           reset()
           handleClose()
 
-          queryClient.invalidateQueries([keys.localEmbarque])
+          queryClient.invalidateQueries([keys.usuario])
 
           useToastStandalone({
             title: "Cadastro concluído!",
@@ -102,20 +105,20 @@ const createLocalEmbarque = (
   }
 }
 
-const updateLocalEmbarque = (
+const updateUsuario = (
   reset: () => void,
   handleClose: () => void
-): IUpdateLocalEmbarqueResponse => {
+): IUpdateUsuarioResponse => {
 
   const { isLoading, mutate } = useMutation(
-    async (data: IUpdateLocalEmbarqueArgs) => {
-      const urlPath = `local-embarque/update/${data.id}`;
+    async (data: IUpdateUsuarioArgs) => {
+      const urlPath = `usuarios/update/${data.id}`;
 
       try {
         await apiPrados.put(urlPath, data).then(() => {
           reset()
           handleClose()
-          queryClient.invalidateQueries([keys.localEmbarque])
+          queryClient.invalidateQueries([keys.usuario])
 
           useToastStandalone({
             title: "Atualizado com sucesso!",
@@ -134,17 +137,17 @@ const updateLocalEmbarque = (
   }
 }
 
-const deleteLocalEmbarque = (): IDeleteLocalEmbarqueResponse => {
+const deleteUsuario = (): IDeleteUsuarioResponse => {
 
   const { isLoading, mutate } = useMutation(
     async (id: string) => {
-      const urlPath = `local-embarque/delete/${id}`
+      const urlPath = `usuarios/delete/${id}`
       try {
         await apiPrados.patch(urlPath).then(function () {
-          queryClient.invalidateQueries([keys.localEmbarque])
+          queryClient.invalidateQueries([keys.usuario])
 
           useToastStandalone({
-            title: "Excluído com sucesso!",
+            title: "Excluída com sucesso!",
             status: "success"
           })
         })
@@ -160,12 +163,12 @@ const deleteLocalEmbarque = (): IDeleteLocalEmbarqueResponse => {
   }
 }
 
-export default function useLocalEmbarque() {
+export default function useUsuario() {
   return {
-    getLocalEmbarque,
-    createLocalEmbarque,
-    deleteLocalEmbarque,
-    updateLocalEmbarque,
-    getAllLocalEmbarque
+    getUsuario,
+    getAllUsuario,
+    createUsuario,
+    updateUsuario,
+    deleteUsuario
   }
 }

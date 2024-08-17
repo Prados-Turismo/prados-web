@@ -52,6 +52,7 @@ import Fornecedor from "../pages/Fornecedor";
 import Reservas from "../pages/Reservas";
 import SubCategoriaTransacao from "../pages/SubCategoriaTransacao";
 import Voucher from "../pages/Reservas/pages/Voucher";
+import Ticket from "../pages/Reservas/pages/Ticket";
 
 export const AppRoutes = () => {
   const location = useLocation();
@@ -96,6 +97,7 @@ export const AppRoutes = () => {
         <Route path="/fornecedor" element={<Fornecedor />} />
         <Route path="/reservas" element={<Reservas />} />
         <Route path="/reservas/:id/voucher" element={<Voucher />} />
+        <Route path="/reservas/:id/ticket" element={<Ticket />} />
         <Route path="/subcategoria-transacao" element={<SubCategoriaTransacao />} />
 
         <Route path="/politica-privacidade" element={<PrivacyPolicy />} />

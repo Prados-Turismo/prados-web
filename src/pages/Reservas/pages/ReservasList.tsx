@@ -210,7 +210,7 @@ const ReservasList = () => {
                                                         <ButtonIcon tooltip="Imprimir Detalhes Reserva">
                                                             <AiFillPrinter
                                                                 size={20}
-                                                                onClick={() => { }}
+                                                                onClick={() => { window.open(`/reservas/${item.id}/ticket`, '_blank') }}
                                                             />
                                                         </ButtonIcon>
 

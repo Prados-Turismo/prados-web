@@ -18,6 +18,7 @@ export interface IReserva {
     rg: string | null
     email: string
     telefone: string
+    orgaoEmissor: string | null
   }[],
   Excursao: {
     id: string,

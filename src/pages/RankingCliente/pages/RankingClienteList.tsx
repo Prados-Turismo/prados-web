@@ -13,39 +13,38 @@ import { Content, SectionTop } from "./styled";
 import ReactSelect from "react-select";
 import SimpleModal from "../../../components/SimpleModal";
 import { ISelect } from "../../../models/generics.model";
-import ModalRegisterCliente from "../components/ModalRegisterCliente";
-import ModalUpdateCliente from "../components/ModalUpdateCliente";
+import ModalRegisterRankingCliente from "../components/ModalRegisterRankingCliente";
+import ModalUpdateRankingCliente from "../components/ModalUpdateRankingCliente";
 import AlertNoDataFound from "../../../components/AlertNoDataFound";
 import { MdEdit } from "react-icons/md";
 import ButtonIcon from "../../../components/ButtonIcon";
 import { FiTrash } from "react-icons/fi";
 import AlertModal from "../../../components/AlertModal";
-import usePessoas from "../../../hooks/usePessoas";
-import { IPessoa } from "../../../models/pessoa.model";
-import { cpfMask } from "../../../utils";
+import useRankingCliente from "../../../hooks/useRankingCliente";
+import { IRankingCliente } from "../../../models/ranking-cliente.model";
 
-const ClienteList = () => {
-    const { getPessoas, deletePessoa } = usePessoas();
+const RankingClienteList = () => {
+    const { getRankingCliente, deleteRankingCliente } = useRankingCliente();
     const [statusSelected, setStatusSelected] = useState<ISelect | null>();
     const [resetFilter, setResetFilter] = useState(false);
-    const [modalRegisterCliente, setModalRegisterCliente] = useState(false);
-    const [modalUpdateCliente, setModalUpdateCliente] = useState(false);
-    const [modalRemoveCliente, setModalRemoveCliente] = useState(false);
-    const [clienteData, setClienteData] = useState<IPessoa | undefined>();
+    const [modalRegisterRankingCliente, setModalRegisterRankingCliente] = useState(false);
+    const [modalUpdateRankingCliente, setModalUpdateRankingCliente] = useState(false);
+    const [modalRemoveRankingCliente, setModalRemoveRankingCliente] = useState(false);
+    const [rankingClienteData, setRankingClienteData] = useState<IRankingCliente | undefined>();
     const [currentPage, setCurrentPage] = useState(1);
     const registerPerPage = 10;
 
-    const { mutate: mutateToDeleteCliente } = deletePessoa();
-    const [deleteItemId, setDeleteClienteId] = useState('');
+    const { mutate: mutateToDeleteRankingCliente } = deleteRankingCliente();
+    const [deleteItemId, setDeleteRankingClienteId] = useState('');
 
-    const { data, count, isLoading } = getPessoas({
+    const { data, count, isLoading } = getRankingCliente({
         size: registerPerPage,
         page: currentPage
     });
 
-    const onConfirmRemoveCliente = () => {
-        mutateToDeleteCliente(deleteItemId || "");
-        setModalRemoveCliente(false);
+    const onConfirmRemoveRankingCliente = () => {
+        mutateToDeleteRankingCliente(deleteItemId || "");
+        setModalRemoveRankingCliente(false);
     };
 
     return (
@@ -54,7 +53,7 @@ const ClienteList = () => {
                 <SectionTop className="contentTop" gap="30px">
                     <Flex gap="10px" flexWrap="wrap">
                         <Text fontSize="2xl" fontWeight="bold">
-                            Clientes
+                            Rankings Cliente
                         </Text>
                     </Flex>
                 </SectionTop>
@@ -63,10 +62,10 @@ const ClienteList = () => {
                     <Button
                         leftIcon={<IoIosAdd />}
                         onClick={() => {
-                            setModalRegisterCliente(true);
+                            setModalRegisterRankingCliente(true);
                         }}
                     >
-                        Cadastrar Cliente
+                        Cadastrar Ranking
                     </Button>
                 </SectionTop>
             </Flex>
@@ -74,9 +73,9 @@ const ClienteList = () => {
             <Content className="contentMain">
                 <Flex width="100%" gap="15px" alignItems="flex-end" flexWrap="wrap">
                     <div className="searchWrap">
-                        <span>Buscar Cliente</span>
+                        <span>Buscar Ranking</span>
                         <FieldSearch
-                            placeholder="Nome/E-mail"
+                            placeholder="Nome"
                             handleSearch={() => {
                                 setResetFilter(false);
                                 setCurrentPage(1);
@@ -136,10 +135,8 @@ const ClienteList = () => {
                                     <Table>
                                         <THead padding="0 30px 0 30px">
                                             <TD>Nome</TD>
-                                            <TD>CPF</TD>
-                                            <TD>E-Mail</TD>
-                                            <TD>Ativo</TD>
-                                            <TD>Ranking</TD>
+                                            <TD>Mínimo de Viagens</TD>
+                                            <TD>Máximo de Viagens</TD>
                                             <TD></TD>
                                         </THead>
 
@@ -150,16 +147,10 @@ const ClienteList = () => {
                                                         {item.nome}
                                                     </TD>
                                                     <TD>
-                                                        {cpfMask(item.cpf)}
+                                                        {item.qtdMinViagens}
                                                     </TD>
                                                     <TD>
-                                                        {item.email}
-                                                    </TD>
-                                                    <TD>
-                                                        {item.ativo ? 'Ativo' : 'Inativo'}
-                                                    </TD>
-                                                    <TD>
-                                                        {item.Ranking?.nome}
+                                                        {item.qtdMaxViagens}
                                                     </TD>
                                                     <TD gap={3}>
                                                         <MdEdit
@@ -167,20 +158,20 @@ const ClienteList = () => {
                                                             // color={customTheme.colors.brandSecond.first}
                                                             cursor="pointer"
                                                             onClick={() => {
-                                                                setClienteData(item)
-                                                                setModalUpdateCliente(true)
+                                                                setRankingClienteData(item)
+                                                                setModalUpdateRankingCliente(true)
                                                             }}
                                                         />
 
-                                                        <ButtonIcon tooltip="Excluir Cliente">
+                                                        <ButtonIcon tooltip="Excluir Ranking">
                                                             <Button
                                                                 variant="unstyled"
                                                                 display="flex"
                                                                 alignItems="center"
                                                                 colorScheme="red"
                                                                 onClick={() => {
-                                                                    setModalRemoveCliente(true)
-                                                                    setDeleteClienteId(item.id)
+                                                                    setModalRemoveRankingCliente(true)
+                                                                    setDeleteRankingClienteId(item.id)
                                                                 }}
                                                             >
                                                                 <FiTrash />
@@ -203,44 +194,44 @@ const ClienteList = () => {
                         )}
 
                         {data.length === 0 && (
-                            <AlertNoDataFound title="Nenhuma cliente encontrado" />
+                            <AlertNoDataFound title="Nenhum ranking encontrado" />
                         )}
                     </>
                 )}
             </Content>
 
             <SimpleModal
-                title="Cliente"
+                title="Ranking"
                 size="xl"
-                isOpen={modalRegisterCliente}
-                handleModal={setModalRegisterCliente}
+                isOpen={modalRegisterRankingCliente}
+                handleModal={setModalRegisterRankingCliente}
             >
-                <ModalRegisterCliente
-                    handleClose={() => setModalRegisterCliente(false)}
+                <ModalRegisterRankingCliente
+                    handleClose={() => setModalRegisterRankingCliente(false)}
                 />
             </SimpleModal>
 
-            {clienteData && (
+            {rankingClienteData && (
                 <SimpleModal
-                    title="Cliente"
+                    title="Ranking"
                     size="xl"
-                    isOpen={modalUpdateCliente}
-                    handleModal={setModalUpdateCliente}
+                    isOpen={modalUpdateRankingCliente}
+                    handleModal={setModalUpdateRankingCliente}
                 >
-                    <ModalUpdateCliente
-                        handleClose={() => setModalUpdateCliente(false)}
-                        data={clienteData}
+                    <ModalUpdateRankingCliente
+                        handleClose={() => setModalUpdateRankingCliente(false)}
+                        data={rankingClienteData}
                     />
                 </SimpleModal>
             )}
 
-            {modalRemoveCliente && (
+            {modalRemoveRankingCliente && (
                 <AlertModal
-                    title="Remover Cliente"
-                    question="Deseja realmente remover esse cliente?"
-                    request={onConfirmRemoveCliente}
-                    showModal={modalRemoveCliente}
-                    setShowModal={setModalRemoveCliente}
+                    title="Remover Ranking"
+                    question="Deseja realmente remover essa ranking?"
+                    request={onConfirmRemoveRankingCliente}
+                    showModal={modalRemoveRankingCliente}
+                    setShowModal={setModalRemoveRankingCliente}
                     size="md"
                 ></AlertModal>
             )}
@@ -248,4 +239,4 @@ const ClienteList = () => {
     );
 };
 
-export default ClienteList;
+export default RankingClienteList;

@@ -71,16 +71,7 @@ const LinksMenu = ({ onClose }: ILinksMenu) => {
 
             <MenuList>
               <MenuItem>
-                <Link to="/pacotes">Pacotes</Link>
-              </MenuItem>
-              <MenuItem>
-                <Link to="/excursoes">Excursões</Link>
-              </MenuItem>
-              <MenuItem>
                 <Link to="/produtos2">Produtos</Link>
-              </MenuItem>
-              <MenuItem>
-                <Link to="/tipo-quarto">Tipos de Quarto</Link>
               </MenuItem>
               <MenuItem>
                 <Link to="/categoria-transacao">Categoria Transação</Link>
@@ -101,15 +92,53 @@ const LinksMenu = ({ onClose }: ILinksMenu) => {
                 <Link to="/fornecedor">Fornecedor</Link>
               </MenuItem>
               <MenuItem>
-                <Link to="/local-embarque">Local de Embarque</Link>
+                <Link to="/usuarios">Usuários</Link>
               </MenuItem>
               <MenuItem>
-                <Link to="/usuarios">Usuários</Link>
+                <Link to="/ranking-clientes">Ranking Clientes</Link>
               </MenuItem>
             </MenuList>
           </Box>
         )}
       </Menu>
+
+      <Menu>
+        {({ isOpen }) => (
+          <Box style={{ zIndex: "3" }}>
+            <MenuButton
+              isActive={isOpen}
+              name="perfilMenuDropDown"
+              as={ButtonStyled}
+              rightIcon={
+                isOpen ? (
+                  <MdKeyboardArrowUp size={18} />
+                ) : (
+                  <MdKeyboardArrowDown size={18} />
+                )
+              }
+            >
+              <Text>Controle de Excursões</Text>
+            </MenuButton>
+
+            <MenuList>
+              <MenuItem>
+                <Link to="/local-embarque">Local de Embarque</Link>
+              </MenuItem>
+              <MenuItem>
+                <Link to="/tipo-quarto">Tipos de Quarto</Link>
+              </MenuItem>
+              <MenuItem>
+                <Link to="/pacotes">Pacotes</Link>
+              </MenuItem>
+              <MenuItem>
+                <Link to="/excursoes">Excursões</Link>
+              </MenuItem>
+
+            </MenuList>
+          </Box>
+        )}
+      </Menu>
+
       <Menu>
         {({ isOpen }) => (
           <Box style={{ zIndex: "3" }}>

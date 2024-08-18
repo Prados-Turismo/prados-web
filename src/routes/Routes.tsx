@@ -55,6 +55,7 @@ import Voucher from "../pages/Reservas/pages/Voucher";
 import Ticket from "../pages/Reservas/pages/Ticket";
 import LocalEmbarque from "../pages/LocalEmbarque";
 import Usuarios from "../pages/Usuarios";
+import RankingCliente from "../pages/RankingCliente";
 
 export const AppRoutes = () => {
   const location = useLocation();
@@ -103,6 +104,7 @@ export const AppRoutes = () => {
         <Route path="/subcategoria-transacao" element={<SubCategoriaTransacao />} />
         <Route path="/local-embarque" element={<LocalEmbarque />} />
         <Route path="/usuarios" element={<Usuarios />} />
+        <Route path="/ranking-clientes" element={<RankingCliente />} />
 
         <Route path="/politica-privacidade" element={<PrivacyPolicy />} />
 

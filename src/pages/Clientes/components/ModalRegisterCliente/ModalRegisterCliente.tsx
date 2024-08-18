@@ -21,6 +21,7 @@ import FormInput from "../../../../components/FormInput";
 import { FormEvent, useState } from "react";
 import { cellphoneMask, cellphoneValidation, cepMask, cpfMask } from "../../../../utils/fieldMask";
 import { IEndereco } from "../../../../models/endereco.model";
+import useRankingCliente from "../../../../hooks/useRankingCliente";
 
 const handleSubmitRegisterSchema = z.object({
   nome: z
@@ -71,6 +72,12 @@ const handleSubmitRegisterSchema = z.object({
     .string(),
   rg: z
     .string()
+    .optional(),
+  emissor: z
+    .string()
+    .optional(),
+  rankingClientesId: z
+    .string()
     .optional()
 });
 
@@ -86,6 +93,7 @@ const ModalRegisterCliente = ({
   const { user } = useGlobal();
   const { createPessoa } = usePessoas();
   const { buscaCep } = useEndereco();
+  const { getAllRankingCliente } = useRankingCliente()
 
   const {
     setValue,
@@ -101,6 +109,7 @@ const ModalRegisterCliente = ({
   const [errorPhone, setErrorPhone] = useState(false);
   const [cepValue, setCepValue] = useState('');
   const { mutate: mutateToGetCep, isLoading: isLoadingCep } = buscaCep();
+  const { data: dataRanking, isLoading: isLoadingRanking } = getAllRankingCliente()
 
   const handleSubmitRegister = (submitData: IhandleSubmitRegister) => {
     mutate({
@@ -265,7 +274,8 @@ const ModalRegisterCliente = ({
               inputArea={false}
               errors={errors.telefone}
               placeholder="Digite o telefone"
-              minW="135px"
+              minW="240px"
+              maxW="240px"
               maxLengthInpt={15}
               onInput={phoneMask}
             />
@@ -280,7 +290,7 @@ const ModalRegisterCliente = ({
             inputArea={false}
             errors={errors.telefoneWpp}
             placeholder="Digite o Wpp"
-            minW="135px"
+            minW="150px"
             onInput={phoneMask}
             maxLengthInpt={15}
           />
@@ -344,6 +354,31 @@ const ModalRegisterCliente = ({
             <FormErrorMessage>{errors.dataNascimento?.message}</FormErrorMessage>
           </FormControl>
 
+          <SelectForm
+            name="rankingClientesId"
+            label="Ranking"
+            isLoading={isLoadingRanking}
+            minW="250px"
+            handleChange={(option) => {
+              setValue("rankingClientesId", option?.value);
+            }}
+            options={dataRanking
+              ?.map((ranking) => ({
+                label: ranking?.nome,
+                value: ranking?.id,
+              }))}
+            errors={errors.rankingClientesId}
+          />
+        </Flex>
+
+        <Flex
+          gap="15px"
+          flexDirection={{
+            base: "column",
+            lg: "row",
+          }}
+        >
+
           <FormInput
             id="rg"
             label="RG"
@@ -353,9 +388,25 @@ const ModalRegisterCliente = ({
             inputArea={false}
             errors={errors.rg}
             placeholder="Digite o RG"
-            maxWidth="300px"
+            maxWidth="240px"
+            minW="240px"
             maxLengthInpt={15}
           />
+
+          <FieldWrap>
+            <span>
+              Emissor
+            </span>
+
+            <Input
+              placeholder="Emissor"
+              id="emissor"
+              type="text"
+              {...register('emissor')}
+              minWidth="250px"
+            />
+          </FieldWrap>
+
         </Flex>
 
         <Flex

@@ -14,6 +14,7 @@ export interface IPessoa {
   dataNascimento?: string | null
   usuarioCadastro: string
   rg: string | null
+  emissor: string | null
   Endereco: [{
     logradouro: string
     numero: string
@@ -23,6 +24,10 @@ export interface IPessoa {
     uf: string
     bairro: string
   }]
+  Ranking?: {
+    id: string
+    nome: string
+  } | null
 }
 
 export interface IPessoaArgs {

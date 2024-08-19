@@ -23,6 +23,9 @@ import AlertModal from "../../../components/AlertModal";
 import usePessoas from "../../../hooks/usePessoas";
 import { IPessoa } from "../../../models/pessoa.model";
 import { cpfMask } from "../../../utils";
+import useFiles from "../../../hooks/useFiles";
+import { FaFileExcel } from "react-icons/fa";
+
 
 const ClienteList = () => {
     const { getPessoas, deletePessoa } = usePessoas();
@@ -33,6 +36,7 @@ const ClienteList = () => {
     const [modalRemoveCliente, setModalRemoveCliente] = useState(false);
     const [clienteData, setClienteData] = useState<IPessoa | undefined>();
     const [currentPage, setCurrentPage] = useState(1);
+    const { generateCsvPessoas } = useFiles()
     const registerPerPage = 10;
 
     const { mutate: mutateToDeleteCliente } = deletePessoa();
@@ -42,6 +46,9 @@ const ClienteList = () => {
         size: registerPerPage,
         page: currentPage
     });
+
+    const { isLoading: isLoadingCsv, csv } = generateCsvPessoas()
+
 
     const onConfirmRemoveCliente = () => {
         mutateToDeleteCliente(deleteItemId || "");
@@ -53,6 +60,17 @@ const ClienteList = () => {
             <Flex>
                 <SectionTop className="contentTop" gap="30px">
                     <Flex gap="10px" flexWrap="wrap">
+                        <ButtonIcon>
+                            <FaFileExcel
+                                size={20}
+                                cursor='pointer'
+                                onClick={() => {
+                                    if (!isLoadingCsv) {
+                                        csv()
+                                    }
+                                }}
+                            />
+                        </ButtonIcon>
                         <Text fontSize="2xl" fontWeight="bold">
                             Clientes
                         </Text>

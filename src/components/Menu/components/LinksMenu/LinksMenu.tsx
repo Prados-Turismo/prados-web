@@ -131,6 +131,33 @@ const LinksMenu = ({ onClose }: ILinksMenu) => {
         )}
       </Menu>
 
+      <Menu>
+        {({ isOpen }) => (
+          <Box style={{ zIndex: "3" }}>
+            <MenuButton
+              isActive={isOpen}
+              name="perfilMenuDropDown"
+              as={ButtonStyled}
+              rightIcon={
+                isOpen ? (
+                  <MdKeyboardArrowUp size={18} />
+                ) : (
+                  <MdKeyboardArrowDown size={18} />
+                )
+              }
+            >
+              <Text>Relatórios</Text>
+            </MenuButton>
+
+            <MenuList>
+              <MenuItem>
+                <Link to="/relatorios/clientes">Clientes</Link>
+              </MenuItem>
+            </MenuList>
+          </Box>
+        )}
+      </Menu>
+
       <Box display="flex" width="100%" flex="1">
         {/* break900 && company && <Notification /> */}
       </Box>

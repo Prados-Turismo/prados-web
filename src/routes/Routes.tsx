@@ -51,6 +51,7 @@ import Clientes from "../pages/Clientes";
 import Fornecedor from "../pages/Fornecedor";
 import Reservas from "../pages/Reservas";
 import SubCategoriaTransacao from "../pages/SubCategoriaTransacao";
+import RelatorioClientes from "../pages/RelatorioClientes";
 
 export const AppRoutes = () => {
   const location = useLocation();
@@ -95,6 +96,7 @@ export const AppRoutes = () => {
         <Route path="/fornecedor" element={<Fornecedor />} />
         <Route path="/reservas" element={<Reservas />} />
         <Route path="/subcategoria-transacao" element={<SubCategoriaTransacao />} />
+        <Route path="/relatorios/clientes" element={<RelatorioClientes />} />
 
         <Route path="/politica-privacidade" element={<PrivacyPolicy />} />
 

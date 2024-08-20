@@ -137,6 +137,11 @@ export interface ITransacao {
 export interface ITransacaoArgs {
   page: number;
   size: number;
+  nome?: string | null
+  dataInicio?: string | null
+  dataFim?: string | null
+  codigoContaBancaria?: string | null
+  efetivado?: boolean | number | string | null
 }
 
 export interface ITransacaoResponse {

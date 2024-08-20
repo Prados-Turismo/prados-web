@@ -21,6 +21,8 @@ import ModalRegisterQuarto from "../components/ModalRegisterQuarto";
 import ModalUpdateQuarto from "../components/ModalUpdateQuarto";
 import { IExcursaoQuarto } from "../../../../../models/excursao-quarto.model";
 import AlertModal from "../../../../../components/AlertModal";
+import { FaFileExcel } from "react-icons/fa";
+import useFiles from "../../../../../hooks/useFiles";
 
 const QuartosList = () => {
   const { id: _id } = useParams();
@@ -28,6 +30,7 @@ const QuartosList = () => {
   const { getExcursaoQuarto, deleteExcursaoQuarto } = useExcursaoQuarto();
   const { getExcursao } = useExcursao();
   const { data: dataExcursao, isLoading: loadingExcursao } = getExcursao(_id || '');
+  const { generateCsvQuartos } = useFiles()
 
   const [modalRecordQuarto, setModalRecordQuarto] = useState(false);
   const [modalUpdateQuarto, setModalUpdateQuarto] = useState(false);
@@ -42,6 +45,8 @@ const QuartosList = () => {
     size: registerPerPage,
     page: currentPage
   });
+
+  const { isLoading: isLoadingCsv, csv } = generateCsvQuartos()
 
   const { mutate: mutateToDeleteExcursaoQuarto } = deleteExcursaoQuarto();
   const [deleteItemId, setDeleteExcursaoQuartoId] = useState('');
@@ -77,6 +82,17 @@ const QuartosList = () => {
               </Button>
 
               <Flex gap="10px" flexWrap="wrap">
+                <ButtonIcon>
+                  <FaFileExcel
+                    size={20}
+                    cursor='pointer'
+                    onClick={() => {
+                      if (!isLoadingCsv) {
+                        csv(_id || '')
+                      }
+                    }}
+                  />
+                </ButtonIcon>
                 <Text fontSize="2xl" fontWeight="bold">
                   Quartos:
                 </Text>

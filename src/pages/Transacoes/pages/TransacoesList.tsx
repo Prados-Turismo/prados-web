@@ -46,6 +46,10 @@ const TransacoesList = () => {
   const [transacaoData, setTransacaoData] = useState<ITransacao | undefined>();
   const [currentPage, setCurrentPage] = useState(1);
   const registerPerPage = 10;
+  const [dataInicio, setDataInicio] = useState(null || '')
+  const [dataFim, setDataFim] = useState(null || '')
+  const [nome, setNome] = useState(null || '')
+  const [codigoContaBancaria, setContaBancaria] = useState(null)
 
   const { mutate: mutateToDeleteTransacao } = deleteTransacao();
   const [transacaoId, setTransacaoId] = useState('');
@@ -57,7 +61,12 @@ const TransacoesList = () => {
 
   const { data, count, isLoading } = getTransacoes({
     size: registerPerPage,
-    page: currentPage
+    page: currentPage,
+    dataInicio,
+    dataFim,
+    nome,
+    codigoContaBancaria,
+    efetivado: statusSelected?.value
   });
 
   const onConfirmRemoveTransacao = () => {
@@ -104,9 +113,10 @@ const TransacoesList = () => {
             <span>Buscar transação</span>
             <FieldSearch
               placeholder=""
-              handleSearch={() => {
+              handleSearch={(event) => {
                 setResetFilter(false);
                 setCurrentPage(1);
+                setNome(event)
               }}
               reset={resetFilter}
             />
@@ -127,6 +137,10 @@ const TransacoesList = () => {
               }}
               options={[
                 {
+                  label: 'Todos',
+                  value: 'all'
+                },
+                {
                   label: "Efetivados",
                   value: 1,
                 },
@@ -144,7 +158,10 @@ const TransacoesList = () => {
               placeholder="dd/mm/aaaa"
               max="2099-12-31"
               maxLength={10}
-              onChange={() => { }}
+              value={dataInicio}
+              onChange={(event) => {
+                setDataInicio(event.target.value)
+              }}
             />
           </Flex>
           <Flex flexDirection="column" gap="5px" width="160px">
@@ -152,9 +169,12 @@ const TransacoesList = () => {
             <Input
               type="date"
               placeholder="dd/mm/aaaa"
+              value={dataFim}
               max="2099-12-31"
               maxLength={10}
-              onChange={() => { }}
+              onChange={(event) => {
+                setDataFim(event.target.value)
+              }}
             />
           </Flex>
           <Button
@@ -163,6 +183,9 @@ const TransacoesList = () => {
             onClick={() => {
               setResetFilter(true);
               setStatusSelected(null);
+              setDataInicio('')
+              setDataFim('')
+              setNome('')
             }}
           >
             Limpar Filtros

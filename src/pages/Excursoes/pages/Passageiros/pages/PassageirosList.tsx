@@ -1,8 +1,7 @@
-import { Box, Button, Flex, Table, TableContainer, Text } from "@chakra-ui/react";
+import { Button, Flex, Table, TableContainer, Text } from "@chakra-ui/react";
 import { useState } from "react";
 import Loading from "../../../../../components/Loading";
 import Pagination from "../../../../../components/Pagination";
-import FieldSearch from "../../../../../components/FieldSearch";
 
 // Styled Components
 import { Content, SectionTop } from "./styled";
@@ -14,20 +13,20 @@ import AlertNoDataFound from "../../../../../components/AlertNoDataFound";
 import useExcursaoPassageiros from "../../../../../hooks/useExcursaoPassageiros";
 import useExcursao from "../../../../../hooks/useExcursao";
 import { useNavigate, useParams } from "react-router-dom";
-import { MdEdit } from "react-icons/md";
-import ButtonIcon from "../../../../../components/ButtonIcon";
-import { IoIosAdd, IoMdTrash } from "react-icons/io";
-import SimpleModal from "../../../../../components/SimpleModal";
-import AlertModal from "../../../../../components/AlertModal";
 import { TBody, TD, THead, TR } from "../../../../../components/Table";
 import { dateFormat, phoneMask } from "../../../../../utils";
+import ButtonIcon from "../../../../../components/ButtonIcon";
+import { FaFileExcel } from "react-icons/fa";
+import useFiles from "../../../../../hooks/useFiles";
 
 const PassageirosList = () => {
   const { id: _id } = useParams();
   const navigate = useNavigate();
   const { getAllPassageiros } = useExcursaoPassageiros();
   const { getExcursao } = useExcursao();
+  const { generateCsvPassageiros } = useFiles()
   const { data: dataExcursao, isLoading: loadingExcursao } = getExcursao(_id || '');
+  const { isLoading: isLoadingCsv, csv } = generateCsvPassageiros()
 
   const [statusSelected, setStatusSelected] = useState<ISelect | null>();
   const [currentPage, setCurrentPage] = useState(1);
@@ -54,6 +53,17 @@ const PassageirosList = () => {
               </Button>
 
               <Flex gap="10px" flexWrap="wrap">
+                <ButtonIcon>
+                  <FaFileExcel
+                    size={20}
+                    cursor='pointer'
+                    onClick={() => {
+                      if (!isLoadingCsv) {
+                        csv(_id || '')
+                      }
+                    }}
+                  />
+                </ButtonIcon>
                 <Text fontSize="2xl" fontWeight="bold">
                   Passageiros:
                 </Text>

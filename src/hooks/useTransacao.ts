@@ -13,21 +13,41 @@ import {
 import { Warning } from "../errors";
 import { keys, queryClient } from "../services/query";
 
-const getTransacoes = ({ page, size }: ITransacaoArgs): ITransacaoResponse => {
+const getTransacoes = (
+  { page,
+    size,
+    nome,
+    dataInicio,
+    dataFim,
+    codigoContaBancaria,
+    efetivado }: ITransacaoArgs): ITransacaoResponse => {
 
   const { data, isLoading } = useQuery(
     [
       keys.financeiro,
-      page
+      page,
+      nome,
+      dataInicio,
+      dataFim,
+      codigoContaBancaria,
+      efetivado
     ],
     async () => {
       const path = 'financeiro/index';
+
+      dataInicio = dataInicio ? dataInicio : null
+      dataFim = dataFim ? dataFim : null
 
       try {
         const { data } = await apiPrados.get(path, {
           params: {
             page,
-            size
+            size,
+            nome,
+            dataInicio,
+            dataFim,
+            codigoContaBancaria,
+            efetivado
           },
         });
 

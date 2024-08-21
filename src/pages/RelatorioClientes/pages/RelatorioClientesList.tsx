@@ -1,4 +1,4 @@
-import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box, Button, Flex, Table, TableContainer, Tbody, Td, Text, Thead, Tr } from "@chakra-ui/react";
+import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box, Button, Flex, Table, TableContainer, Tbody, Td, Text, Thead, Tr, useMediaQuery } from "@chakra-ui/react";
 import { useState } from "react";
 import Loading from "../../../components/Loading";
 import Pagination from "../../../components/Pagination";
@@ -18,6 +18,7 @@ import { cpfMask, dateFormat } from "../../../utils";
 import { currencyBRLFormat } from "../../../utils/currencyBRLFormat";
 
 const RelatorioClientesList = () => {
+  const [break600] = useMediaQuery("(max-width: 600px)");
   const { id: _id } = useParams();
   const { getExcursaoQuarto } = useExcursaoQuarto();
 
@@ -146,6 +147,32 @@ const RelatorioClientesList = () => {
                                     </Tbody>
                                   </Table>
                                 </TableContainer>
+
+                                <Flex
+                                  w="100%"
+                                  justifyContent="space-between"
+                                  alignItems="center"
+                                  padding="0 30px"
+                                  flexDir={break600 ? "column" : "row"}
+                                  mb="20px"
+                                >
+                                  <Flex flex="1" gap="5px" marginBottom={break600 ? "25px" : "unset"} justifyContent="start">
+                                    <Text fontWeight={600}>
+                                      Total de viagens:
+                                    </Text>
+                                    <Text fontWeight={500}>
+                                      {item.totalTrips || 0}
+                                    </Text>
+                                  </Flex>
+                                  <Flex flex="1" gap="5px" marginBottom={break600 ? "25px" : "unset"} justifyContent="end">
+                                    <Text fontWeight={600}>
+                                      Valor Total:
+                                    </Text>
+                                    <Text fontWeight={500}>
+                                      {currencyBRLFormat(item.totalValue || 0)}
+                                    </Text>
+                                  </Flex>
+                                </Flex>
 
                                 <Pagination
                                   registerPerPage={registerPerPage}

@@ -15,6 +15,8 @@ export const dados = [
       "dataNascimento": null,
       "rg": "213112323123123",
       "usuarioCadastro": "1",
+      "totalTrips": 1,
+      "totalValue": 475,
       "Transacoes": [
           {
               "id": "4ed097a0-cd0a-455b-800f-89df48bce742",

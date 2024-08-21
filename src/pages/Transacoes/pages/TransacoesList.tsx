@@ -223,7 +223,7 @@ const TransacoesList = () => {
                             {item.efetivado ? (
                               <Tooltip label="Efetivado" placement="top" hasArrow>
                                 <div style={{
-                                  backgroundColor: "green",
+                                  backgroundColor: formattingDate(item.dataPrevistaRecebimento) == formattingDate(new Date().toISOString()) ? 'blue' : 'green',
                                   borderRadius: "50%",
                                   width: "10px",
                                   height: "10px"
@@ -232,7 +232,7 @@ const TransacoesList = () => {
                             ) : (
                               <Tooltip label="Pendente" placement="top" hasArrow>
                                 <div style={{
-                                  backgroundColor: "red",
+                                  backgroundColor: formattingDate(item.dataPrevistaRecebimento) == formattingDate(new Date().toISOString()) ? 'blue' : 'red',
                                   borderRadius: "50%",
                                   width: "10px",
                                   height: "10px"

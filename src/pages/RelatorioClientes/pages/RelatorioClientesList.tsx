@@ -1,5 +1,5 @@
 import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box, Button, Flex, Table, TableContainer, Tbody, Td, Text, Thead, Tr, useMediaQuery } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Loading from "../../../components/Loading";
 import Pagination from "../../../components/Pagination";
 
@@ -10,26 +10,61 @@ import { Content, SectionTop } from "./styled";
 import ReactSelect from "react-select";
 import { ISelect } from "../../../models/generics.model";
 import AlertNoDataFound from "../../../components/AlertNoDataFound";
-import useExcursaoQuarto from "../../../hooks/useExcursaoQuarto";
 import { useParams } from "react-router-dom";
-import { dados } from "./dados";
 import { capitalize } from "../../../utils/capitalize";
 import { cpfMask, dateFormat } from "../../../utils";
 import { currencyBRLFormat } from "../../../utils/currencyBRLFormat";
+import usePessoas from "../../../hooks/usePessoas";
+import useRelatorioClientes from "../../../hooks/useRelatorioClientes";
 
 const RelatorioClientesList = () => {
   const [break600] = useMediaQuery("(max-width: 600px)");
   const { id: _id } = useParams();
-  const { getExcursaoQuarto } = useExcursaoQuarto();
+  const { getPessoas } = usePessoas();
+  const { getRelatorioClientesPorPessoa } = useRelatorioClientes();
 
   const [statusSelected, setStatusSelected] = useState<ISelect | null>();
   const [currentPage, setCurrentPage] = useState(1);
   const registerPerPage = 10;
 
-  const { data, count, isLoading } = getExcursaoQuarto({
+  const { data, count, isLoading } = getPessoas({
     size: registerPerPage,
     page: currentPage
   });
+
+  const [queries, setQueries] = useState({});
+  const [pessoaSelecionada, setPessoaSelecionada] = useState<string>("");
+
+  const {
+    data: dataTransacoes,
+    isLoading: isLoadingTransacoes,
+    count: countTransacoes,
+    sum: sumTransacoes
+  } = getRelatorioClientesPorPessoa({
+    pessoaId: pessoaSelecionada,
+    page: currentPage,
+    size: registerPerPage,
+    options: {
+      enabled: true,
+    }
+  })
+
+  useEffect(() => {
+    setQueries((prev) => ({
+      ...prev,
+      [pessoaSelecionada]: {
+        dataTransacoes,
+        isLoadingTransacoes,
+        count,
+        countTransacoes,
+        sumTransacoes
+      }
+    }));
+  }, [dataTransacoes, isLoadingTransacoes]);
+
+  const handleAccordionChange = (index: number, pessoaId: string) => {
+    setPessoaSelecionada(pessoaId);
+  };
 
   return (
     <>
@@ -90,29 +125,38 @@ const RelatorioClientesList = () => {
 
         {!isLoading && (
           <>
-            {dados.length > 0 && (
+            {data.length > 0 && (
               <>
                 <Accordion allowMultiple>
-                  {dados.map((item) => (
-                    <AccordionItem key={item.id}>
-                      <h2>
-                        <AccordionButton>
-                          <Box as='span' flex='1' textAlign='left'>
-                            {`${capitalize(item.nome)} - ${cpfMask(item.cpf)}`}
-                          </Box>
-                          <AccordionIcon />
-                        </AccordionButton>
-                      </h2>
-                      <AccordionPanel
-                        pb={4}
-                        pt={4}
-                        pl={12}
-                        display="flex"
-                        flexDirection="column"
-                      >
-                        {!isLoading && (
-                          <>
-                            {item.Transacoes.length > 0 && (
+                  {data.map((item, index) => {
+                    const query = queries[item.id];
+                    const isLoadingTransacoes = query?.isLoadingTransacoes;
+                    const dataTransacoes = query?.dataTransacoes;
+                    const countTransacoes = query?.countTransacoes;
+                    const sumTransacoes = query?.sumTransacoes;
+
+                    return (
+                      <AccordionItem key={item.id}>
+                        <h2>
+                          <AccordionButton onClick={() => handleAccordionChange(index, item.id)}>
+                            <Box as='span' flex='1' textAlign='left'>
+                              {`${capitalize(item.nome)} - ${cpfMask(item.cpf)}`}
+                            </Box>
+                            <AccordionIcon />
+                          </AccordionButton>
+                        </h2>
+                        <AccordionPanel
+                          pb={4}
+                          pt={4}
+                          pl={12}
+                          display="flex"
+                          flexDirection="column"
+                        >
+                          {isLoadingTransacoes ? (
+                            <p>Carregando...</p>
+                          ) : (
+                            <>
+                            {dataTransacoes?.length > 0 && (
                               <>
                                 <TableContainer marginBottom="10px">
                                   <Table>
@@ -125,7 +169,7 @@ const RelatorioClientesList = () => {
                                     </Thead>
 
                                     <Tbody>
-                                      {item.Transacoes.map((transacao) => (
+                                      {dataTransacoes?.map((transacao) => (
                                         <Tr key={transacao.id}>
                                           <Td fontSize="0.9rem">
                                             {transacao.idReserva || "-"}
@@ -161,7 +205,7 @@ const RelatorioClientesList = () => {
                                       Total de viagens:
                                     </Text>
                                     <Text fontWeight={500}>
-                                      {item.totalTrips || 0}
+                                      {countTransacoes || 0}
                                     </Text>
                                   </Flex>
                                   <Flex flex="1" gap="5px" marginBottom={break600 ? "25px" : "unset"} justifyContent="end">
@@ -169,7 +213,7 @@ const RelatorioClientesList = () => {
                                       Valor Total:
                                     </Text>
                                     <Text fontWeight={500}>
-                                      {currencyBRLFormat(item.totalValue || 0)}
+                                      {currencyBRLFormat(sumTransacoes || 0)}
                                     </Text>
                                   </Flex>
                                 </Flex>
@@ -183,14 +227,15 @@ const RelatorioClientesList = () => {
                               </>
                             )}
 
-                            {item.Transacoes.length === 0 && (
+                            {dataTransacoes?.length === 0 && (
                               <AlertNoDataFound title="Nenhuma transação encontrada" />
                             )}
                           </>
-                        )}
-                      </AccordionPanel>
-                    </AccordionItem>
-                  ))}
+                          )}
+                        </AccordionPanel>
+                      </AccordionItem>
+                    );
+                  })}
                 </Accordion>
 
                 <Pagination
@@ -202,7 +247,7 @@ const RelatorioClientesList = () => {
               </>
             )}
 
-            {dados.length === 0 && (
+            {data.length === 0 && (
               <AlertNoDataFound title="Nenhum cliente encontrado" />
             )}
           </>

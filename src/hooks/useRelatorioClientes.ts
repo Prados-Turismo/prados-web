@@ -4,15 +4,23 @@ import { Warning } from "../errors";
 import { keys } from "../services/query";
 import { IRelatorioClientesArgs, IRelatorioClientesResponse } from "../models/relatorio-clientes.model";
 
-const getRelatorioClientesPorPessoa = ({ pessoaId, page, size }: IRelatorioClientesArgs): IRelatorioClientesResponse => {
+const getRelatorioClientesPorPessoa = ({ pessoaId, page, size, options = {} }: IRelatorioClientesArgs): IRelatorioClientesResponse => {
 
   const { data, isLoading } = useQuery(
     [
-      keys.excursaoQuarto,
+      keys.relatorioClientes,
       pessoaId,
       page
     ],
     async () => {
+      if (!pessoaId) {
+        return {
+          rows: [],
+          count: 0,
+          sum: 0
+        }
+      }
+
       try {
         const { data } = await apiPrados.get(`relatorios/clientes/${pessoaId}`, {
           params: {
@@ -25,7 +33,8 @@ const getRelatorioClientesPorPessoa = ({ pessoaId, page, size }: IRelatorioClien
       } catch (error: any) {
         throw new Warning(error.response.data.message, error.response.status);
       }
-    }
+    },
+    options
   )
 
   return {

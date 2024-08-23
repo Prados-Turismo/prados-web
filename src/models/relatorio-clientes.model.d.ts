@@ -43,7 +43,8 @@ export interface IRelatorioClientes {
 export interface IRelatorioClientesArgs {
   page: number
   size: number
-  pessoaId: string
+  pessoaId?: string
+  options?: object
 }
 
 export interface IRelatorioClientesResponse {

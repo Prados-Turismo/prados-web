@@ -200,19 +200,25 @@ const ReservasList = () => {
                                                     </TD>
                                                     <TD gap={3}>
 
+                                                        {!item.status && (
+                                                            <ButtonIcon tooltip="Editar">
+                                                                <MdEdit
+                                                                    size={20}
+                                                                    cursor="pointer"
+                                                                    onClick={() => {
+                                                                        // setTransacaoData(item)
+                                                                        // setModalUpdateTransacao(true)
+                                                                    }}
+                                                                />
+                                                            </ButtonIcon>
+                                                        )}
+
                                                         <ButtonIcon tooltip="Ver Voucher">
                                                             <IoTicket
                                                                 size={20}
                                                                 onClick={() => { navigate(`/reservas/${item.id}/voucher`) }}
                                                             />
                                                         </ButtonIcon>
-
-                                                        {/* <ButtonIcon tooltip="Imprimir Detalhes Reserva">
-                                                            <AiFillPrinter
-                                                                size={20}
-                                                                onClick={() => { window.open(`/reservas/${item.id}/ticket`, '_blank') }}
-                                                            />
-                                                        </ButtonIcon> */}
 
                                                         <ButtonIcon tooltip="Enviar E-mail com voucher">
                                                             <MdOutgoingMail

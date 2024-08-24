@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Box, Button, Flex, FormControl, FormErrorMessage, FormLabel, Input } from "@chakra-ui/react";
+import { Box, Button, Flex } from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -19,7 +19,7 @@ import SelectForm from "../../../../components/SelectForm";
 import FormInputNumber from "../../../../components/FormInputNumber";
 import FormInput from "../../../../components/FormInput";
 import useExcursoes from "../../../../hooks/useExcursao";
-import usePacotes from "../../../../hooks/usePacotes";
+import useReservas from "../../../../hooks/useReservas";
 import { useState } from "react";
 import useFormaPagamento from "../../../../hooks/useFormaPagamento";
 import useTransacao from "../../../../hooks/useTransacao";
@@ -66,7 +66,7 @@ const handleSubmitRegisterSchema = z.object({
   codigoExcursao: z
     .string()
     .optional(),
-  codigoPacote: z
+  idReserva: z
     .string()
     .optional(),
   codigoFormaPagamento: z
@@ -95,7 +95,7 @@ const ModalUpdateTransacao = ({
   const { getProducts } = useProduct();
   const { getAllFornecedores } = useFornecedor();
   const { getExcursoes } = useExcursoes();
-  const { getAllPacotes } = usePacotes();
+  const { getAllReservas } = useReservas();
   const { getAllPessoas } = usePessoas()
   const { getAllContaBancaria } = useContaBancaria()
   const { getAllCategoriaTransacao } = useCategoriaTransacao()
@@ -120,7 +120,7 @@ const ModalUpdateTransacao = ({
       codigoFornecedor: data.codigoFornecedor ?? undefined,
       codigoProduto: data.codigoProduto ?? undefined,
       codigoExcursao: data.codigoExcursao ?? undefined,
-      codigoPacote: data.codigoPacote ?? undefined,
+      idReserva: data.Reservas.id ?? undefined,
       codigoFormaPagamento: data.codigoFormaPagamento,
       observacao: data.observacao || '',
       codigoContaBancaria: data.ContaBancaria?.id,
@@ -132,7 +132,7 @@ const ModalUpdateTransacao = ({
   const { data: dataFormaPagamentos, isLoading: loadingFormaPagamentos } = getAllFormaPagamentos();
   const { data: dataExcursoes, isLoading: loadingExcursoes } = getExcursoes({ page: 1, size: 100 });
   const { data: dataClientes, isLoading: loadingClientes } = getAllPessoas();
-  const { data: dataPacotes, isLoading: loadingPacotes } = getAllPacotes();
+  const { data: dataReservas, isLoading: loadingReservas } = getAllReservas();
   const { data: dataFornecedores, isLoading: loadingFornecedores } = getAllFornecedores();
   const { data: dataProdutos, isLoading: loadingProdutos } = getProducts({ page: 1, size: 100 });
   const { data: dataContaBancaria, isLoading: isLoadingContaBancaria } = getAllContaBancaria();
@@ -330,23 +330,23 @@ const ModalUpdateTransacao = ({
         />
 
         <SelectForm
-          name="codigoPacote"
-          label="Pacote"
+          name="idReserva"
+          label="Reserva"
           minW="200px"
-          isLoading={loadingPacotes}
+          isLoading={loadingReservas}
           handleChange={(option) => {
-            setValue("codigoPacote", option?.value);
+            setValue("idReserva", option?.value);
           }}
-          options={dataPacotes
-            ?.map((codigoPacote) => ({
-              label: codigoPacote?.nome,
-              value: codigoPacote?.id,
+          options={dataReservas
+            ?.map((reserva) => ({
+              label: `${reserva?.reserva}`,
+              value: reserva?.id,
             }))}
           defaultValue={{
-            label: data.Pacotes?.nome,
-            value: data.Pacotes?.id
+            label: `${data.Reservas?.reserva}`,
+            value: data.Reservas?.id
           }}
-          errors={errors.codigoPacote}
+          errors={errors.idReserva}
         />
 
         <SelectForm

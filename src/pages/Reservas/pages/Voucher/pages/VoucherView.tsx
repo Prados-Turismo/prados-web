@@ -111,11 +111,11 @@ const VoucherView = () => {
                                             </Tr>
                                             <Tr>
                                                 <Td>Desconto</Td>
-                                                <Td>{currencyBRLFormat(((data.desconto * data.Excursao.valor) / 100) * data.Pessoa.length)}</Td>
+                                                <Td>{currencyBRLFormat(data.desconto)}</Td>
                                             </Tr>
                                             <Tr>
                                                 <Td>Total</Td>
-                                                <Td>{currencyBRLFormat((data.Excursao.valor * data.Pessoa.length) - (((data.desconto * data.Excursao.valor) / 100) * data.Pessoa.length))}</Td>
+                                                <Td>{currencyBRLFormat((data.Excursao.valor * data.Pessoa.length) - (data.desconto))}</Td>
                                             </Tr>
                                             <Tr>
                                                 <Td>Número Comprovante</Td>

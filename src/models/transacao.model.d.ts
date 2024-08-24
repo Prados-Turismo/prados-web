@@ -131,6 +131,14 @@ export interface ITransacao {
       nome: string
       codigoUsuario: string
     }
+  },
+  Reservas: {
+    id: string,
+    reserva: number,
+    status: boolean,
+    codigoUsuario: string | null,
+    desconto: number
+    plataforma: number
   }
 }
 
@@ -140,7 +148,7 @@ export interface ITransacaoArgs {
   nome?: string | null
   dataInicio?: string | null
   dataFim?: string | null
-  codigoContaBancaria?: string | null
+  codigoContaBancaria?: [string] | null | undefined | (string | number)[]
   efetivado?: boolean | number | string | null
 }
 

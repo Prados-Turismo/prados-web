@@ -142,7 +142,7 @@ const ModalRegisterReservas = ({
         onSuccess: (data: IExcursao) => {
           setSubtotal(data.valor)
           calculateTotal(quantidade, data.valor, desconto)
-          calculateDesconto(quantidade, data.valor, getValues("desconto") || 0)
+          calculateDesconto(quantidade, getValues("desconto") || 0)
         }
       });
     }
@@ -153,17 +153,17 @@ const ModalRegisterReservas = ({
     setQuantidade(qtd)
     setValue('quantidade', qtd)
     calculateTotal(qtd, subTotal, desconto)
-    calculateDesconto(qtd, subTotal, desconto)
+    calculateDesconto(qtd, desconto)
   }
 
   const calculateTotal = async (qtd: number, valorPacote: number, discount: number) => {
-    let result = (((qtd || 1) * valorPacote) - ((valorPacote * discount / 100) * qtd))
+    let result = (((qtd || 1) * valorPacote) - (discount * qtd))
     setTotal(result)
     setValue('total', result)
   }
 
-  const calculateDesconto = async (qtd: number, valorPacote: number, desconto: number) => {
-    let valorDesconto = ((valorPacote * desconto / 100) * qtd)
+  const calculateDesconto = async (qtd: number, desconto: number) => {
+    let valorDesconto = desconto * qtd
     setValorDesconto(valorDesconto)
     setValue('valorDesconto', valorDesconto)
   }
@@ -189,7 +189,7 @@ const ModalRegisterReservas = ({
             setValue("idExcursao", option?.value);
             onSelectExcursao(option?.value || '')
             calculateTotal(quantidade, subTotal, desconto)
-            calculateDesconto(quantidade, subTotal, getValues("desconto") || 0)
+            calculateDesconto(quantidade, getValues("desconto") || 0)
           }}
           options={dataExcursoes
             ?.map((codigoExcursao) => ({
@@ -273,18 +273,18 @@ const ModalRegisterReservas = ({
         >
 
           <FieldWrap>
-            <span>Desconto %</span>
+            <span>Desconto (R$)</span>
             <Input
               height="40px"
               {...register("desconto", { valueAsNumber: true })}
-              placeholder="Desconto %"
+              placeholder="Desconto (R$)"
               flex="1.01"
               type="number"
               prefix="percentual"
               onChange={(event) => {
                 let newValue = parseInt(event.target.value)
 
-                if ((Number(newValue) <= 100 && !isNaN(Number(newValue)))) {
+                if ((Number(newValue) && !isNaN(Number(newValue)))) {
                   setValue('desconto', newValue);
                 } else {
                   setValue('desconto', 0);
@@ -292,7 +292,7 @@ const ModalRegisterReservas = ({
               }}
               onBlur={() => {
                 setDesconto(getValues("desconto") || 0)
-                calculateDesconto(quantidade, subTotal, getValues("desconto") || 0)
+                calculateDesconto(quantidade, getValues("desconto") || 0)
                 calculateTotal(quantidade, subTotal, getValues("desconto") || 0)
               }}
               minW="250px"

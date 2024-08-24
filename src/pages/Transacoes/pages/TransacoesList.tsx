@@ -26,6 +26,7 @@ import { ITransacao } from "../../../models/transacao.model";
 import { IoCheckmarkCircle, IoCheckmarkDoneSharp, IoCloseCircle } from "react-icons/io5";
 import { IoMdClose } from "react-icons/io";
 import { currencyBRLFormat } from "../../../utils/currencyBRLFormat";
+import useContaBancaria from "../../../hooks/useContaBancaria";
 
 const TransacoesList = () => {
   const { getTransacoes,
@@ -49,7 +50,8 @@ const TransacoesList = () => {
   const [dataInicio, setDataInicio] = useState(null || '')
   const [dataFim, setDataFim] = useState(null || '')
   const [nome, setNome] = useState(null || '')
-  const [codigoContaBancaria, setContaBancaria] = useState(null)
+  const [codigoContaBancaria, setContaBancaria] = useState<Array<ISelect> | null>();
+  const { getAllContaBancaria } = useContaBancaria()
 
   const { mutate: mutateToDeleteTransacao } = deleteTransacao();
   const [transacaoId, setTransacaoId] = useState('');
@@ -58,6 +60,7 @@ const TransacoesList = () => {
   const { mutate: mutateToDesefetivarTransacao } = desefetivarTransacao();
   const { mutate: mutateToSetVistoTransacao } = setVistoTransacao();
   const { mutate: mutateToRemoveVistoTransacao } = removeVistoTransacao();
+  const { data: dataContaBancaria, isLoading: isLoadingContaBancaria } = getAllContaBancaria();
 
   const { data, count, isLoading } = getTransacoes({
     size: registerPerPage,
@@ -65,7 +68,7 @@ const TransacoesList = () => {
     dataInicio,
     dataFim,
     nome,
-    codigoContaBancaria,
+    codigoContaBancaria: codigoContaBancaria?.map((conta) => { return conta.value }),
     efetivado: statusSelected?.value
   });
 
@@ -151,6 +154,28 @@ const TransacoesList = () => {
               ]}
             />
           </Flex>
+          <Flex flexDirection="column" gap="5px" width="200px">
+            <span>Conta Bancária</span>
+
+            <ReactSelect
+              isMulti
+              isLoading={isLoadingContaBancaria}
+              className="select-fields"
+              classNamePrefix="select"
+              closeMenuOnSelect={true}
+              isSearchable={true}
+              value={codigoContaBancaria}
+              placeholder="Selecionar"
+              noOptionsMessage={() => "Nenhum Status encontrado"}
+              onChange={(item) => {
+                debugger
+                setContaBancaria(item.map((val) => { return val }));
+              }}
+              options={dataContaBancaria.map((conta, index) => {
+                return { value: conta.id, label: conta.nome }
+              })}
+            />
+          </Flex>
           <Flex flexDirection="column" gap="5px" width="160px">
             <span>Data Início</span>
             <Input
@@ -207,11 +232,14 @@ const TransacoesList = () => {
                     <THead padding="0 30px 0 30px">
                       <TD></TD>
                       <TD>Data</TD>
-                      <TD>Tipo</TD>
                       <TD>Valor</TD>
                       <TD>Conta</TD>
                       <TD>Forma de pagamento</TD>
-                      <TD>Recebimento</TD>
+                      <TD>Fornecedor</TD>
+                      <TD>Excursão</TD>
+                      <TD>Destino</TD>
+                      <TD>Categoria</TD>
+                      <TD>Reserva</TD>
                       <TD>Visto</TD>
                       <TD></TD>
                     </THead>
@@ -241,13 +269,10 @@ const TransacoesList = () => {
                             )}
                           </TD>
                           <TD>
-                            {formattingDate(item.data)}
+                            {formattingDate(item.dataPrevistaRecebimento)}
                           </TD>
-                          <TD>
-                            {item.tipo === 1 ? "Débito" : "Crédito"}
-                          </TD>
-                          <TD>
-                            {currencyBRLFormat(item.valor)}
+                          <TD style={{ color: item.tipo == 1 ? 'red' : 'green' }}>
+                            {item.tipo == 1 ? '-' : ''}  {currencyBRLFormat(item.valor)}
                           </TD>
                           <TD>
                             {item.ContaBancaria?.nome}
@@ -256,7 +281,19 @@ const TransacoesList = () => {
                             {item.FormaPagamento.nome}
                           </TD>
                           <TD>
-                            {formattingDate(item.dataPrevistaRecebimento)}
+                            {item.Fornecedor?.nome}
+                          </TD>
+                          <TD>
+                            {item.Excursao?.nome}
+                          </TD>
+                          <TD>
+                            {item.Pacotes?.nome}
+                          </TD>
+                          <TD>
+                            {item?.CategoriaTransacao?.nome || ''} {item?.CategoriaTransacao?.SubCategoria?.id ? '/' : ''} {item?.CategoriaTransacao?.SubCategoria?.nome || ''}
+                          </TD>
+                          <TD>
+                            {item?.Reservas?.reserva ? `${item?.Reservas?.reserva}` : '' || ''}
                           </TD>
                           <TD>
                             {item.vistoAdmin ? "Sim" : "Não"}

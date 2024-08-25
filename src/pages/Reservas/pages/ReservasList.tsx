@@ -231,7 +231,9 @@ const ReservasList = () => {
                                                             <IoMdClose
                                                                 size={20}
                                                                 onClick={() => {
-
+                                                                    if (item.status) {
+                                                                        
+                                                                    }
                                                                 }}
                                                             />
                                                         </ButtonIcon>

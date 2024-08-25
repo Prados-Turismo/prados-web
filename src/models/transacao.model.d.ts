@@ -174,6 +174,7 @@ export interface ICreateTransacaoArgs {
   codigoPacote?: string
   codigoFormaPagamento: string
   usuarioCadastro: string
+  data?: string | null
 }
 
 export interface IUpdateTransacaoArgs extends ICreateTransacaoArgs {

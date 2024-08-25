@@ -21,14 +21,14 @@ import ModalUpdateExcursao from "../components/ModalUpdateExcursao";
 import { IExcursao } from "../../../models/excursao.model";
 import ButtonIcon from "../../../components/ButtonIcon";
 import AlertModal from "../../../components/AlertModal";
-import { IoBed } from "react-icons/io5";
+import { IoBed, IoCheckmarkCircle } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import { dateFormat } from "../../../utils";
 import { currencyBRLFormat } from "../../../utils/currencyBRLFormat";
 
 const ExcursaoList = () => {
   const navigate = useNavigate();
-  const { getExcursoes, deleteExcursao, publicarExcursao } = useExcursoes();
+  const { getExcursoes, deleteExcursao, publicarExcursao, concluirExcursao } = useExcursoes();
 
   const [statusSelected, setStatusSelected] = useState<ISelect | null>();
   const [resetFilter, setResetFilter] = useState(false);
@@ -36,13 +36,17 @@ const ExcursaoList = () => {
   const [modalUpdateExcursao, setModalUpdateExcursao] = useState(false);
   const [modalRemoveExcursao, setModalRemoveExcursao] = useState(false);
   const [modalPublishExcursao, setModalPublishExcursao] = useState(false);
+  const [modalFinishExcursao, setModalFinishExcursao] = useState(false);
+  const [nome, setNome] = useState(null || '')
   const [excursaoData, setExcursaoData] = useState<IExcursao | undefined>();
   const [currentPage, setCurrentPage] = useState(1);
   const registerPerPage = 10;
 
   const { data, count, isLoading } = getExcursoes({
     size: registerPerPage,
-    page: currentPage
+    page: currentPage,
+    concluida: statusSelected?.value,
+    nome
   });
 
   const { mutate: mutateToDeleteExcursao, isLoading: isLoadingDelete } = deleteExcursao();
@@ -50,6 +54,9 @@ const ExcursaoList = () => {
 
   const { mutate: mutateToPublishExcursao, isLoading: isLoadingPublish } = publicarExcursao();
   const [publishItemId, setPublishExcursaoId] = useState('');
+
+  const { mutate: mutateToFinishExcursao, isLoading: isLoadingFinish } = concluirExcursao();
+  const [finishItemId, setFinishExcursaoId] = useState('');
 
   const onConfirmRemoveExcursao = () => {
     mutateToDeleteExcursao(deleteItemId || "");
@@ -59,6 +66,11 @@ const ExcursaoList = () => {
   const onConfirmPublishExcursao = () => {
     mutateToPublishExcursao(publishItemId || "");
     setModalPublishExcursao(false);
+  };
+
+  const onConfirmFinishExcursao = () => {
+    mutateToFinishExcursao(finishItemId || "");
+    setModalFinishExcursao(false);
   };
 
   return (
@@ -90,9 +102,10 @@ const ExcursaoList = () => {
             <span>Buscar excursão</span>
             <FieldSearch
               placeholder="Nome"
-              handleSearch={() => {
+              handleSearch={(event) => {
                 setResetFilter(false);
                 setCurrentPage(1);
+                setNome(event)
               }}
               reset={resetFilter}
             />
@@ -113,12 +126,16 @@ const ExcursaoList = () => {
               }}
               options={[
                 {
-                  label: "Completo",
+                  label: "Todas",
+                  value: 'all'
+                },
+                {
+                  label: "Concluída",
                   value: 1,
                 },
                 {
-                  label: "Incompleto",
-                  value: 2,
+                  label: "Em andamento",
+                  value: 0,
                 },
               ]}
             />
@@ -199,8 +216,7 @@ const ExcursaoList = () => {
                                   }}
                                 />
                               </ButtonIcon>
-                            )
-                            }
+                            )}
 
                             <ButtonIcon tooltip="Editar">
                               <MdEdit
@@ -213,6 +229,18 @@ const ExcursaoList = () => {
                                 }}
                               />
                             </ButtonIcon>
+
+                            {!item.concluida && !isLoadingFinish && (
+                              <ButtonIcon tooltip="Concluir Excursão">
+                                <IoCheckmarkCircle
+                                  size={20}
+                                  onClick={() => {
+                                    setFinishExcursaoId(item.id)
+                                    setModalFinishExcursao(true)
+                                  }}
+                                />
+                              </ButtonIcon>
+                            )}
 
                             <ButtonIcon tooltip="Ônibus">
                               <IoMdBus
@@ -319,22 +347,35 @@ const ExcursaoList = () => {
         )
       }
 
-      {
-        !isLoadingPublish && (
-          <>
-            {modalPublishExcursao && (
-              <AlertModal
-                title="Publicar Excursão"
-                question="Deseja realmente publicar esta excursão?"
-                request={onConfirmPublishExcursao}
-                showModal={modalPublishExcursao}
-                setShowModal={setModalPublishExcursao}
-                size="md"
-              ></AlertModal>
-            )}
-          </>
-        )
-      }
+      {!isLoadingPublish && (
+        <>
+          {modalPublishExcursao && (
+            <AlertModal
+              title="Publicar Excursão"
+              question="Deseja realmente publicar esta excursão?"
+              request={onConfirmPublishExcursao}
+              showModal={modalPublishExcursao}
+              setShowModal={setModalPublishExcursao}
+              size="md"
+            ></AlertModal>
+          )}
+        </>
+      )}
+
+      {!isLoadingFinish && (
+        <>
+          {modalFinishExcursao && (
+            <AlertModal
+              title="Concluir Excursão"
+              question="Deseja realmente concluir esta excursão?"
+              request={onConfirmFinishExcursao}
+              showModal={modalFinishExcursao}
+              setShowModal={setModalFinishExcursao}
+              size="md"
+            ></AlertModal>
+          )}
+        </>
+      )}
     </>
   );
 };

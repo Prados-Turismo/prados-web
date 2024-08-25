@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Box, Button, Flex } from "@chakra-ui/react";
+import { Box, Button, Flex, FormControl, FormErrorMessage, FormLabel, Input } from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -75,6 +75,9 @@ const handleSubmitRegisterSchema = z.object({
     }),
   observacao: z
     .string()
+    .optional(),
+  data: z
+    .string()
     .optional()
 });
 
@@ -124,7 +127,8 @@ const ModalUpdateTransacao = ({
       codigoFormaPagamento: data.codigoFormaPagamento,
       observacao: data.observacao || '',
       codigoContaBancaria: data.ContaBancaria?.id,
-      codigoCategoria: data.CategoriaTransacao?.id
+      codigoCategoria: data.CategoriaTransacao?.id,
+      data: data.tipo == 1 ? data.data.split('T')[0] : data.dataPrevistaRecebimento.split('T')[0]
     }
   });
 
@@ -323,11 +327,37 @@ const ModalUpdateTransacao = ({
           />
         </Flex>
 
-        <FormInput
-          label="Nº do comprovante bancário"
-          {...register("numeroComprovanteBancario")}
-          errors={errors?.numeroComprovanteBancario}
-        />
+        <Flex
+          gap="15px"
+          flexDirection={{
+            base: "column",
+            lg: "row",
+          }}>
+
+          <FormInput
+            label="Nº do comprovante bancário"
+            minW="250px"
+            maxW="250px"
+            {...register("numeroComprovanteBancario")}
+            errors={errors?.numeroComprovanteBancario}
+          />
+
+          <FormControl
+            isInvalid={errors.data?.message ? true : false}
+          >
+            <FormLabel>Data <Asterisk /></FormLabel>
+            <Input
+              isRequired
+              type="date"
+              maxWidth="300px"
+              placeholder="dd/mm/aaaa"
+              max="2099-12-31"
+              maxLength={10}
+              {...register("data")}
+            />
+            <FormErrorMessage>{errors.data?.message}</FormErrorMessage>
+          </FormControl>
+        </Flex>
 
         <SelectForm
           name="idReserva"

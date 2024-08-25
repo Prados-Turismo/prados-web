@@ -327,6 +327,7 @@ const ModalRegisterReservas = ({
             isSearchable={true}
             placeholder="Selecionar"
             noOptionsMessage={() => "Nenhum local encontrado"}
+            isLoading={isLoadingLocalEmbarque}
             onChange={(item) => {
               setValue('localEmbarqueId', item?.value || '')
             }}

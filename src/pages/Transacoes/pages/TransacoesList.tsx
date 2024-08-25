@@ -269,7 +269,7 @@ const TransacoesList = () => {
                             )}
                           </TD>
                           <TD>
-                            {item.tipo == 1 ? formattingDate(item.data) : formattingDate(item.dataPrevistaRecebimento)}
+                            {formattingDate(item.data)}
                           </TD>
                           <TD style={{ color: item.tipo == 1 ? 'red' : 'green', fontWeight: 'bold' }}>
                             {item.tipo == 1 ? '-' : ''}  {currencyBRLFormat(item.valor)}

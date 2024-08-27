@@ -13,12 +13,14 @@ import {
 import { Warning } from "../errors";
 import { keys, queryClient } from "../services/query";
 
-const getExcursoes = ({ page, size }: IExcursaoArgs): IExcursaoResponse => {
+const getExcursoes = ({ page, size, concluida, nome }: IExcursaoArgs): IExcursaoResponse => {
 
   const { data, isLoading } = useQuery(
     [
       keys.excursao,
-      page
+      page,
+      concluida,
+      nome
     ],
     async () => {
       const path = 'excursao/index';
@@ -27,7 +29,9 @@ const getExcursoes = ({ page, size }: IExcursaoArgs): IExcursaoResponse => {
         const { data } = await apiPrados.get(path, {
           params: {
             page,
-            size
+            size,
+            concluida,
+            nome
           },
         });
 
@@ -169,7 +173,7 @@ const findExcursao = (): IUpdateExcursaoResponse => {
       try {
         const { data } = await apiPrados.get(urlPath)
         queryClient.invalidateQueries([keys.excursao])
-        
+
         return data
       } catch (error: any) {
         throw new Warning(error.response.data.message, error?.response?.status);
@@ -210,6 +214,33 @@ const publicarExcursao = (): IUpdateExcursaoResponse => {
   }
 }
 
+const concluirExcursao = (): IUpdateExcursaoResponse => {
+
+  const { isLoading, mutate } = useMutation(
+    async (id: string) => {
+      const urlPath = `excursao/concluir/${id}`
+
+      try {
+        await apiPrados.patch(urlPath).then(function () {
+          queryClient.invalidateQueries([keys.excursao])
+
+          useToastStandalone({
+            title: "Excursão concluída com sucesso!",
+            status: "success"
+          })
+        })
+      } catch (error: any) {
+        throw new Warning(error.response.data.message, error?.response?.status);
+      }
+    }
+  )
+
+  return {
+    isLoading,
+    mutate
+  }
+}
+
 export default function useExcursoes() {
   return {
     getExcursoes,
@@ -218,6 +249,7 @@ export default function useExcursoes() {
     updateExcursao,
     deleteExcursao,
     publicarExcursao,
-    findExcursao
+    findExcursao,
+    concluirExcursao
   }
 }

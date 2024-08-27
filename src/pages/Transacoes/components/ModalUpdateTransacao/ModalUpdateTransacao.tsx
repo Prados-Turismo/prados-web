@@ -19,7 +19,7 @@ import SelectForm from "../../../../components/SelectForm";
 import FormInputNumber from "../../../../components/FormInputNumber";
 import FormInput from "../../../../components/FormInput";
 import useExcursoes from "../../../../hooks/useExcursao";
-import usePacotes from "../../../../hooks/usePacotes";
+import useReservas from "../../../../hooks/useReservas";
 import { useState } from "react";
 import useFormaPagamento from "../../../../hooks/useFormaPagamento";
 import useTransacao from "../../../../hooks/useTransacao";
@@ -66,7 +66,7 @@ const handleSubmitRegisterSchema = z.object({
   codigoExcursao: z
     .string()
     .optional(),
-  codigoPacote: z
+  idReserva: z
     .string()
     .optional(),
   codigoFormaPagamento: z
@@ -74,6 +74,9 @@ const handleSubmitRegisterSchema = z.object({
       required_error: fieldRequired("forma de pagamento")
     }),
   observacao: z
+    .string()
+    .optional(),
+  data: z
     .string()
     .optional()
 });
@@ -95,7 +98,7 @@ const ModalUpdateTransacao = ({
   const { getProducts } = useProduct();
   const { getAllFornecedores } = useFornecedor();
   const { getExcursoes } = useExcursoes();
-  const { getAllPacotes } = usePacotes();
+  const { getAllReservas } = useReservas();
   const { getAllPessoas } = usePessoas()
   const { getAllContaBancaria } = useContaBancaria()
   const { getAllCategoriaTransacao } = useCategoriaTransacao()
@@ -120,11 +123,12 @@ const ModalUpdateTransacao = ({
       codigoFornecedor: data.codigoFornecedor ?? undefined,
       codigoProduto: data.codigoProduto ?? undefined,
       codigoExcursao: data.codigoExcursao ?? undefined,
-      codigoPacote: data.codigoPacote ?? undefined,
+      idReserva: data.Reservas.id ?? undefined,
       codigoFormaPagamento: data.codigoFormaPagamento,
       observacao: data.observacao || '',
       codigoContaBancaria: data.ContaBancaria?.id,
-      codigoCategoria: data.CategoriaTransacao?.id
+      codigoCategoria: data.CategoriaTransacao?.id,
+      data: data.tipo == 1 ? data.data.split('T')[0] : data.dataPrevistaRecebimento.split('T')[0]
     }
   });
 
@@ -132,7 +136,7 @@ const ModalUpdateTransacao = ({
   const { data: dataFormaPagamentos, isLoading: loadingFormaPagamentos } = getAllFormaPagamentos();
   const { data: dataExcursoes, isLoading: loadingExcursoes } = getExcursoes({ page: 1, size: 100 });
   const { data: dataClientes, isLoading: loadingClientes } = getAllPessoas();
-  const { data: dataPacotes, isLoading: loadingPacotes } = getAllPacotes();
+  const { data: dataReservas, isLoading: loadingReservas } = getAllReservas();
   const { data: dataFornecedores, isLoading: loadingFornecedores } = getAllFornecedores();
   const { data: dataProdutos, isLoading: loadingProdutos } = getProducts({ page: 1, size: 100 });
   const { data: dataContaBancaria, isLoading: isLoadingContaBancaria } = getAllContaBancaria();
@@ -323,30 +327,56 @@ const ModalUpdateTransacao = ({
           />
         </Flex>
 
-        <FormInput
-          label="Nº do comprovante bancário"
-          {...register("numeroComprovanteBancario")}
-          errors={errors?.numeroComprovanteBancario}
-        />
+        <Flex
+          gap="15px"
+          flexDirection={{
+            base: "column",
+            lg: "row",
+          }}>
+
+          <FormInput
+            label="Nº do comprovante bancário"
+            minW="250px"
+            maxW="250px"
+            {...register("numeroComprovanteBancario")}
+            errors={errors?.numeroComprovanteBancario}
+          />
+
+          <FormControl
+            isInvalid={errors.data?.message ? true : false}
+          >
+            <FormLabel>Data <Asterisk /></FormLabel>
+            <Input
+              isRequired
+              type="date"
+              maxWidth="300px"
+              placeholder="dd/mm/aaaa"
+              max="2099-12-31"
+              maxLength={10}
+              {...register("data")}
+            />
+            <FormErrorMessage>{errors.data?.message}</FormErrorMessage>
+          </FormControl>
+        </Flex>
 
         <SelectForm
-          name="codigoPacote"
-          label="Pacote"
+          name="idReserva"
+          label="Reserva"
           minW="200px"
-          isLoading={loadingPacotes}
+          isLoading={loadingReservas}
           handleChange={(option) => {
-            setValue("codigoPacote", option?.value);
+            setValue("idReserva", option?.value);
           }}
-          options={dataPacotes
-            ?.map((codigoPacote) => ({
-              label: codigoPacote?.nome,
-              value: codigoPacote?.id,
+          options={dataReservas
+            ?.map((reserva) => ({
+              label: `${reserva?.reserva}`,
+              value: reserva?.id,
             }))}
           defaultValue={{
-            label: data.Pacotes?.nome,
-            value: data.Pacotes?.id
+            label: `${data.Reservas?.reserva}`,
+            value: data.Reservas?.id
           }}
-          errors={errors.codigoPacote}
+          errors={errors.idReserva}
         />
 
         <SelectForm

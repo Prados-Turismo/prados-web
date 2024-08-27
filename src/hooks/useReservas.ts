@@ -72,7 +72,7 @@ const findReserva = (id: string): IReservaFindResponse => {
   };
 }
 
-const getAllReserva = (): IReservaResponse => {
+const getAllReservas = (): IReservaResponse => {
 
   const { data, isLoading } = useQuery(
     [
@@ -193,7 +193,7 @@ const deleteReserva = (): IDeleteReservaResponse => {
 export default function useReserva() {
   return {
     getReserva,
-    getAllReserva,
+    getAllReservas,
     createReserva,
     updateReserva,
     deleteReserva,

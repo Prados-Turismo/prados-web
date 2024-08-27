@@ -11,6 +11,7 @@ export interface IExcursao {
   valor: number
   codigoPacote: string
   usuarioCadastro: string
+  concluida: boolean
   ExcursaoPassageiros: {
     id: string
     reserva: string
@@ -61,6 +62,8 @@ export interface IExcursao {
 export interface IExcursaoArgs {
   page: number;
   size: number;
+  concluida?: string | number
+  nome?: string | null
 }
 
 export interface IDataExcursao {

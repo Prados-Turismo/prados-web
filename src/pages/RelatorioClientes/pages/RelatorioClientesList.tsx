@@ -1,4 +1,19 @@
-import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box, Button, Flex, Table, TableContainer, Tbody, Td, Text, Thead, Tr, useMediaQuery } from "@chakra-ui/react";
+import { Accordion,
+  AccordionButton,
+  AccordionIcon,
+  AccordionItem,
+  AccordionPanel,
+  Box,
+  Flex,
+  Table,
+  TableContainer,
+  Tbody,
+  Td,
+  Text,
+  Thead,
+  Tr,
+  useMediaQuery
+} from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import Loading from "../../../components/Loading";
 import Pagination from "../../../components/Pagination";
@@ -7,8 +22,6 @@ import Pagination from "../../../components/Pagination";
 import { Content, SectionTop } from "./styled";
 
 // Hooks and utils
-import ReactSelect from "react-select";
-import { ISelect } from "../../../models/generics.model";
 import AlertNoDataFound from "../../../components/AlertNoDataFound";
 import { useParams } from "react-router-dom";
 import { capitalize } from "../../../utils/capitalize";
@@ -16,6 +29,7 @@ import { cpfMask, dateFormat } from "../../../utils";
 import { currencyBRLFormat } from "../../../utils/currencyBRLFormat";
 import usePessoas from "../../../hooks/usePessoas";
 import useRelatorioClientes from "../../../hooks/useRelatorioClientes";
+import FieldSearch from "../../../components/FieldSearch";
 
 const RelatorioClientesList = () => {
   const [break600] = useMediaQuery("(max-width: 600px)");
@@ -23,13 +37,14 @@ const RelatorioClientesList = () => {
   const { getPessoas } = usePessoas();
   const { getRelatorioClientesPorPessoa } = useRelatorioClientes();
 
-  const [statusSelected, setStatusSelected] = useState<ISelect | null>();
+  const [nome, setNome] = useState('')
   const [currentPage, setCurrentPage] = useState(1);
   const registerPerPage = 10;
 
   const { data, count, isLoading } = getPessoas({
     size: registerPerPage,
-    page: currentPage
+    page: currentPage,
+    nome
   });
 
   const [queries, setQueries] = useState({});
@@ -60,7 +75,7 @@ const RelatorioClientesList = () => {
         sumTransacoes
       }
     }));
-  }, [dataTransacoes, isLoadingTransacoes]);
+  }, [count, countTransacoes, dataTransacoes, isLoadingTransacoes, pessoaSelecionada, sumTransacoes]);
 
   const handleAccordionChange = (index: number, pessoaId: string) => {
     setPessoaSelecionada(pessoaId);
@@ -79,42 +94,18 @@ const RelatorioClientesList = () => {
       </Flex>
 
       <Content className="contentMain">
-        <Flex width="100%" gap="15px" alignItems="flex-end" flexWrap="wrap">
+        <Flex width="100%" gap="15px" alignItems="flex-end" flexWrap="wrap" mb={5}>
           <Flex flexDirection="column" gap="5px" width="500px">
-            <span>Cliente</span>
+            <span>Nome</span>
 
-            <ReactSelect
-              className="select-fields"
-              classNamePrefix="select"
-              closeMenuOnSelect={true}
-              isSearchable={true}
-              value={statusSelected}
-              placeholder="Selecionar"
-              noOptionsMessage={() => "Nenhum Cliente encontrado"}
-              onChange={(item) => {
-                setStatusSelected(item);
+            <FieldSearch
+              placeholder=""
+              handleSearch={(event) => {
+                setCurrentPage(1);
+                setNome(event)
               }}
-              options={[
-                {
-                  label: "Cliente 1",
-                  value: 1,
-                },
-                {
-                  label: "Cliente 2",
-                  value: 2,
-                },
-              ]}
             />
           </Flex>
-          <Button
-            borderRadius="5px"
-            variant="outline"
-            onClick={() => {
-              setStatusSelected(null);
-            }}
-          >
-            Limpar Filtros
-          </Button>
         </Flex>
 
         {isLoading && (
@@ -140,7 +131,7 @@ const RelatorioClientesList = () => {
                         <h2>
                           <AccordionButton onClick={() => handleAccordionChange(index, item.id)}>
                             <Box as='span' flex='1' textAlign='left'>
-                              {`${capitalize(item.nome)} - ${cpfMask(item.cpf)}`}
+                              {cpfMask(item.cpf)}&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;{capitalize(item.nome)}
                             </Box>
                             <AccordionIcon />
                           </AccordionButton>
@@ -153,7 +144,9 @@ const RelatorioClientesList = () => {
                           flexDirection="column"
                         >
                           {isLoadingTransacoes ? (
-                            <p>Carregando...</p>
+                            <Flex h="100%" alignItems="center">
+                              <Loading />
+                            </Flex>
                           ) : (
                             <>
                             {dataTransacoes?.length > 0 && (

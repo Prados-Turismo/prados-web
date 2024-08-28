@@ -33,6 +33,7 @@ export interface IPessoa {
 export interface IPessoaArgs {
   page: number;
   size: number;
+  nome?: string
 }
 
 export interface IPessoaResponse {

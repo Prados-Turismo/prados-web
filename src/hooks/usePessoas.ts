@@ -14,12 +14,13 @@ import {
 } from "../models/pessoa.model";
 import { extractNumbers } from "../utils/fieldValidation";
 
-const getPessoas = ({ page, size }: IPessoaArgs): IPessoaResponse => {
+const getPessoas = ({ page, size, nome }: IPessoaArgs): IPessoaResponse => {
 
   const { data, isLoading } = useQuery(
     [
       keys.pessoas,
-      page
+      page,
+      nome
     ],
     async () => {
       const path = 'pessoas/index';
@@ -29,10 +30,11 @@ const getPessoas = ({ page, size }: IPessoaArgs): IPessoaResponse => {
           params: {
             page,
             size,
+            nome,
             orderBy: 'nome'
           },
         });
-        
+
         return data
       } catch (error: any) {
         throw new Warning(error.response.data.message, error.response.status);

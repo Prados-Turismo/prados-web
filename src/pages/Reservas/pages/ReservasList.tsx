@@ -206,8 +206,8 @@ const ReservasList = () => {
                                                                     size={20}
                                                                     cursor="pointer"
                                                                     onClick={() => {
-                                                                        // setTransacaoData(item)
-                                                                        // setModalUpdateTransacao(true)
+                                                                        setReservaData(item)
+                                                                        setModalUpdateReserva(true)
                                                                     }}
                                                                 />
                                                             </ButtonIcon>
@@ -232,7 +232,7 @@ const ReservasList = () => {
                                                                 size={20}
                                                                 onClick={() => {
                                                                     if (item.status) {
-                                                                        
+
                                                                     }
                                                                 }}
                                                             />

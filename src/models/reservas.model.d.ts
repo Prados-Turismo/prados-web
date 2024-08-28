@@ -11,6 +11,7 @@ export interface IReserva {
   desconto: number,
   dataCadastro: string,
   plataforma: number
+  criancasColo: number
   Pessoa: {
     id: string,
     nome: string,
@@ -35,9 +36,19 @@ export interface IReserva {
     data: string,
     numeroComprovanteBancario: string
     FormaPagamento: {
+      id: string
+      nome: string
+    }
+    ContaBancaria: {
+      id: string
       nome: string
     }
   }[]
+  LocalEmbarque: {
+    id: string
+    nome: string
+    horaEmbarque: string
+  },
 }
 
 export interface IReservaResponse {

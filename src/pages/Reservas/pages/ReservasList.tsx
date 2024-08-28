@@ -233,6 +233,9 @@ const ReservasList = () => {
                                                                 onClick={() => {
                                                                     if (item.status) {
 
+                                                                    } else {
+                                                                        setDeleteReservaId(item.id)
+                                                                        setModalRemoveReserva(true)
                                                                     }
                                                                 }}
                                                             />
@@ -287,8 +290,8 @@ const ReservasList = () => {
 
             {modalRemoveReserva && (
                 <AlertModal
-                    title="Remover Reserva"
-                    question="Deseja realmente remover essa reserva?"
+                    title="Cancelar Reserva"
+                    question="Deseja realmente cancelar essa reserva?"
                     request={onConfirmRemoveReserva}
                     showModal={modalRemoveReserva}
                     setShowModal={setModalRemoveReserva}

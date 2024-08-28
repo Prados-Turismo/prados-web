@@ -53,9 +53,6 @@ const handleSubmitRegisterSchema = z.object({
     .string({
       required_error: fieldRequired('Categoria')
     }),
-  codigoPessoa: z
-    .string()
-    .optional(),
   codigoFornecedor: z
     .string()
     .optional(),
@@ -348,23 +345,6 @@ const ModalRegisterTransacao = ({
               value: codigoExcursao?.id,
             }))}
           errors={errors.codigoExcursao}
-        />
-
-        <SelectForm
-          name="codigoPessoa"
-          placeholder="Selecione"
-          label="Cliente"
-          minW="200px"
-          isLoading={loadingClientes}
-          handleChange={(option) => {
-            setValue("codigoPessoa", option?.value);
-          }}
-          options={dataClientes
-            ?.map((codigoPessoa) => ({
-              label: codigoPessoa?.nome,
-              value: codigoPessoa?.id,
-            }))}
-          errors={errors.codigoPessoa}
         />
 
         <SelectForm

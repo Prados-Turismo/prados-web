@@ -54,9 +54,6 @@ const handleSubmitRegisterSchema = z.object({
     .string({
       required_error: fieldRequired('Categoria')
     }),
-  codigoPessoa: z
-    .string()
-    .optional(),
   codigoFornecedor: z
     .string()
     .optional(),
@@ -119,7 +116,6 @@ const ModalUpdateTransacao = ({
       valor: data.valor,
       numeroComprovanteBancario: data.numeroComprovanteBancario ?? undefined,
       efetivado: data.efetivado ? 1 : 2,
-      codigoPessoa: data.codigoPessoa ?? undefined,
       codigoFornecedor: data.codigoFornecedor ?? undefined,
       codigoProduto: data.codigoProduto ?? undefined,
       codigoExcursao: data.codigoExcursao ?? undefined,
@@ -128,7 +124,7 @@ const ModalUpdateTransacao = ({
       observacao: data.observacao || '',
       codigoContaBancaria: data.ContaBancaria?.id,
       codigoCategoria: data.CategoriaTransacao?.id,
-      data: data.tipo == 1 ? data.data.split('T')[0] : data.dataPrevistaRecebimento.split('T')[0]
+      data: data.tipo == 1 ? data.data.split('T')[0] : data.data.split('T')[0]
     }
   });
 
@@ -290,6 +286,7 @@ const ModalUpdateTransacao = ({
           <SelectForm
             name="codigoContaBancaria"
             label="Conta Bancária"
+            isRequired
             minW="135px"
             isLoading={isLoadingContaBancaria}
             handleChange={(option) => {
@@ -400,26 +397,6 @@ const ModalUpdateTransacao = ({
           errors={errors.codigoExcursao}
         />
 
-        <SelectForm
-          name="codigoPessoa"
-          placeholder="Selecione"
-          label="Passageiro"
-          minW="200px"
-          isLoading={loadingClientes}
-          handleChange={(option) => {
-            setValue("codigoPessoa", option?.value);
-          }}
-          options={dataClientes
-            ?.map((codigoPessoa) => ({
-              label: codigoPessoa?.nome,
-              value: codigoPessoa?.id,
-            }))}
-          defaultValue={{
-            label: data.Pessoas?.nome,
-            value: data.Pessoas?.id
-          }}
-          errors={errors.codigoPessoa}
-        />
 
         <SelectForm
           name="codigoFornecedor"

@@ -27,6 +27,7 @@ import useFormaPagamento from "../../../../hooks/useFormaPagamento";
 import useContaBancaria from "../../../../hooks/useContaBancaria";
 import { IExcursao } from "../../../../models/excursao.model";
 import useLocalEmbarque from "../../../../hooks/useLocalEmbarque";
+import { formattingDate } from "../../../../utils/formattingDate";
 
 const handleSubmitRegisterSchema = z.object({
   passageiros: z
@@ -193,7 +194,7 @@ const ModalRegisterReservas = ({
           }}
           options={dataExcursoes
             ?.map((codigoExcursao) => ({
-              label: codigoExcursao?.nome,
+              label: `${codigoExcursao?.nome} - ${formattingDate(codigoExcursao.dataInicio)} à ${formattingDate(codigoExcursao.dataFim)}`,
               value: codigoExcursao?.id,
             }))}
           errors={errors.idExcursao}

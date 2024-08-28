@@ -11,6 +11,7 @@ import useReservas from "../../../../hooks/useReservas";
 import usePessoas from "../../../../hooks/usePessoas";
 import useFormaPagamento from "../../../../hooks/useFormaPagamento";
 import useContaBancaria from "../../../../hooks/useContaBancaria";
+import useExcursoes from "../../../../hooks/useExcursao";
 
 import {
   fieldRequired
@@ -25,12 +26,18 @@ import { IOption } from "../../../../components/SelectForm/types";
 import useLocalEmbarque from "../../../../hooks/useLocalEmbarque";
 import ReactSelect from "react-select";
 import { useState } from "react";
+import { IExcursao } from "../../../../models/excursao.model";
 
 const handleSubmitRegisterSchema = z.object({
   passageiros: z
     .array(z.string())
     .min(1, {
       message: fieldRequired("passageiro"),
+    }),
+  idExcursao: z
+    .string()
+    .min(1, {
+      message: fieldRequired('Excursão')
     }),
   codigoFormaPagamento: z
     .string()
@@ -79,13 +86,16 @@ const ModalUpdateReserva = ({
   const { getAllFormaPagamentos } = useFormaPagamento()
   const { getAllContaBancaria } = useContaBancaria()
   const { getLocalEmbarque } = useLocalEmbarque()
+  const { getExcursoes, findExcursao } = useExcursoes()
 
   const { data: dataClientes, isLoading: loadingClientes } = getAllPessoas();
   const { data: dataFormaPagamentos, isLoading: loadingFormaPagamentos } = getAllFormaPagamentos();
   const { data: dataContaBancaria, isLoading: isLoadingContaBancaria } = getAllContaBancaria();
   const { data: localEmbarqueData, isLoading: isLoadingLocalEmbarque } = getLocalEmbarque()
+  const { data: dataExcursoes, isLoading: loadingExcursoes } = getExcursoes({ page: 1, size: 100 });
+  const { mutate: mutateToGetExcursao, isLoading: isLoadingExcursao } = findExcursao();
   const [quantidade, setQuantidade] = useState(data.Pessoa.length);
-  const [subTotal, setSubtotal] = useState(data.Excursao.valor * quantidade);
+  const [subTotal, setSubtotal] = useState(data.Excursao.valor);
   const [desconto, setDesconto] = useState(data.desconto);
   const [total, setTotal] = useState((subTotal * quantidade) - desconto);
   const [valorDesconto, setValorDesconto] = useState(data.desconto);
@@ -103,7 +113,8 @@ const ModalUpdateReserva = ({
       criancasColo: data.criancasColo,
       localEmbarqueId: data.LocalEmbarque.id,
       codigoContaBancaria: data.Transacoes[0].ContaBancaria?.id,
-      codigoFormaPagamento: data.Transacoes[0].FormaPagamento.id
+      codigoFormaPagamento: data.Transacoes[0].FormaPagamento.id,
+      idExcursao: data.Excursao.id
     }
   });
   const { mutate, isLoading } = updateReserva(reset, handleClose);
@@ -114,6 +125,18 @@ const ModalUpdateReserva = ({
       ...data,
       usuarioCadastro: user?.id
     })
+  };
+
+  const onSelectExcursao = async (excursao: string) => {
+    if (excursao) {
+      mutateToGetExcursao(excursao, {
+        onSuccess: (data: IExcursao) => {
+          setSubtotal(data.valor)
+          calculateTotal(quantidade, data.valor, desconto)
+          calculateDesconto(quantidade, desconto || 0)
+        }
+      });
+    }
   };
 
   const onSelectPassageiros = async (option: Array<{ label: string, value: string }>) => {
@@ -130,7 +153,7 @@ const ModalUpdateReserva = ({
     setValue('total', result)
   }
 
-  const calculateDesconto = async (qtd: number, desconto: number) => {
+  const calculateDesconto = async (qtd: number, desconto: number) => {    
     let newDesconto = desconto * qtd
     setValorDesconto(newDesconto)
     setValue('valorDesconto', newDesconto)
@@ -145,6 +168,30 @@ const ModalUpdateReserva = ({
         <span>
           (<Asterisk />) indica os campos obrigatórios
         </span>
+
+        <SelectForm
+          name="idExcursao"
+          label="Excursão"
+          minW="200px"
+          isRequired
+          isLoading={loadingExcursoes}
+          handleChange={(option) => {
+            setValue("idExcursao", option?.value);
+            onSelectExcursao(option?.value || '')
+            calculateTotal(quantidade, subTotal, desconto)
+            calculateDesconto(quantidade, getValues("valorDesconto") || 0)
+          }}
+          options={dataExcursoes
+            ?.map((codigoExcursao) => ({
+              label: codigoExcursao?.nome,
+              value: codigoExcursao?.id,
+            }))}
+          defaultValue={{
+            value: data.Excursao.id,
+            label: data.Excursao.nome
+          }}
+          errors={errors.idExcursao}
+        />
 
         <SelectForm
           name="passageiros"

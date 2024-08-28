@@ -3,6 +3,7 @@ import { Aside, AsideTop } from "./styled";
 import { Table, TableContainer, Tbody, Td, Thead, Tr } from "@chakra-ui/react";
 import { ISidebar } from "../../../../models/sidebar.model";
 import useExcursoes from "../../../../hooks/useExcursao";
+import { formattingDate } from "../../../../utils/formattingDate";
 
 const SideBar = ({ status }: ISidebar) => {
   const { getExcursoes } = useExcursoes();
@@ -26,7 +27,7 @@ const SideBar = ({ status }: ISidebar) => {
               {!loadingExcursoes && dataExcursoes.map((item) => (
                 <Tr key={item.id}>
                   <Td fontSize="0.9rem">
-                    {item.nome}
+                    {item.nome} - {formattingDate(item.dataInicio)} à {formattingDate(item.dataFim)}
                   </Td>
                   <Td fontSize="0.9rem">
                     {item.vagas}

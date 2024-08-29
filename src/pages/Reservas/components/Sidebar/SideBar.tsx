@@ -27,7 +27,7 @@ const SideBar = ({ status }: ISidebar) => {
               {!loadingExcursoes && dataExcursoes.map((item) => (
                 <Tr key={item.id}>
                   <Td fontSize="0.9rem">
-                    {item.nome} - {formattingDate(item.dataInicio)} à {formattingDate(item.dataFim)}
+                    {formattingDate(item.dataInicio)} à {formattingDate(item.dataFim)} - {item.nome}
                   </Td>
                   <Td fontSize="0.9rem">
                     {item.vagas}

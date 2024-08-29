@@ -18,17 +18,16 @@ import ModalUpdateReservas from "../components/ModalUpdateReservas";
 import AlertNoDataFound from "../../../components/AlertNoDataFound";
 import { MdEdit } from "react-icons/md";
 import ButtonIcon from "../../../components/ButtonIcon";
-import { FiTrash } from "react-icons/fi";
 import AlertModal from "../../../components/AlertModal";
 import useReservas from "../../../hooks/useReservas";
 import { IReserva } from "../../../models/reservas.model";
 import { IoTicket } from "react-icons/io5";
-import { AiFillPrinter } from "react-icons/ai";
 import { MdOutgoingMail } from "react-icons/md";
 import { formattingDate } from "../../../utils/formattingDate";
 import { FaShoppingCart } from "react-icons/fa";
 import { GrSystem } from "react-icons/gr";
 import { useNavigate } from "react-router-dom";
+import ModalRegisterCredito from "../components/ModalRegisterCredito";
 
 const ReservasList = () => {
     const { getReserva, deleteReserva } = useReservas();
@@ -37,6 +36,9 @@ const ReservasList = () => {
     const [modalRegisterReserva, setModalRegisterReserva] = useState(false);
     const [modalUpdateReserva, setModalUpdateReserva] = useState(false);
     const [modalRemoveReserva, setModalRemoveReserva] = useState(false);
+    const [modalRegisterCredito, setModalRegisterCredito] = useState(false);
+    const [valorPacote, setvalorPacote] = useState(0)
+    const [creditoData, setCreditoData] = useState<IReserva>();
     const [reservaData, setReservaData] = useState<IReserva | undefined>();
     const [currentPage, setCurrentPage] = useState(1);
     const registerPerPage = 10;
@@ -232,7 +234,9 @@ const ReservasList = () => {
                                                                 size={20}
                                                                 onClick={() => {
                                                                     if (item.status) {
-
+                                                                        setCreditoData(item)
+                                                                        setvalorPacote((item.Excursao.valor - item.desconto) * item.Pessoa.length)
+                                                                        setModalRegisterCredito(true)
                                                                     } else {
                                                                         setDeleteReservaId(item.id)
                                                                         setModalRemoveReserva(true)
@@ -284,6 +288,21 @@ const ReservasList = () => {
                     <ModalUpdateReservas
                         handleClose={() => setModalUpdateReserva(false)}
                         data={reservaData}
+                    />
+                </SimpleModal>
+            )}
+
+            {modalRegisterCredito && creditoData && (
+                <SimpleModal
+                    title="Gerar Crédito"
+                    size="xl"
+                    isOpen={modalRegisterCredito}
+                    handleModal={setModalRegisterCredito}
+                >
+                    <ModalRegisterCredito
+                        handleClose={() => setModalRegisterCredito(false)}
+                        valorPacote={valorPacote}
+                        data={creditoData}
                     />
                 </SimpleModal>
             )}

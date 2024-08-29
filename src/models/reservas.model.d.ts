@@ -34,6 +34,7 @@ export interface IReserva {
   Transacoes: {
     valor: number,
     data: string,
+    valor: number
     numeroComprovanteBancario: string
     FormaPagamento: {
       id: string

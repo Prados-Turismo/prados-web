@@ -194,7 +194,7 @@ const ModalRegisterReservas = ({
           }}
           options={dataExcursoes
             ?.map((codigoExcursao) => ({
-              label: `${codigoExcursao?.nome} - ${formattingDate(codigoExcursao.dataInicio)} à ${formattingDate(codigoExcursao.dataFim)}`,
+              label: `${formattingDate(codigoExcursao.dataInicio)} à ${formattingDate(codigoExcursao.dataFim)} - ${codigoExcursao?.nome}`,
               value: codigoExcursao?.id,
             }))}
           errors={errors.idExcursao}

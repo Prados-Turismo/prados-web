@@ -10,6 +10,7 @@ import {
   IUpdateReservaResponse,
   IDeleteReservaResponse,
   IReservaFindResponse,
+  IReserva,
 } from "../models/reservas.model";
 import { Warning } from "../errors";
 import { keys, queryClient } from "../services/query";
@@ -54,7 +55,7 @@ const findReserva = (id: string): IReservaFindResponse => {
     async () => {
       const path = `reserva/find/${id}`;
       queryClient.invalidateQueries([keys.reserva])
-      
+
       try {
         const { data } = await apiPrados.get(path);
 
@@ -170,7 +171,7 @@ const deleteReserva = (): IDeleteReservaResponse => {
     async (id: string) => {
       const urlPath = `reserva/delete/${id}`
       try {
-        await apiPrados.delete(urlPath).then(function () {
+        await apiPrados.patch(urlPath).then(function () {
           queryClient.invalidateQueries([keys.reserva])
 
           useToastStandalone({
@@ -190,6 +191,40 @@ const deleteReserva = (): IDeleteReservaResponse => {
   }
 }
 
+
+const createCreditoCliente = (
+  reset: () => void,
+  handleClose: () => void): IDeleteReservaResponse => {
+
+  const { isLoading, mutate } = useMutation(
+    async (data: IReserva) => {
+      const urlPath = `reserva/cancelar/${data.id}`;
+
+      try {
+        await apiPrados.post(urlPath, data).then(function () {
+
+          reset()
+          handleClose()
+
+          queryClient.invalidateQueries([keys.reserva])
+
+          useToastStandalone({
+            title: "Crédito gerado com sucesso!",
+            status: "success"
+          })
+        })
+      } catch (error: any) {
+        throw new Warning(error.response.data.message, error?.response?.status)
+      }
+    }
+  )
+
+  return {
+    isLoading,
+    mutate
+  }
+}
+
 export default function useReserva() {
   return {
     getReserva,
@@ -197,6 +232,7 @@ export default function useReserva() {
     createReserva,
     updateReserva,
     deleteReserva,
-    findReserva
+    findReserva,
+    createCreditoCliente
   }
 }

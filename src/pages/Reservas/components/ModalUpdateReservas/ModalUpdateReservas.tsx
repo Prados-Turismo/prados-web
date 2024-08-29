@@ -27,6 +27,7 @@ import useLocalEmbarque from "../../../../hooks/useLocalEmbarque";
 import ReactSelect from "react-select";
 import { useState } from "react";
 import { IExcursao } from "../../../../models/excursao.model";
+import { formattingDate } from "../../../../utils/formattingDate";
 
 const handleSubmitRegisterSchema = z.object({
   passageiros: z
@@ -183,7 +184,7 @@ const ModalUpdateReserva = ({
           }}
           options={dataExcursoes
             ?.map((codigoExcursao) => ({
-              label: codigoExcursao?.nome,
+              label: `${formattingDate(codigoExcursao.dataInicio)} à ${formattingDate(codigoExcursao.dataFim)} - ${codigoExcursao?.nome}`,
               value: codigoExcursao?.id,
             }))}
           defaultValue={{
@@ -292,6 +293,7 @@ const ModalUpdateReserva = ({
             maxLength={25}
             dontAllowNegative={true}
             name="criancasColo"
+            value={data.criancasColo}
             errors={errors.criancasColo}
           />
 

@@ -35,6 +35,11 @@ const handleSubmitRegisterSchema = z.object({
     .string()
     .min(1, {
       message: fieldRequired("fornecedor"),
+    }),
+  valor: z
+    .number()
+    .min(1, {
+      message: fieldRequired('valor')
     })
 });
 
@@ -64,7 +69,8 @@ const ModalUpdateProduct = ({
     defaultValues: {
       nome: data.nome,
       estoque: data.estoque,
-      codigoFornecedor: data.codigoFornecedor
+      codigoFornecedor: data.codigoFornecedor,
+      valor: data.valor
     }
   });
   const { mutate, isLoading } = updateProduct(reset, handleClose);
@@ -107,20 +113,48 @@ const ModalUpdateProduct = ({
           {errors.nome && <p className="error">{errors.nome.message}</p>}
         </FieldWrap>
 
-        <FieldWrap>
-          <span>
-            Estoque <Asterisk />
-          </span>
+        <Flex
+          gap="15px"
+          flexDirection={{
+            base: "column",
+            lg: "row",
+          }}
+        >
+          <FieldWrap>
+            <span>
+              Estoque <Asterisk />
+            </span>
 
-          <Input
-            placeholder="Digite o Estoque"
-            id="estoque"
-            type="number"
-            {...register("estoque", { valueAsNumber: !isEmpty("estoque") })}
-            min={0}
-          />
-          {errors.estoque && <p className="error">{errors.estoque.message}</p>}
-        </FieldWrap>
+            <Input
+              placeholder="Digite o Estoque"
+              id="estoque"
+              minW="250px"
+              maxW="250px"
+              type="number"
+              {...register("estoque", { valueAsNumber: !isEmpty("estoque") })}
+              min={0}
+            />
+            {errors.estoque && <p className="error">{errors.estoque.message}</p>}
+          </FieldWrap>
+
+          <FieldWrap>
+            <span>
+              Valor <Asterisk />
+            </span>
+
+            <Input
+              placeholder="Digite o Valor"
+              minW="250px"
+              maxW="250px"
+              id="valor"
+              type="number"
+              {...register("valor", { valueAsNumber: !isEmpty("valor") })}
+              min={0}
+            />
+            {errors.estoque && <p className="error">{errors.estoque.message}</p>}
+          </FieldWrap>
+
+        </Flex>
 
         <FieldWrap>
           <span>Fornecedor</span>

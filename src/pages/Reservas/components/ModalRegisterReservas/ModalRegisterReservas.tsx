@@ -28,6 +28,7 @@ import useContaBancaria from "../../../../hooks/useContaBancaria";
 import { IExcursao } from "../../../../models/excursao.model";
 import useLocalEmbarque from "../../../../hooks/useLocalEmbarque";
 import { formattingDate } from "../../../../utils/formattingDate";
+import useProduct from "../../../../hooks/useProducts";
 
 const handleSubmitRegisterSchema = z.object({
   passageiros: z
@@ -70,7 +71,10 @@ const handleSubmitRegisterSchema = z.object({
     .string()
     .min(1, {
       message: fieldRequired('Local de embarque')
-    })
+    }),
+  opcionais: z
+    .array(z.string())
+    .optional()
 });
 
 type IhandleSubmitRegister = z.infer<typeof handleSubmitRegisterSchema>;
@@ -89,6 +93,7 @@ const ModalRegisterReservas = ({
   const { getAllFormaPagamentos } = useFormaPagamento()
   const { getAllContaBancaria } = useContaBancaria()
   const { getLocalEmbarque } = useLocalEmbarque()
+  const { getAllProducts } = useProduct()
 
   const { data: dataClientes, isLoading: loadingClientes } = getAllPessoas();
   const { data: dataExcursoes, isLoading: loadingExcursoes } = getExcursoes({ page: 1, size: 100 });
@@ -96,6 +101,7 @@ const ModalRegisterReservas = ({
   const { data: dataContaBancaria, isLoading: isLoadingContaBancaria } = getAllContaBancaria();
   const { mutate: mutateToGetExcursao, isLoading: isLoadingExcursao } = findExcursao();
   const { data: localEmbarqueData, isLoading: isLoadingLocalEmbarque } = getLocalEmbarque()
+  const { data: produtoData, isLoading: isLoadingProduto } = getAllProducts()
   const [subTotal, setSubtotal] = useState(0);
   const [quantidade, setQuantidade] = useState(0);
   const [desconto, setDesconto] = useState(0);
@@ -217,6 +223,28 @@ const ModalRegisterReservas = ({
             ?.map((codigoPessoa) => ({
               label: codigoPessoa?.nome,
               value: codigoPessoa?.id,
+            }))}
+          errors={errors.passageiros}
+        />
+
+        <SelectForm
+          name="opcionais"
+          placeholder="Selecione"
+          label="Opcionais"
+          minW="200px"
+          isRequired
+          isMulti
+          isSearchable
+          isLoading={isLoadingProduto}
+          handleChange={(option) => {
+            setValue("opcionais", option?.map((item: IOption) => item?.value.toString()) || []);
+            onSelectPassageiros(option)
+          }}
+          options={produtoData
+            ?.map((produto) => ({
+              label: produto?.nome,
+              value: produto?.id,
+              valor: produto.valor
             }))}
           errors={errors.passageiros}
         />

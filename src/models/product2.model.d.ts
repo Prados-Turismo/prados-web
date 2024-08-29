@@ -10,6 +10,7 @@ export interface IDataProduct {
   dataCompra?: Date | null,
   dataCadastro: Date,
   ativo: boolean,
+  valor: number,
   codigoFornecedor: string,
   usuarioCadastro: string,
   Fornecedor: {

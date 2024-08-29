@@ -54,6 +54,31 @@ const getProducts = ({
   };
 };
 
+const getAllProducts = (): IProductResponse => {
+  const { data, isLoading } = useQuery(
+    [
+      keys.products
+    ],
+    async () => {
+      const path = 'produtos/findAll';
+
+      try {
+        const { data } = await apiPrados.get(path);
+
+        return data
+      } catch (error: any) {
+        throw new Warning(error.response.data.message, error.response.status);
+      }
+    }
+  );
+
+  return {
+    data: data || [],
+    count: data?.count || 0,
+    isLoading
+  };
+};
+
 const createProduct = (
   reset: () => void,
   handleClose: () => void,
@@ -148,6 +173,7 @@ export default function useProduct() {
     getProducts,
     createProduct,
     updateProduct,
-    deleteProduto
+    deleteProduto,
+    getAllProducts
   };
 }

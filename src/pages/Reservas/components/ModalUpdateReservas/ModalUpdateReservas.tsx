@@ -28,6 +28,7 @@ import ReactSelect from "react-select";
 import { useState } from "react";
 import { IExcursao } from "../../../../models/excursao.model";
 import { formattingDate } from "../../../../utils/formattingDate";
+import useProduct from "../../../../hooks/useProducts";
 
 const handleSubmitRegisterSchema = z.object({
   passageiros: z
@@ -67,7 +68,10 @@ const handleSubmitRegisterSchema = z.object({
     .string()
     .min(1, {
       message: fieldRequired('Local de embarque')
-    })
+    }),
+  opcionais: z
+    .array(z.string())
+    .optional()
 });
 
 type IhandleSubmitRegister = z.infer<typeof handleSubmitRegisterSchema>;
@@ -88,6 +92,7 @@ const ModalUpdateReserva = ({
   const { getAllContaBancaria } = useContaBancaria()
   const { getLocalEmbarque } = useLocalEmbarque()
   const { getExcursoes, findExcursao } = useExcursoes()
+  const { getAllProducts } = useProduct()
 
   const { data: dataClientes, isLoading: loadingClientes } = getAllPessoas();
   const { data: dataFormaPagamentos, isLoading: loadingFormaPagamentos } = getAllFormaPagamentos();
@@ -95,6 +100,7 @@ const ModalUpdateReserva = ({
   const { data: localEmbarqueData, isLoading: isLoadingLocalEmbarque } = getLocalEmbarque()
   const { data: dataExcursoes, isLoading: loadingExcursoes } = getExcursoes({ page: 1, size: 100 });
   const { mutate: mutateToGetExcursao, isLoading: isLoadingExcursao } = findExcursao();
+  const { data: produtoData, isLoading: isLoadingProduto } = getAllProducts()
   const [quantidade, setQuantidade] = useState(data.Pessoa.length);
   const [subTotal, setSubtotal] = useState(data.Excursao.valor);
   const [desconto, setDesconto] = useState(data.desconto);
@@ -154,7 +160,7 @@ const ModalUpdateReserva = ({
     setValue('total', result)
   }
 
-  const calculateDesconto = async (qtd: number, desconto: number) => {    
+  const calculateDesconto = async (qtd: number, desconto: number) => {
     let newDesconto = desconto * qtd
     setValorDesconto(newDesconto)
     setValue('valorDesconto', newDesconto)
@@ -218,6 +224,28 @@ const ModalUpdateReserva = ({
               label: passageiro.nome
             }
           })}
+          errors={errors.passageiros}
+        />
+
+        <SelectForm
+          name="opcionais"
+          placeholder="Selecione"
+          label="Opcionais"
+          minW="200px"
+          isRequired
+          isMulti
+          isSearchable
+          isLoading={isLoadingProduto}
+          handleChange={(option) => {
+            setValue("opcionais", option?.map((item: IOption) => item?.value.toString()) || []);
+            onSelectPassageiros(option)
+          }}
+          options={produtoData
+            ?.map((produto) => ({
+              label: produto?.nome,
+              value: produto?.id,
+              valor: produto.valor
+            }))}
           errors={errors.passageiros}
         />
 

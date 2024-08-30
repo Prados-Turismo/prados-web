@@ -108,6 +108,7 @@ const createReserva = (
     async (data: ICreateReservaArgs) => {
       const urlPath = 'reserva/create'
       data.plataforma = 2
+      debugger
 
       try {
         await apiPrados.post(urlPath, data).then(() => {

@@ -21,6 +21,8 @@ import FormInputNumber from "../../../../components/FormInputNumber";
 import FormInput from "../../../../components/FormInput";
 import { useState } from "react";
 import { IDataPacote } from "../../../../models/pacote.model";
+import SelectForm from "../../../../components/SelectForm";
+import useProduct from "../../../../hooks/useProducts";
 
 const handleSubmitRegisterSchema = z.object({
   nome: z
@@ -41,11 +43,9 @@ const handleSubmitRegisterSchema = z.object({
     .min(1, {
       message: fieldRequired("tipo de transporte"),
     }),
-  destino: z
-    .string()
-    .min(1, {
-      message: fieldRequired("destino")
-    })
+  opcionais: z
+    .array(z.string())
+    .optional()
 });
 
 type IhandleSubmitRegister = z.infer<typeof handleSubmitRegisterSchema>;
@@ -61,9 +61,9 @@ const ModalUpdatePacote = ({
 }: IModalRecordCollaborator) => {
   const { user } = useGlobal();
   const { updatePacote } = usePacotes();
+  const { getAllProducts } = useProduct()
 
-  const [ufSelected, setUfSelected] = useState<any>(null);
-  const [citySelected, setCitySelected] = useState<any>(null);
+  const { data: dataProduto, isLoading: isLoadingProduto } = getAllProducts()
 
   const {
     setValue,
@@ -79,7 +79,7 @@ const ModalUpdatePacote = ({
       descricao: data.descricao || '',
       origem: data.origem,
       tipoTransporte: data.tipoTransporte,
-      destino: data.destino
+      opcionais: data.Produto.map((opcional) => { return opcional.id })
     }
   });
 
@@ -219,104 +219,39 @@ const ModalUpdatePacote = ({
         </FieldWrap>
 
         <FieldWrap>
-          <span>
-            Destino <Asterisk />
-          </span>
+          <span>Opcionais</span>
 
-          <Input
-            placeholder="Digite o destino"
-            id="destino"
-            type="text"
-            {...register("destino")}
-          />
-          {errors.destino && <p className="error">{errors.destino.message}</p>}
-        </FieldWrap>
-
-        {/* <Flex gap={5}>
-          <FormControl
-            maxWidth={{
-              base: "100%",
-              md: "250px",
-            }}
-            minW="130px"
-          >
-            <FormLabel>Estado</FormLabel>
-
+          <Box display="flex" gap="10px">
             <ReactSelect
-              className="estado select-fields large"
+              className="select-fields large"
               classNamePrefix="select"
               closeMenuOnSelect={true}
+              {...register?.("opcionais")}
               isSearchable={true}
-              placeholder="Selecionar"
-              noOptionsMessage={() => "Nenhum opção para selecionar"}
-              value={ufSelected}
-              onChange={(selectedOption) => {
-                setUfSelected(selectedOption)
-                setCitySelected(null)
+              placeholder="Selecione"
+              noOptionsMessage={() => "Não há opcional cadastrado"}
+              isLoading={isLoadingProduto}
+              isMulti
+              onChange={(option) => {
+                setValue("opcionais", option.map((opt) => opt.value));
               }}
-            // options={
-            //   uf &&
-            //   uf
-            //     .filter((el) =>
-            //       search?.uf ? !search?.uf.includes(el.codIbgeUF) : true,
-            //     )
-            //     .map((item) => ({
-            //       value: item?.codIbgeUF,
-            //       label: item?.nomeUF,
-            //     }))
-            // }
+              options={dataProduto
+                ?.map((produto) => ({
+                  label: `${produto?.nome}`,
+                  value: produto?.id,
+                }))}
+              defaultValue={
+                data.Produto.map((opcional) => {
+                  return {
+                    value: opcional.id,
+                    label: opcional.nome
+                  }
+                })
+              }
             />
-          </FormControl>
+          </Box>
+        </FieldWrap>
 
-          <FormControl
-            maxWidth={{
-              base: "100%",
-              md: "250px",
-            }}
-          >
-            <FormLabel>Município</FormLabel>
-
-            {!ufSelected ? (
-              <Flex
-                justifyContent="flex-start"
-                paddingLeft="10px"
-                alignItems="center"
-                border="1px solid hsl(0, 0%, 80%)"
-                borderRadius="4px"
-                height="38px"
-                minW="165px"
-              >
-                Selecione um Estado
-              </Flex>
-            ) : (
-              <ReactSelect
-                className="municipio select-fields large"
-                classNamePrefix="select"
-                closeMenuOnSelect={true}
-                isSearchable={true}
-                placeholder="Selecionar"
-                noOptionsMessage={() => "Nenhum opção para selecionar"}
-                value={citySelected}
-                onChange={(selectedOption) => {
-                  setCitySelected(selectedOption)
-                }}
-              // options={
-              //   cities &&
-              //   cities
-              //     .filter(
-              //       (item) =>
-              //         item?.unidade_federativa?.codIbgeUF === ufSelected?.value,
-              //     )
-              //     .map((item) => ({
-              //       value: item?.codIbgeMunicipio,
-              //       label: item?.nomeMunicipio,
-              //       uf: item?.unidade_federativa?.codIbgeUF,
-              //     }))
-              // }
-              />
-            )}
-          </FormControl>
-        </Flex> */}
 
         <Flex justifyContent="flex-end" gap="15px">
           <Button

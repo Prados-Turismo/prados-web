@@ -17,6 +17,10 @@ export interface IDataPacote {
   categoria: number | null,
   codigoDestino: string | null,
   usuarioCadastro: string
+  Produto: {
+    id: string
+    nome: string
+  }[]
 }
 
 export interface IPacoteResponse {

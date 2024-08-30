@@ -56,6 +56,11 @@ export interface IExcursao {
     categoria: string
     codigoDestino: string | null
     usuarioCadastro: string
+    Produto: {
+      id: string
+      nome: string
+      valor: number
+    }[]
   }
 }
 

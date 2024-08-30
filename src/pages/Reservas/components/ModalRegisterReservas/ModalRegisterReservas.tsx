@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Box, Button, Flex, Input, Select } from "@chakra-ui/react";
+import { Box, Button, Flex, HStack, Input, Select, Text, useNumberInput } from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -28,7 +28,14 @@ import useContaBancaria from "../../../../hooks/useContaBancaria";
 import { IExcursao } from "../../../../models/excursao.model";
 import useLocalEmbarque from "../../../../hooks/useLocalEmbarque";
 import { formattingDate } from "../../../../utils/formattingDate";
-import useProduct from "../../../../hooks/useProducts";
+import Opcionais from "../Opcionais";
+
+const opcionalSchema = z.object({
+  id: z.string(),
+  quantidade: z.number().min(0),
+  valor: z.number().min(0),
+  nome: z.string()
+});
 
 const handleSubmitRegisterSchema = z.object({
   passageiros: z
@@ -72,9 +79,12 @@ const handleSubmitRegisterSchema = z.object({
     .min(1, {
       message: fieldRequired('Local de embarque')
     }),
+  valorOpcionais: z
+    .number()
+    .optional(),
   opcionais: z
-    .array(z.string())
-    .optional()
+    .array(opcionalSchema)
+    .optional(),
 });
 
 type IhandleSubmitRegister = z.infer<typeof handleSubmitRegisterSchema>;
@@ -93,7 +103,6 @@ const ModalRegisterReservas = ({
   const { getAllFormaPagamentos } = useFormaPagamento()
   const { getAllContaBancaria } = useContaBancaria()
   const { getLocalEmbarque } = useLocalEmbarque()
-  const { getAllProducts } = useProduct()
 
   const { data: dataClientes, isLoading: loadingClientes } = getAllPessoas();
   const { data: dataExcursoes, isLoading: loadingExcursoes } = getExcursoes({ page: 1, size: 100 });
@@ -101,12 +110,13 @@ const ModalRegisterReservas = ({
   const { data: dataContaBancaria, isLoading: isLoadingContaBancaria } = getAllContaBancaria();
   const { mutate: mutateToGetExcursao, isLoading: isLoadingExcursao } = findExcursao();
   const { data: localEmbarqueData, isLoading: isLoadingLocalEmbarque } = getLocalEmbarque()
-  const { data: produtoData, isLoading: isLoadingProduto } = getAllProducts()
+  const [produtoData, setProdutoData] = useState<Array<{ id: string, nome: string, valor: number }>>()
   const [subTotal, setSubtotal] = useState(0);
   const [quantidade, setQuantidade] = useState(0);
   const [desconto, setDesconto] = useState(0);
   const [total, setTotal] = useState(0);
   const [valorDesconto, setValorDesconto] = useState(0);
+  const [valorOpcionais, setValorOpcionais] = useState(0);
 
   const {
     setValue,
@@ -119,7 +129,6 @@ const ModalRegisterReservas = ({
     resolver: zodResolver(handleSubmitRegisterSchema),
   });
   const { mutate, isLoading } = createReserva(reset, handleClose);
-
 
   const handleSubmitRegister = (submitData: IhandleSubmitRegister) => {
     mutate({
@@ -147,6 +156,7 @@ const ModalRegisterReservas = ({
     if (excursao) {
       mutateToGetExcursao(excursao, {
         onSuccess: (data: IExcursao) => {
+          setProdutoData(data.Pacotes.Produto)
           setSubtotal(data.valor)
           calculateTotal(quantidade, data.valor, desconto)
           calculateDesconto(quantidade, getValues("desconto") || 0)
@@ -163,8 +173,8 @@ const ModalRegisterReservas = ({
     calculateDesconto(qtd, desconto)
   }
 
-  const calculateTotal = async (qtd: number, valorPacote: number, discount: number) => {
-    let result = (((qtd || 1) * valorPacote) - (discount * qtd))
+  const calculateTotal = async (qtd: number, valorPacote: number, discount: number, totalOpcionais?: number) => {
+    let result = (((qtd || 1) * valorPacote) - (discount * qtd)) + (totalOpcionais || valorOpcionais)
     setTotal(result)
     setValue('total', result)
   }
@@ -174,6 +184,16 @@ const ModalRegisterReservas = ({
     setValorDesconto(valorDesconto)
     setValue('valorDesconto', valorDesconto)
   }
+
+  const handleOpcionaisTotalChange = (totalOpcionais: number) => {
+    setValorOpcionais(totalOpcionais);
+    setValue('valorOpcionais', totalOpcionais);
+    calculateTotal(quantidade, subTotal, desconto, totalOpcionais)
+  };
+
+  const handleQuantitiesChange = (quantities: { id: string; quantidade: number; valor: number, nome: string }[]) => {
+    setValue('opcionais', quantities);
+  };
 
   return (
     <form
@@ -223,28 +243,6 @@ const ModalRegisterReservas = ({
             ?.map((codigoPessoa) => ({
               label: codigoPessoa?.nome,
               value: codigoPessoa?.id,
-            }))}
-          errors={errors.passageiros}
-        />
-
-        <SelectForm
-          name="opcionais"
-          placeholder="Selecione"
-          label="Opcionais"
-          minW="200px"
-          isRequired
-          isMulti
-          isSearchable
-          isLoading={isLoadingProduto}
-          handleChange={(option) => {
-            setValue("opcionais", option?.map((item: IOption) => item?.value.toString()) || []);
-            onSelectPassageiros(option)
-          }}
-          options={produtoData
-            ?.map((produto) => ({
-              label: produto?.nome,
-              value: produto?.id,
-              valor: produto.valor
             }))}
           errors={errors.passageiros}
         />
@@ -346,7 +344,7 @@ const ModalRegisterReservas = ({
         </Flex>
 
         <FieldWrap>
-          <span>Local De Embarque</span>
+          <span>Local De Embarque <Asterisk /></span>
           <ReactSelect
             {...register('localEmbarqueId')}
             name="localEmbarqueId"
@@ -357,6 +355,7 @@ const ModalRegisterReservas = ({
             placeholder="Selecionar"
             noOptionsMessage={() => "Nenhum local encontrado"}
             isLoading={isLoadingLocalEmbarque}
+            required
             onChange={(item) => {
               setValue('localEmbarqueId', item?.value || '')
             }}
@@ -366,6 +365,14 @@ const ModalRegisterReservas = ({
           />
 
         </FieldWrap>
+
+        {!isLoadingExcursao && produtoData && (
+          <Opcionais
+            produtoData={produtoData}
+            onTotalChange={handleOpcionaisTotalChange}
+            onQuantitiesChange={handleQuantitiesChange}
+          />
+        )}
 
         <Flex
           gap="15px"
@@ -389,11 +396,11 @@ const ModalRegisterReservas = ({
           />
 
           <FieldWrap>
-            <span>Quantidade </span>
+            <span>Qtd</span>
             <Input
               height="40px"
               type="number"
-              minWidth="80px"
+              minWidth="50px"
               {...register("quantidade")}
               flex="1.01"
               value={quantidade}
@@ -417,6 +424,22 @@ const ModalRegisterReservas = ({
               setValue={setValue}
               flex="1.01"
               value={valorDesconto}
+              readOnly={true}
+              isMoneyValue={true}
+              dontAllowNegative={true}
+            />
+          </FieldWrap>
+
+          <FieldWrap>
+            <FormInputNumber
+              height="40px"
+              type="number"
+              label="Opcionais"
+              minWidth="100px"
+              {...register("valorOpcionais")}
+              setValue={setValue}
+              flex="1.01"
+              value={valorOpcionais}
               readOnly={true}
               isMoneyValue={true}
               dontAllowNegative={true}

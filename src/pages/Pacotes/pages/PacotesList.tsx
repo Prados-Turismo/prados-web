@@ -137,7 +137,7 @@ const PacotesList = () => {
                     <THead padding="0 30px 0 30px">
                       <TD>Nome</TD>
                       <TD>Origem</TD>
-                      <TD>Destino</TD>
+                      <TD>Opcionais</TD>
                       <TD>Status</TD>
                       <TD></TD>
                     </THead>
@@ -152,7 +152,7 @@ const PacotesList = () => {
                             {item.origem == 1 ? 'Fortaleza' : 'Tianguá'}
                           </TD>
                           <TD>
-                            {item.destino}
+                            {item.Produto.map((opcionais, index) => { return `${opcionais.nome}${index == item.Produto.length - 1 ? '' : ', '}` })}
                           </TD>
                           <TD>
                             {item.ativo ? "Ativo" : "Inativo"}

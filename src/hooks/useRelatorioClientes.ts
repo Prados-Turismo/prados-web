@@ -25,7 +25,9 @@ const getRelatorioClientesPorPessoa = ({ pessoaId, page, size, options = {} }: I
         const { data } = await apiPrados.get(`relatorios/clientes/${pessoaId}`, {
           params: {
             page,
-            size
+            size,
+            orderBy: "data",
+            order: "desc"
           },
         });
 

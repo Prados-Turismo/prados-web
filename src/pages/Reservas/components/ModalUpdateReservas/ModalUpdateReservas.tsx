@@ -29,6 +29,14 @@ import { useState } from "react";
 import { IExcursao } from "../../../../models/excursao.model";
 import { formattingDate } from "../../../../utils/formattingDate";
 import useProduct from "../../../../hooks/useProducts";
+import Opcionais from "../Opcionais";
+
+const opcionalSchema = z.object({
+  id: z.string(),
+  quantidade: z.number().min(0),
+  valor: z.number().min(0),
+  nome: z.string()
+});
 
 const handleSubmitRegisterSchema = z.object({
   passageiros: z
@@ -69,9 +77,12 @@ const handleSubmitRegisterSchema = z.object({
     .min(1, {
       message: fieldRequired('Local de embarque')
     }),
+  valorOpcionais: z
+    .number()
+    .optional(),
   opcionais: z
-    .array(z.string())
-    .optional()
+    .array(opcionalSchema)
+    .optional(),
 });
 
 type IhandleSubmitRegister = z.infer<typeof handleSubmitRegisterSchema>;
@@ -106,6 +117,7 @@ const ModalUpdateReserva = ({
   const [desconto, setDesconto] = useState(data.desconto);
   const [total, setTotal] = useState((subTotal * quantidade) - desconto);
   const [valorDesconto, setValorDesconto] = useState(data.desconto);
+  const [valorOpcionais, setValorOpcionais] = useState(0);
 
   const {
     getValues,
@@ -121,7 +133,9 @@ const ModalUpdateReserva = ({
       localEmbarqueId: data.LocalEmbarque.id,
       codigoContaBancaria: data.Transacoes[0].ContaBancaria?.id,
       codigoFormaPagamento: data.Transacoes[0].FormaPagamento.id,
-      idExcursao: data.Excursao.id
+      idExcursao: data.Excursao.id,
+      opcionais: data.Opcionais,
+      passageiros: data.Pessoa.map((passageiro) => { return passageiro.id })
     }
   });
   const { mutate, isLoading } = updateReserva(reset, handleClose);
@@ -130,7 +144,7 @@ const ModalUpdateReserva = ({
     mutate({
       ...submitData,
       ...data,
-      usuarioCadastro: user?.id
+      codigoUsuario: user?.id
     })
   };
 
@@ -154,8 +168,8 @@ const ModalUpdateReserva = ({
     calculateDesconto(qtd, desconto)
   }
 
-  const calculateTotal = async (qtd: number, valorPacote: number, discount: number) => {
-    let result = (((qtd || 1) * valorPacote) - (discount * qtd))
+  const calculateTotal = async (qtd: number, valorPacote: number, discount: number, totalOpcionais?: number) => {
+    let result = (((qtd || 1) * valorPacote) - (discount * qtd)) + (totalOpcionais || valorOpcionais)
     setTotal(result)
     setValue('total', result)
   }
@@ -165,6 +179,16 @@ const ModalUpdateReserva = ({
     setValorDesconto(newDesconto)
     setValue('valorDesconto', newDesconto)
   }
+
+  const handleOpcionaisTotalChange = (totalOpcionais: number) => {
+    setValorOpcionais(totalOpcionais);
+    setValue('valorOpcionais', totalOpcionais);
+    calculateTotal(quantidade, subTotal, desconto, totalOpcionais)
+  };
+
+  const handleQuantitiesChange = (quantities: { id: string; quantidade: number; valor: number, nome: string }[]) => {
+    setValue('opcionais', quantities);
+  };
 
   return (
     <form
@@ -224,28 +248,6 @@ const ModalUpdateReserva = ({
               label: passageiro.nome
             }
           })}
-          errors={errors.passageiros}
-        />
-
-        <SelectForm
-          name="opcionais"
-          placeholder="Selecione"
-          label="Opcionais"
-          minW="200px"
-          isRequired
-          isMulti
-          isSearchable
-          isLoading={isLoadingProduto}
-          handleChange={(option) => {
-            setValue("opcionais", option?.map((item: IOption) => item?.value.toString()) || []);
-            onSelectPassageiros(option)
-          }}
-          options={produtoData
-            ?.map((produto) => ({
-              label: produto?.nome,
-              value: produto?.id,
-              valor: produto.valor
-            }))}
           errors={errors.passageiros}
         />
 
@@ -352,6 +354,15 @@ const ModalUpdateReserva = ({
           </FieldWrap>
 
         </Flex>
+
+        {!isLoadingExcursao && produtoData && (
+          <Opcionais
+            produtoData={produtoData}
+            onTotalChange={handleOpcionaisTotalChange}
+            onQuantitiesChange={handleQuantitiesChange}
+            updateData={data}
+          />
+        )}
 
 
         <Flex

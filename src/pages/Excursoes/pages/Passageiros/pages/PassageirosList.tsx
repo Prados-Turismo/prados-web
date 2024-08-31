@@ -18,6 +18,11 @@ import { dateFormat, phoneMask } from "../../../../../utils";
 import ButtonIcon from "../../../../../components/ButtonIcon";
 import { FaFileExcel } from "react-icons/fa";
 import useFiles from "../../../../../hooks/useFiles";
+import { MdEdit } from "react-icons/md";
+import SimpleModal from "../../../../../components/SimpleModal";
+import ModalRegisterVenda from "../components/ModalRegisterVenda"
+import { FaShoppingCart } from "react-icons/fa";
+
 
 const PassageirosList = () => {
   const { id: _id } = useParams();
@@ -27,6 +32,8 @@ const PassageirosList = () => {
   const { generateCsvPassageiros } = useFiles()
   const { data: dataExcursao, isLoading: loadingExcursao } = getExcursao(_id || '');
   const { isLoading: isLoadingCsv, csv } = generateCsvPassageiros()
+  const [dataPassageiro, setDataPassageiro] = useState<{ nome: string, id: string }>()
+  const [modalVenda, setModalVenda] = useState(false)
 
   const [statusSelected, setStatusSelected] = useState<ISelect | null>();
   const [currentPage, setCurrentPage] = useState(1);
@@ -133,6 +140,7 @@ const PassageirosList = () => {
                       <TD>Telefone(Wpp)</TD>
                       <TD>Data Reserva</TD>
                       <TD>Local de Embarque</TD>
+                      <TD></TD>
                     </THead>
 
                     <TBody>
@@ -152,6 +160,18 @@ const PassageirosList = () => {
                           </TD>
                           <TD>
                             {item.LocalEmbarque.nome}
+                          </TD>
+                          <TD>
+                            <ButtonIcon tooltip="Venda">
+                              <FaShoppingCart
+                                size={20}
+                                cursor="pointer"
+                                onClick={() => {
+                                  setDataPassageiro({ id: item.Pessoa.id, nome: item.Pessoa.nome })
+                                  setModalVenda(true)
+                                }}
+                              />
+                            </ButtonIcon>
                           </TD>
                         </TR>
                       ))}
@@ -174,6 +194,20 @@ const PassageirosList = () => {
           </>
         )}
       </Content >
+
+      {modalVenda && (
+        <SimpleModal
+          title="Venda"
+          size="xl"
+          isOpen={modalVenda}
+          handleModal={setModalVenda}
+        >
+          <ModalRegisterVenda
+            handleClose={() => setModalVenda(false)}
+            dataCliente={dataPassageiro}
+          />
+        </SimpleModal>
+      )}
     </>
   );
 };

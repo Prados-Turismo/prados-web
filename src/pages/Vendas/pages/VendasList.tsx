@@ -13,50 +13,42 @@ import { Content, SectionTop } from "./styled";
 import ReactSelect from "react-select";
 import SimpleModal from "../../../components/SimpleModal";
 import { ISelect } from "../../../models/generics.model";
-import ModalRegisterCliente from "../components/ModalRegisterCliente";
-import ModalUpdateCliente from "../components/ModalUpdateCliente";
+import ModalRegisterVendas from "../components/ModalRegisterVendas";
+import ModalUpdateVendas from "../components/ModalUpdateVendas";
 import AlertNoDataFound from "../../../components/AlertNoDataFound";
 import { MdEdit } from "react-icons/md";
 import ButtonIcon from "../../../components/ButtonIcon";
 import { FiTrash } from "react-icons/fi";
 import AlertModal from "../../../components/AlertModal";
-import usePessoas from "../../../hooks/usePessoas";
-import { IPessoa } from "../../../models/pessoa.model";
-import { cpfMask } from "../../../utils";
-import useFiles from "../../../hooks/useFiles";
-import { FaFileExcel } from "react-icons/fa";
+import useVendas from "../../../hooks/useVendas";
+import { IVendas } from "../../../models/vendas.model";
 import { currencyBRLFormat } from "../../../utils/currencyBRLFormat";
-import { formattingDate } from "../../../utils/formattingDate";
+import { IoCheckmarkCircle } from "react-icons/io5";
 
-
-const ClienteList = () => {
-    const { getPessoas, deletePessoa } = usePessoas();
+const VendasList = () => {
+    const { getVendas, deleteVendas } = useVendas();
     const [statusSelected, setStatusSelected] = useState<ISelect | null>();
     const [resetFilter, setResetFilter] = useState(false);
-    const [modalRegisterCliente, setModalRegisterCliente] = useState(false);
-    const [modalUpdateCliente, setModalUpdateCliente] = useState(false);
-    const [modalRemoveCliente, setModalRemoveCliente] = useState(false);
-    const [clienteData, setClienteData] = useState<IPessoa | undefined>();
+    const [modalRegisterVendas, setModalRegisterVendas] = useState(false);
+    const [modalUpdateVendas, setModalUpdateVendas] = useState(false);
+    const [modalRemoveVendas, setModalRemoveVendas] = useState(false);
+    const [VendasData, setVendasData] = useState<IVendas | undefined>();
     const [currentPage, setCurrentPage] = useState(1);
-    const { generateCsvPessoas } = useFiles()
     const registerPerPage = 10;
 
-    const { mutate: mutateToDeleteCliente } = deletePessoa();
-    const [deleteItemId, setDeleteClienteId] = useState('');
+    const { mutate: mutateToDeleteVendas } = deleteVendas();
+    const [deleteItemId, setDeleteVendasId] = useState('');
 
-    const { data, count, isLoading } = getPessoas({
+    const { data, count, isLoading } = getVendas({
         size: registerPerPage,
         page: currentPage
     });
 
-    const { isLoading: isLoadingCsv, csv } = generateCsvPessoas()
+    debugger
 
-    var credito = 0
-
-
-    const onConfirmRemoveCliente = () => {
-        mutateToDeleteCliente(deleteItemId || "");
-        setModalRemoveCliente(false);
+    const onConfirmRemoveVendas = () => {
+        mutateToDeleteVendas(deleteItemId || "");
+        setModalRemoveVendas(false);
     };
 
     return (
@@ -64,19 +56,8 @@ const ClienteList = () => {
             <Flex>
                 <SectionTop className="contentTop" gap="30px">
                     <Flex gap="10px" flexWrap="wrap">
-                        <ButtonIcon>
-                            <FaFileExcel
-                                size={20}
-                                cursor='pointer'
-                                onClick={() => {
-                                    if (!isLoadingCsv) {
-                                        csv()
-                                    }
-                                }}
-                            />
-                        </ButtonIcon>
                         <Text fontSize="2xl" fontWeight="bold">
-                            Clientes
+                            Vendas
                         </Text>
                     </Flex>
                 </SectionTop>
@@ -85,10 +66,10 @@ const ClienteList = () => {
                     <Button
                         leftIcon={<IoIosAdd />}
                         onClick={() => {
-                            setModalRegisterCliente(true);
+                            setModalRegisterVendas(true);
                         }}
                     >
-                        Cadastrar Cliente
+                        Cadastrar Venda
                     </Button>
                 </SectionTop>
             </Flex>
@@ -96,9 +77,9 @@ const ClienteList = () => {
             <Content className="contentMain">
                 <Flex width="100%" gap="15px" alignItems="flex-end" flexWrap="wrap">
                     <div className="searchWrap">
-                        <span>Buscar Cliente</span>
+                        <span>Buscar Venda</span>
                         <FieldSearch
-                            placeholder="Nome/E-mail"
+                            placeholder="Nome"
                             handleSearch={() => {
                                 setResetFilter(false);
                                 setCurrentPage(1);
@@ -157,13 +138,11 @@ const ClienteList = () => {
                                 <TableContainer marginBottom="10px">
                                     <Table>
                                         <THead padding="0 30px 0 30px">
-                                            <TD>Nome</TD>
-                                            <TD>CPF</TD>
-                                            <TD>E-Mail</TD>
-                                            <TD>Ativo</TD>
-                                            <TD>Ranking</TD>
-                                            <TD>Crédito</TD>
-                                            <TD>Data do Crédito</TD>
+                                            <TD>Produto</TD>
+                                            <TD>Excursão</TD>
+                                            <TD>Quantidade</TD>
+                                            <TD>Total</TD>
+                                            <TD>Vendedor</TD>
                                             <TD></TD>
                                         </THead>
 
@@ -171,51 +150,58 @@ const ClienteList = () => {
                                             {data.map((item) => (
                                                 <TR key={item.id}>
                                                     <TD>
-                                                        {item.nome}
+                                                        {item.Produtos?.nome}
                                                     </TD>
                                                     <TD>
-                                                        {cpfMask(item.cpf)}
+                                                        {item.Excursao?.nome}
                                                     </TD>
                                                     <TD>
-                                                        {item.email}
+                                                        {item.qtd}
                                                     </TD>
                                                     <TD>
-                                                        {item.ativo ? 'Ativo' : 'Inativo'}
+                                                        {currencyBRLFormat(item.valor)}
                                                     </TD>
                                                     <TD>
-                                                        {item.Ranking?.nome}
-                                                    </TD>
-                                                    <TD>
-                                                        {currencyBRLFormat(item.CreditoClientes.reduce((previousValue, currentValue) => previousValue + currentValue.valor, credito))}
-                                                    </TD>
-                                                    <TD>
-                                                        {formattingDate(item.CreditoClientes[item.CreditoClientes.length - 1]?.dataCadastro)}
+                                                        {item.Usuarios.nome}
                                                     </TD>
                                                     <TD gap={3}>
-                                                        <MdEdit
-                                                            size={20}
-                                                            // color={customTheme.colors.brandSecond.first}
-                                                            cursor="pointer"
-                                                            onClick={() => {
-                                                                setClienteData(item)
-                                                                setModalUpdateCliente(true)
-                                                            }}
-                                                        />
 
-                                                        <ButtonIcon tooltip="Excluir Cliente">
+                                                        <ButtonIcon tooltip="Editar">
+                                                            <MdEdit
+                                                                size={20}
+                                                                cursor="pointer"
+                                                                onClick={() => {
+                                                                    setVendasData(item)
+                                                                    setModalUpdateVendas(true)
+                                                                }}
+                                                            />
+                                                        </ButtonIcon>
+
+                                                        <ButtonIcon tooltip="Excluir Venda">
                                                             <Button
                                                                 variant="unstyled"
                                                                 display="flex"
                                                                 alignItems="center"
                                                                 colorScheme="red"
                                                                 onClick={() => {
-                                                                    setModalRemoveCliente(true)
-                                                                    setDeleteClienteId(item.id)
+                                                                    setModalRemoveVendas(true)
+                                                                    setDeleteVendasId(item.id)
                                                                 }}
                                                             >
                                                                 <FiTrash />
                                                             </Button>
                                                         </ButtonIcon>
+
+                                                        <ButtonIcon tooltip="Efetivar transação">
+                                                            <IoCheckmarkCircle
+                                                                size={20}
+                                                                onClick={() => {
+
+                                                                }}
+                                                            />
+                                                        </ButtonIcon>
+
+
                                                     </TD>
                                                 </TR>
                                             ))}
@@ -233,44 +219,44 @@ const ClienteList = () => {
                         )}
 
                         {data.length === 0 && (
-                            <AlertNoDataFound title="Nenhuma cliente encontrado" />
+                            <AlertNoDataFound title="Nenhuma venda encontrada" />
                         )}
                     </>
                 )}
             </Content>
 
             <SimpleModal
-                title="Cliente"
+                title="Venda"
                 size="xl"
-                isOpen={modalRegisterCliente}
-                handleModal={setModalRegisterCliente}
+                isOpen={modalRegisterVendas}
+                handleModal={setModalRegisterVendas}
             >
-                <ModalRegisterCliente
-                    handleClose={() => setModalRegisterCliente(false)}
+                <ModalRegisterVendas
+                    handleClose={() => setModalRegisterVendas(false)}
                 />
             </SimpleModal>
 
-            {clienteData && (
+            {VendasData && (
                 <SimpleModal
-                    title="Cliente"
+                    title="Venda"
                     size="xl"
-                    isOpen={modalUpdateCliente}
-                    handleModal={setModalUpdateCliente}
+                    isOpen={modalUpdateVendas}
+                    handleModal={setModalUpdateVendas}
                 >
-                    <ModalUpdateCliente
-                        handleClose={() => setModalUpdateCliente(false)}
-                        data={clienteData}
+                    <ModalUpdateVendas
+                        handleClose={() => setModalUpdateVendas(false)}
+                        data={VendasData}
                     />
                 </SimpleModal>
             )}
 
-            {modalRemoveCliente && (
+            {modalRemoveVendas && (
                 <AlertModal
-                    title="Remover Cliente"
-                    question="Deseja realmente remover esse cliente?"
-                    request={onConfirmRemoveCliente}
-                    showModal={modalRemoveCliente}
-                    setShowModal={setModalRemoveCliente}
+                    title="Remover Venda"
+                    question="Deseja realmente remover essa venda?"
+                    request={onConfirmRemoveVendas}
+                    showModal={modalRemoveVendas}
+                    setShowModal={setModalRemoveVendas}
                     size="md"
                 ></AlertModal>
             )}
@@ -278,4 +264,4 @@ const ClienteList = () => {
     );
 };
 
-export default ClienteList;
+export default VendasList;

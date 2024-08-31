@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Button, HStack, Text } from '@chakra-ui/react';
-import { useFormContext } from 'react-hook-form';
+import { IReserva } from '../../../../models/reservas.model';
 
 interface Opcional {
   id: string;
@@ -10,14 +10,15 @@ interface Opcional {
 
 interface ProdutoOpcionalProps {
   produtoData: Opcional[];
+  updateData?: IReserva
   onTotalChange: (total: number) => void;
   onQuantitiesChange: (quantities: { id: string; quantidade: number; valor: number, nome: string }[]) => void;
 }
 
-const ProdutoOpcional: React.FC<ProdutoOpcionalProps> = ({ produtoData, onTotalChange, onQuantitiesChange }) => {
+const ProdutoOpcional: React.FC<ProdutoOpcionalProps> = ({ produtoData, onTotalChange, onQuantitiesChange, updateData }) => {
   const [quantidades, setQuantidades] = useState<{ [key: string]: number }>(
     produtoData.reduce((acc, opcional) => {
-      acc[opcional.id] = 1;
+      acc[opcional.id] = updateData?.Opcionais?.find(o => o.Produto.id === opcional.id)?.qtd || 0;
       return acc;
     }, {} as { [key: string]: number })
   );

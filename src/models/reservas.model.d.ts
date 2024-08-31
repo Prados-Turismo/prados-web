@@ -50,6 +50,15 @@ export interface IReserva {
     nome: string
     horaEmbarque: string
   },
+  Opcionais: {
+    id: string,
+    qtd: number,
+    Produto: {
+      id: string,
+      nome: string
+      valor: number
+    }
+  }[]
 }
 
 export interface IReservaResponse {

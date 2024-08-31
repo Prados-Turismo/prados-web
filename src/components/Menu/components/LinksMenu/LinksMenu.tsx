@@ -128,7 +128,7 @@ const LinksMenu = ({ onClose }: ILinksMenu) => {
                 <Link to="/tipo-quarto">Tipos de Quarto</Link>
               </MenuItem>
               <MenuItem>
-                <Link to="/pacotes">Pacotes</Link>
+                <Link to="/destinos">Destinos</Link>
               </MenuItem>
               <MenuItem>
                 <Link to="/excursoes">Excursões</Link>
@@ -160,6 +160,9 @@ const LinksMenu = ({ onClose }: ILinksMenu) => {
             <MenuList>
               <MenuItem>
                 <Link to="/transacoes">Transações</Link>
+              </MenuItem>
+              <MenuItem>
+                <Link to="/vendas">Vendas</Link>
               </MenuItem>
             </MenuList>
           </Box>

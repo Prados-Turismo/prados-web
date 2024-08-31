@@ -163,6 +163,42 @@ const VoucherView = () => {
                     </>
                 )}
             </Content>
+            <br />
+            <Content className="contentMain">
+                {!isLoading && data.Opcionais.length ? (
+                    <>
+                        <Box>
+                            <Heading as="h2" size="md" mb={2}>Opcionais</Heading>
+                            <TableContainer>
+                                <Table>
+                                    <Thead>
+                                        <Tr>
+                                            <Th>Produto</Th>
+                                            <Th>Quantidade</Th>
+                                            <Th>Preço</Th>
+                                            <Th>Total</Th>
+                                        </Tr>
+                                    </Thead>
+                                    <Tbody>
+                                        {data.Opcionais.map((opcional) => (
+                                            <Tr>
+                                                <Td>{opcional.Produto.nome}</Td>
+                                                <Td>{opcional.qtd}</Td>
+                                                <Td>{currencyBRLFormat(opcional.Produto.valor)}</Td>
+                                                <Td>{currencyBRLFormat(opcional.Produto.valor * opcional.qtd)}</Td>
+                                            </Tr>
+                                        ))}
+                                    </Tbody>
+                                </Table>
+                            </TableContainer>
+                        </Box>
+                    </>
+                ) : (
+                    <Box>
+                        <Heading as="h2" size="md" mb={2}>Sem opcionais</Heading>
+                    </Box>
+                )}
+            </Content>
         </>
     );
 };

@@ -54,7 +54,7 @@ const PacotesList = () => {
         <SectionTop className="contentTop" gap="30px">
           <Flex gap="10px" flexWrap="wrap">
             <Text fontSize="2xl" fontWeight="bold">
-              Pacotes
+              Destinos
             </Text>
           </Flex>
         </SectionTop>
@@ -66,7 +66,7 @@ const PacotesList = () => {
               setModalRecordPacote(true);
             }}
           >
-            Cadastrar pacote
+            Cadastrar destino
           </Button>
         </SectionTop>
       </Flex>
@@ -74,7 +74,7 @@ const PacotesList = () => {
       <Content className="contentMain">
         <Flex width="100%" gap="15px" alignItems="flex-end" flexWrap="wrap">
           <div className="searchWrap">
-            <span>Buscar pacote</span>
+            <span>Buscar destino</span>
             <FieldSearch
               placeholder="Nome ou Destino"
               handleSearch={() => {
@@ -199,14 +199,14 @@ const PacotesList = () => {
             )}
 
             {data.length === 0 && (
-              <AlertNoDataFound title="Nenhum pacote encontrado" />
+              <AlertNoDataFound title="Nenhum destino encontrado" />
             )}
           </>
         )}
       </Content>
 
       <SimpleModal
-        title="Pacote"
+        title="Destino"
         size="xl"
         isOpen={modalRecordPacote}
         handleModal={setModalRecordPacote}
@@ -218,7 +218,7 @@ const PacotesList = () => {
 
       {pacoteData && (
         <SimpleModal
-          title="Pacote"
+          title="Destino"
           size="xl"
           isOpen={modalUpdatePacote}
           handleModal={setModalUpdatePacote}
@@ -232,8 +232,8 @@ const PacotesList = () => {
 
       {modalRemovePacote && (
         <AlertModal
-          title="Remover Pacote"
-          question="Deseja realmente remover este pacote?"
+          title="Remover Destino"
+          question="Deseja realmente remover este destino?"
           request={onConfirmRemovePacote}
           showModal={modalRemovePacote}
           setShowModal={setModalRemovePacote}

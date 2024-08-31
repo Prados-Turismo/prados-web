@@ -126,10 +126,8 @@ const FormInputNumber = ({
             onValueChange={({ floatValue }) => {
               if (!readOnly) {
                 if (isStateForm) {
-                  debugger
                   setValue(floatValue || "")
                 } else {
-                  debugger
                   setValue(name, floatValue || "")
                 }
               }
@@ -158,7 +156,6 @@ const FormInputNumber = ({
             value={value}
             defaultValue={defaultValue}
             onValueChange={({ value }) => {
-              debugger
               if (isStateForm) {
                 setValue(Number(value) || "")
               } else {

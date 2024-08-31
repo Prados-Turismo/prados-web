@@ -28,6 +28,11 @@ export interface IPessoa {
     id: string
     nome: string
   } | null
+  CreditoClientes: {
+    id: string,
+    valor: number
+    dataCadastro: string
+  }[]
 }
 
 export interface IPessoaArgs {

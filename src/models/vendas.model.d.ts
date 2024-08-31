@@ -5,7 +5,8 @@ export interface IVendasArgs {
 
 export interface IVendas {
   id: string
-  valor: number
+  valorTotal: number
+  valorUnitario: number
   tipo: number
   qtd: number
   efetivada: boolean
@@ -19,15 +20,22 @@ export interface IVendas {
     id: string,
     nome: string
   }
-  Produtos?: {
+  Produtos: {
     id: string,
     nome: string
+    valor: number
   }
   Excursao?: {
     id: string
     nome: string
+    dataInicio: string
+    dataFim: string
   }
   FormaPagamento: {
+    id: string
+    nome: string
+  }
+  Pessoas: {
     id: string
     nome: string
   }

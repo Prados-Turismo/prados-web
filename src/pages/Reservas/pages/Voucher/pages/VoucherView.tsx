@@ -154,7 +154,7 @@ const VoucherView = () => {
                                             <Td>{data.Excursao.nome}</Td>
                                             <Td>{formattingDate(data.dataCadastro, true)}</Td>
                                             <Td>{data.Pessoa.length}</Td>
-                                            <Td>{currencyBRLFormat(data.Transacoes[0].valor)}</Td>
+                                            <Td>{currencyBRLFormat(data.Excursao.valor - data.desconto)}</Td>
                                         </Tr>
                                     </Tbody>
                                 </Table>

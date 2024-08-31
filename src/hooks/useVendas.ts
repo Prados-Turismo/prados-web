@@ -142,11 +142,65 @@ const deleteVendas = (): IDeleteVendasResponse => {
     async (id: string) => {
       const urlPath = `vendas/delete/${id}`
       try {
-        await apiPrados.patch(urlPath).then(function () {
+        await apiPrados.delete(urlPath).then(function () {
           queryClient.invalidateQueries([keys.vendas])
 
           useToastStandalone({
             title: "Excluída com sucesso!",
+            status: "success"
+          })
+        })
+      } catch (error: any) {
+        throw new Warning(error.response.data.message, error?.response?.status);
+      }
+    }
+  )
+
+  return {
+    isLoading,
+    mutate
+  }
+}
+
+const efetivarVenda = (): IDeleteVendasResponse => {
+
+  const { isLoading, mutate } = useMutation(
+    async (id: string) => {
+      const urlPath = `vendas/efetivar/${id}`
+
+      try {
+        await apiPrados.patch(urlPath).then(function () {
+          queryClient.invalidateQueries([keys.vendas])
+
+          useToastStandalone({
+            title: "Efetivada com sucesso!",
+            status: "success"
+          })
+        })
+      } catch (error: any) {
+        throw new Warning(error.response.data.message, error?.response?.status);
+      }
+    }
+  )
+
+  return {
+    isLoading,
+    mutate
+  }
+}
+
+const desEfetivarVenda = (): IDeleteVendasResponse => {
+
+  const { isLoading, mutate } = useMutation(
+    async (id: string) => {
+      const urlPath = `vendas/desefetivar/${id}`
+
+      try {
+        await apiPrados.patch(urlPath).then(function () {
+          queryClient.invalidateQueries([keys.vendas])
+
+          useToastStandalone({
+            title: "Desefetivada com sucesso!",
             status: "success"
           })
         })
@@ -168,6 +222,8 @@ export default function useVendas() {
     getAllVendas,
     createVendas,
     updateVendas,
-    deleteVendas
+    deleteVendas,
+    efetivarVenda,
+    desEfetivarVenda
   }
 }

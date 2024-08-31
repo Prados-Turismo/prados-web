@@ -30,4 +30,5 @@ export interface IFormInput extends InputProps {
   dontAllowNegative?: boolean
   marginLabelBottom?: string
   placeholder?: string
+  handleOnBlur?: (value: any) => void
 }

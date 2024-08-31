@@ -117,9 +117,9 @@ const ModalUpdateTransacao = ({
       numeroComprovanteBancario: data.numeroComprovanteBancario ?? undefined,
       efetivado: data.efetivado ? 1 : 2,
       codigoFornecedor: data.codigoFornecedor ?? undefined,
-      codigoProduto: data.codigoProduto ?? undefined,
+      codigoProduto: data?.codigoProduto ?? undefined,
       codigoExcursao: data.codigoExcursao ?? undefined,
-      idReserva: data.Reservas.id ?? undefined,
+      idReserva: data.Reservas?.id ?? undefined,
       codigoFormaPagamento: data.codigoFormaPagamento,
       observacao: data.observacao || '',
       codigoContaBancaria: data.ContaBancaria?.id,
@@ -370,8 +370,8 @@ const ModalUpdateTransacao = ({
               value: reserva?.id,
             }))}
           defaultValue={{
-            label: `${data.Reservas?.reserva}`,
-            value: data.Reservas?.id
+            label: `${data.Reservas?.reserva || ''}`,
+            value: data.Reservas?.id || ''
           }}
           errors={errors.idReserva}
         />

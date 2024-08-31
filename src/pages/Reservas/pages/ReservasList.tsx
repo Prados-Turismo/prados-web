@@ -215,7 +215,7 @@ const ReservasList = () => {
                                                             </ButtonIcon>
                                                         )}
 
-                                                        <ButtonIcon tooltip="Ver Voucher">
+                                                        <ButtonIcon tooltip="Ver Reserva">
                                                             <IoTicket
                                                                 size={20}
                                                                 onClick={() => { navigate(`/reservas/${item.id}/voucher`) }}

@@ -2,15 +2,15 @@ const getTheme = (domain: string) => {
   const theme = {
     default: {
       content: {
-        project: "Fiibo",
-        d4signSafe: "fiibo",
+        project: "PradosTurismo",
+        d4signSafe: "Prados",
         phoneNumber: "",
         hubSlug: "padrao",
       },
       images: {
-        favicon: "/images/fiibo/favicon.png",
-        logo: "/images/logoprados120.png",
-        logoLogin: "/images/logoprados120.png",
+        favicon: "/images/prados/logoprados16x16.png",
+        logo: "/images/prados/logopradosg.png",
+        logoLogin: "/images/prados/logoprados120.png",
         iara: "/images/fiibo/avatar-iara.svg",
         iaraWelcome: "/images/fiibo/iara-welcome-fiibo.png",
         iaraPreuser: "/images/fiibo/iara-userpre-fiibo.png",
@@ -19,7 +19,7 @@ const getTheme = (domain: string) => {
       },
       colors: {
         sideBarButton: {
-          "50": "#FDE8EB",
+          "50": "#dd7f11",
         },
 
         brand: {

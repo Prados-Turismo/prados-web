@@ -23,19 +23,23 @@ import AlertModal from "../../../components/AlertModal";
 import useVendas from "../../../hooks/useVendas";
 import { IVendas } from "../../../models/vendas.model";
 import { currencyBRLFormat } from "../../../utils/currencyBRLFormat";
-import { IoCheckmarkCircle } from "react-icons/io5";
+import { IoCheckmarkCircle, IoCloseCircle } from "react-icons/io5";
 
 const VendasList = () => {
-    const { getVendas, deleteVendas } = useVendas();
+    const { getVendas, deleteVendas, efetivarVenda, desEfetivarVenda } = useVendas();
     const [statusSelected, setStatusSelected] = useState<ISelect | null>();
     const [resetFilter, setResetFilter] = useState(false);
     const [modalRegisterVendas, setModalRegisterVendas] = useState(false);
     const [modalUpdateVendas, setModalUpdateVendas] = useState(false);
     const [modalRemoveVendas, setModalRemoveVendas] = useState(false);
-    const [VendasData, setVendasData] = useState<IVendas | undefined>();
+    const [vendasData, setVendasData] = useState<IVendas | undefined>();
+    const [modalEfetivaVenda, setModalEfetivaVenda] = useState(false);
+    const [modalDesefetivaVenda, setModalDesefetivaVenda] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const registerPerPage = 10;
 
+    const { mutate: mutateToEfetivarVenda } = efetivarVenda();
+    const { mutate: mutateToDesEfetivarVenda } = desEfetivarVenda();
     const { mutate: mutateToDeleteVendas } = deleteVendas();
     const [deleteItemId, setDeleteVendasId] = useState('');
 
@@ -44,11 +48,20 @@ const VendasList = () => {
         page: currentPage
     });
 
-    debugger
 
     const onConfirmRemoveVendas = () => {
         mutateToDeleteVendas(deleteItemId || "");
         setModalRemoveVendas(false);
+    };
+
+    const onConfirmEfetivaVenda = () => {
+        mutateToEfetivarVenda(deleteItemId || "");
+        setModalEfetivaVenda(false);
+    };
+
+    const onConfirmDesefetivaVenda = () => {
+        mutateToDesEfetivarVenda(deleteItemId || "");
+        setModalDesefetivaVenda(false);
     };
 
     return (
@@ -141,6 +154,7 @@ const VendasList = () => {
                                             <TD>Produto</TD>
                                             <TD>Excursão</TD>
                                             <TD>Quantidade</TD>
+                                            <TD>Valor Unitário</TD>
                                             <TD>Total</TD>
                                             <TD>Vendedor</TD>
                                             <TD></TD>
@@ -159,48 +173,58 @@ const VendasList = () => {
                                                         {item.qtd}
                                                     </TD>
                                                     <TD>
-                                                        {currencyBRLFormat(item.valor)}
+                                                        {currencyBRLFormat(item.valorUnitario)}
+                                                    </TD>
+                                                    <TD>
+                                                        {currencyBRLFormat(item.valorTotal)}
                                                     </TD>
                                                     <TD>
                                                         {item.Usuarios.nome}
                                                     </TD>
                                                     <TD gap={3}>
 
-                                                        <ButtonIcon tooltip="Editar">
-                                                            <MdEdit
-                                                                size={20}
-                                                                cursor="pointer"
-                                                                onClick={() => {
-                                                                    setVendasData(item)
-                                                                    setModalUpdateVendas(true)
-                                                                }}
-                                                            />
-                                                        </ButtonIcon>
+                                                        {!item.efetivada && (
+                                                            <>
+                                                                <ButtonIcon tooltip="Editar">
+                                                                    <MdEdit
+                                                                        size={20}
+                                                                        cursor="pointer"
+                                                                        onClick={() => {
+                                                                            setVendasData(item)
+                                                                            setModalUpdateVendas(true)
+                                                                        }}
+                                                                    />
+                                                                </ButtonIcon>
 
-                                                        <ButtonIcon tooltip="Excluir Venda">
-                                                            <Button
-                                                                variant="unstyled"
-                                                                display="flex"
-                                                                alignItems="center"
-                                                                colorScheme="red"
-                                                                onClick={() => {
-                                                                    setModalRemoveVendas(true)
-                                                                    setDeleteVendasId(item.id)
-                                                                }}
-                                                            >
-                                                                <FiTrash />
-                                                            </Button>
-                                                        </ButtonIcon>
 
-                                                        <ButtonIcon tooltip="Efetivar transação">
-                                                            <IoCheckmarkCircle
-                                                                size={20}
-                                                                onClick={() => {
-
-                                                                }}
-                                                            />
-                                                        </ButtonIcon>
-
+                                                                <ButtonIcon tooltip="Excluir Venda">
+                                                                    <Button
+                                                                        variant="unstyled"
+                                                                        display="flex"
+                                                                        alignItems="center"
+                                                                        colorScheme="red"
+                                                                        onClick={() => {
+                                                                            setModalRemoveVendas(true)
+                                                                            setDeleteVendasId(item.id)
+                                                                        }}
+                                                                    >
+                                                                        <FiTrash />
+                                                                    </Button>
+                                                                </ButtonIcon>
+                                                            </>
+                                                        )}
+                                                        
+                                                        {!item.efetivada && (
+                                                            <ButtonIcon tooltip="Efetivar Venda">
+                                                                <IoCheckmarkCircle
+                                                                    size={20}
+                                                                    onClick={() => {
+                                                                        setModalEfetivaVenda(true)
+                                                                        setDeleteVendasId(item.id)
+                                                                    }}
+                                                                />
+                                                            </ButtonIcon>
+                                                        )}
 
                                                     </TD>
                                                 </TR>
@@ -236,7 +260,7 @@ const VendasList = () => {
                 />
             </SimpleModal>
 
-            {VendasData && (
+            {vendasData && (
                 <SimpleModal
                     title="Venda"
                     size="xl"
@@ -245,7 +269,7 @@ const VendasList = () => {
                 >
                     <ModalUpdateVendas
                         handleClose={() => setModalUpdateVendas(false)}
-                        data={VendasData}
+                        data={vendasData}
                     />
                 </SimpleModal>
             )}
@@ -257,6 +281,28 @@ const VendasList = () => {
                     request={onConfirmRemoveVendas}
                     showModal={modalRemoveVendas}
                     setShowModal={setModalRemoveVendas}
+                    size="md"
+                ></AlertModal>
+            )}
+
+            {modalEfetivaVenda && (
+                <AlertModal
+                    title="Efetivar venda"
+                    question="Deseja realmente efetivar esta venda?"
+                    request={onConfirmEfetivaVenda}
+                    showModal={modalEfetivaVenda}
+                    setShowModal={setModalEfetivaVenda}
+                    size="md"
+                ></AlertModal>
+            )}
+
+            {modalDesefetivaVenda && (
+                <AlertModal
+                    title="Efetivar venda"
+                    question="Deseja realmente desefetivar esta venda?"
+                    request={onConfirmDesefetivaVenda}
+                    showModal={modalDesefetivaVenda}
+                    setShowModal={setModalDesefetivaVenda}
                     size="md"
                 ></AlertModal>
             )}

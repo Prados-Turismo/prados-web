@@ -174,7 +174,7 @@ const ModalRegisterReservas = ({
   }
 
   const calculateTotal = async (qtd: number, valorPacote: number, discount: number, totalOpcionais?: number) => {
-    let result = (((qtd || 1) * valorPacote) - (discount * qtd)) + (totalOpcionais || valorOpcionais)
+    let result = (((qtd || 1) * valorPacote) - (discount * qtd)) + (totalOpcionais || 0)
     setTotal(result)
     setValue('total', result)
   }

@@ -45,7 +45,8 @@ const FormInputNumber = ({
   prefix = "money",
   dontAllowNegative,
   marginLabelBottom = "4px",
-  placeholder
+  placeholder,
+  handleOnBlur
 }: IFormInput) => {
   const { isOpen, onToggle, onClose } = useDisclosure()
 
@@ -133,6 +134,7 @@ const FormInputNumber = ({
               }
             }}
             disabled={isLoading}
+            onBlur={handleOnBlur}
             allowNegative={!dontAllowNegative}
             {...(register && register(name))}
           />

@@ -74,13 +74,7 @@ const Menu = ({
         )}
 
         <Link
-          to={
-            !user?.termsOfPrivacy
-              ? "/politica-privacidade"
-              : !company
-              ? "/selecione-empresa"
-              : "/"
-          }
+          to="/reservas"
         >
           <Logo backgroundImage={theme.images.logo}>
             {theme.content.project}

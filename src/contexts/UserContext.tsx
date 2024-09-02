@@ -197,7 +197,7 @@ const GlobalProvider = ({ children }: IGlobalProvider) => {
         username,
         password,
       });
-
+      
       setDataCookie({
         key: "@prados.token",
         value: loginResponse.data.token

@@ -59,15 +59,6 @@ const Login = () => {
     document.title = `${theme.content.project} - Login`;
   }, [theme]);
 
-  if (user) {
-    return (
-      <Navigate
-        to={!user?.termsOfPrivacy ? "/politica-privacidade" : "/"}
-        replace
-      />
-    );
-  }
-
   return (
     <Centralized>
       {userAccess?.firstAccess && (

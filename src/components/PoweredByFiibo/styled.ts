@@ -13,7 +13,7 @@ export const Content = chakra(Box, {
     fontWeight: "600",
 
     span: {
-      color: "rgba(233, 32, 67, 1)"
+      color: "rgba(237, 123, 29, 1)"
     },
 
     "&.logged": {

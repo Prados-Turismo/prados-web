@@ -17,7 +17,7 @@ const PoweredByFiibo = () => {
 
   return paths.includes(host?.pathname) ? (
     <Content className={`${user ? "logged" : ""}`}>
-      powered by<span>&nbsp;Fiibo&nbsp;</span> &copy; {new Date().getFullYear()}
+      powered by<span>&nbsp;Prados&nbsp;</span> &copy; {new Date().getFullYear()}
     </Content>
   ) : (
     <></>

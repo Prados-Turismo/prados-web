@@ -12,7 +12,7 @@ export const getWelcome = (): string | null => {
 export const getToken = (): string | null => {
   const cookies = parseCookies();
 
-  return cookies["@fiibo.token"] || null;
+  return cookies["@prados.token"] || null;
 };
 
 export const getRefreshToken = (): string | null => {
@@ -23,7 +23,7 @@ export const getRefreshToken = (): string | null => {
 
 export const getUser = (): IUser | null => {
   const cookies = parseCookies();
-  const useData = cookies["@fiibo.user"];
+  const useData = cookies["@prados.user"];
 
   return useData ? JSON.parse(useData) : null;
 };
@@ -85,9 +85,9 @@ export const setDataCookie = ({
 
 export const removeAllCookies = (): void => {
   destroyCookie(null, "@fiibo.welcome");
-  destroyCookie(null, "@fiibo.token");
+  destroyCookie(null, "@prados.token");
   destroyCookie(null, "@fiibo.refreshToken");
-  destroyCookie(null, "@fiibo.user");
+  destroyCookie(null, "@prados.user");
   destroyCookie(null, "@fiibo.role");
   destroyCookie(null, "@fiibo.roles");
   destroyCookie(null, "@fiibo.company");

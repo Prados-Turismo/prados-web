@@ -54,9 +54,14 @@ const handleSubmitRegisterSchema = z.object({
 
 type IhandleSubmitRegister = z.infer<typeof handleSubmitRegisterSchema>;
 
+interface Cliente {
+    id: string
+    nome: string
+}
+
 interface IModalRegisterVenda {
     handleClose: () => void;
-    dataCliente: { id: string, nome: string }
+    dataCliente?: Cliente
 }
 
 const ModalRegisterVenda = ({
@@ -91,7 +96,7 @@ const ModalRegisterVenda = ({
             ...submitData,
             ativo: true,
             usuarioCadastro: user?.id,
-            codigoCliente: dataCliente.id,
+            codigoCliente: dataCliente?.id,
             codigoExcursao: _id
         })
     };

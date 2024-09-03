@@ -327,7 +327,7 @@ const TransacoesList = () => {
                               </Button>
                             </ButtonIcon>
 
-                            {!item.efetivado && (
+                            {!item.efetivado ? (
                               <ButtonIcon tooltip="Efetivar transação">
                                 <IoCheckmarkCircle
                                   size={20}
@@ -337,19 +337,18 @@ const TransacoesList = () => {
                                   }}
                                 />
                               </ButtonIcon>
-                            )}
-
-                            {item.efetivado && (
-                              <ButtonIcon tooltip="Desfetivar transação">
-                                <IoCloseCircle
-                                  size={20}
-                                  onClick={() => {
-                                    setModalDesfetivaTransacao(true)
-                                    setTransacaoId(item.id)
-                                  }}
-                                />
-                              </ButtonIcon>
-                            )}
+                            ) :
+                              (
+                                <ButtonIcon tooltip="Desfetivar transação">
+                                  <IoCloseCircle
+                                    size={20}
+                                    onClick={() => {
+                                      setModalDesfetivaTransacao(true)
+                                      setTransacaoId(item.id)
+                                    }}
+                                  />
+                                </ButtonIcon>
+                              )}
 
                             {!item.vistoAdmin && (
                               <ButtonIcon tooltip="Marcar como visto">

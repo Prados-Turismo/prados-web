@@ -6,7 +6,7 @@ const componentsTheme = {
       borderRadius: "100px",
     },
     defaultProps: {
-      colorScheme: "brand",
+      colorScheme: "orange",
     },
     variants: {
       solid: () => ({

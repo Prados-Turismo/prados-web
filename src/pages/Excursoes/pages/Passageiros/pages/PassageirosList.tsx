@@ -18,7 +18,6 @@ import { dateFormat, phoneMask } from "../../../../../utils";
 import ButtonIcon from "../../../../../components/ButtonIcon";
 import { FaFileExcel } from "react-icons/fa";
 import useFiles from "../../../../../hooks/useFiles";
-import { MdEdit } from "react-icons/md";
 import SimpleModal from "../../../../../components/SimpleModal";
 import ModalRegisterVenda from "../components/ModalRegisterVenda"
 import { FaShoppingCart } from "react-icons/fa";

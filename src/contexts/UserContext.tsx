@@ -197,9 +197,9 @@ const GlobalProvider = ({ children }: IGlobalProvider) => {
         username,
         password,
       });
-
+      
       setDataCookie({
-        key: "@fiibo.token",
+        key: "@prados.token",
         value: loginResponse.data.token
       });
 
@@ -208,11 +208,11 @@ const GlobalProvider = ({ children }: IGlobalProvider) => {
       setUser(userResponse.data);
 
       setDataCookie({
-        key: "@fiibo.user",
+        key: "@prados.user",
         value: JSON.stringify(userResponse.data),
       });
 
-      navigate("/");
+      navigate("/reservas");
 
     } catch (error: any) {
       if (error?.code === "ERR_NETWORK") {

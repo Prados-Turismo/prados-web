@@ -104,6 +104,11 @@ export interface ICreateExcursaoArgs {
   vagas: number
   codigoPacote: string
   usuarioCadastro: string
+  itensAdicionais: {
+    idFornecedor: string
+    valor: number
+    data: string
+  }[]
 }
 
 export interface IUpdateExcursaoArgs extends ICreateExcursaoArgs {

@@ -63,23 +63,23 @@ export interface ITransacao {
     vagas: number
     codigoPacote: string
     usuarioCadastro: string
-  } | null,
-  Pacotes?: {
-    id: string
-    nome: string
-    valor: number
-    descricao: string
-    ativo: boolean
-    origem: number
-    tipoTransporte: number
-    urlImagem: string | null
-    urlImgEsgotado: string | null
-    idWP: number | null
-    destino: string
-    categoria: number | null
-    codigoDestino: string | null
-    usuarioCadastro: string
-  } | null,
+    Pacotes?: {
+      id: string
+      nome: string
+      valor: number
+      descricao: string
+      ativo: boolean
+      origem: number
+      tipoTransporte: number
+      urlImagem: string | null
+      urlImgEsgotado: string | null
+      idWP: number | null
+      destino: string
+      categoria: number | null
+      codigoDestino: string | null
+      usuarioCadastro: string
+    } | null,
+  } | null, 
   Usuarios: {
     id: string
     nome: string

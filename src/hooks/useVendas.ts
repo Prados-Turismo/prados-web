@@ -82,10 +82,12 @@ const createVendas = (
 
       try {
         await apiPrados.post(urlPath, data).then(() => {
+          queryClient.invalidateQueries([keys.vendas])
+          queryClient.invalidateQueries([keys.excursaoPassageiro])
+          
           reset()
           handleClose()
 
-          queryClient.invalidateQueries([keys.vendas])
 
           useToastStandalone({
             title: "Venda realizada!",
@@ -170,7 +172,7 @@ const efetivarVenda = (): IDeleteVendasResponse => {
 
       try {
         await apiPrados.patch(urlPath).then(function () {
-          queryClient.invalidateQueries([keys.vendas])
+          queryClient.invalidateQueries([keys.vendas])          
 
           useToastStandalone({
             title: "Efetivada com sucesso!",

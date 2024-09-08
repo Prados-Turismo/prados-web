@@ -154,7 +154,7 @@ const ModalUpdateReserva = ({
         onSuccess: (data: IExcursao) => {
           setSubtotal(data.valor)
           calculateTotal(quantidade, data.valor, desconto)
-          calculateDesconto(quantidade, desconto || 0)
+          calculateDesconto(desconto || 0)
         }
       });
     }
@@ -165,17 +165,17 @@ const ModalUpdateReserva = ({
     setQuantidade(qtd)
     setValue('quantidade', qtd)
     calculateTotal(qtd, subTotal, desconto)
-    calculateDesconto(qtd, desconto)
+    calculateDesconto(desconto)
   }
 
   const calculateTotal = async (qtd: number, valorPacote: number, discount: number, totalOpcionais?: number) => {
-    let result = (((qtd || 1) * valorPacote) - (discount * qtd)) + (totalOpcionais || valorOpcionais)
+    let result = (((qtd || 1) * valorPacote) + (totalOpcionais || valorOpcionais)) - (discount)
     setTotal(result)
     setValue('total', result)
   }
 
-  const calculateDesconto = async (qtd: number, desconto: number) => {
-    let newDesconto = desconto * qtd
+  const calculateDesconto = async (desconto: number) => {
+    let newDesconto = desconto
     setValorDesconto(newDesconto)
     setValue('valorDesconto', newDesconto)
   }
@@ -210,7 +210,7 @@ const ModalUpdateReserva = ({
             setValue("idExcursao", option?.value);
             onSelectExcursao(option?.value || '')
             calculateTotal(quantidade, subTotal, desconto)
-            calculateDesconto(quantidade, getValues("valorDesconto") || 0)
+            calculateDesconto(getValues("valorDesconto") || 0)
           }}
           options={dataExcursoes
             ?.map((codigoExcursao) => ({
@@ -219,7 +219,7 @@ const ModalUpdateReserva = ({
             }))}
           defaultValue={{
             value: data.Excursao.id,
-            label: data.Excursao.nome
+            label: `${formattingDate(data.Excursao.dataInicio)} à ${formattingDate(data.Excursao.dataFim)} - ${data.Excursao?.nome}`
           }}
           errors={errors.idExcursao}
         />

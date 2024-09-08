@@ -21,6 +21,8 @@ import useFiles from "../../../../../hooks/useFiles";
 import SimpleModal from "../../../../../components/SimpleModal";
 import ModalRegisterVenda from "../components/ModalRegisterVenda"
 import { FaShoppingCart } from "react-icons/fa";
+import { FaWhatsapp } from "react-icons/fa6";
+
 
 
 const PassageirosList = () => {
@@ -31,18 +33,23 @@ const PassageirosList = () => {
   const { generateCsvPassageiros } = useFiles()
   const { data: dataExcursao, isLoading: loadingExcursao } = getExcursao(_id || '');
   const { isLoading: isLoadingCsv, csv } = generateCsvPassageiros()
-  const [dataPassageiro, setDataPassageiro] = useState<{ nome: string, id: string }>()
+  const [dataPassageiro, setDataPassageiro] = useState<{ nome: string, id: string, reserva: string }>()
   const [modalVenda, setModalVenda] = useState(false)
 
   const [statusSelected, setStatusSelected] = useState<ISelect | null>();
   const [currentPage, setCurrentPage] = useState(1);
   const registerPerPage = 10;
 
-  const { data, count, isLoading } = getAllPassageiros({
+  const { data, count, isLoading, summary } = getAllPassageiros({
     size: registerPerPage,
     page: currentPage,
     localEmbarque: null
   }, _id || '');
+
+  let total = 0
+  if (!isLoading && summary) {
+    total = summary.reduce((previousValue, currentValue) => previousValue + currentValue.sum, 0)
+  }
 
   return (
     <>
@@ -136,9 +143,10 @@ const PassageirosList = () => {
                     <THead padding="0 30px 0 30px">
                       <TD>Passageiro</TD>
                       <TD>Reserva</TD>
-                      <TD>Telefone(Wpp)</TD>
-                      <TD>Data Reserva</TD>
+                      <TD>Telefone  <FaWhatsapp style={{ color: 'green', fontSize: '24px', marginLeft: '5px' }} /></TD>
                       <TD>Local de Embarque</TD>
+                      {/* <TD>Opcionais</TD> */}
+                      <TD>Poltrona</TD>
                       <TD></TD>
                     </THead>
 
@@ -152,13 +160,19 @@ const PassageirosList = () => {
                             {item.Reservas.reserva}
                           </TD>
                           <TD>
-                            {phoneMask(item.Pessoa.telefoneWpp || '')}
-                          </TD>
-                          <TD>
-                            {dateFormat(new Date(item.dataCadastro))}
+                            <FaWhatsapp style={{ color: 'green', fontSize: '24px', marginRight: '5px' }} />
+                            <a href={`https://wa.me/55${item.Pessoa.telefoneWpp}`} target="_blank">
+                              {phoneMask(item.Pessoa.telefoneWpp || '')}
+                            </a>
                           </TD>
                           <TD>
                             {item.LocalEmbarque.nome}
+                          </TD>
+                          {/* <TD>
+                            {item.Reservas.Opcionais.map((opcionais, index) => { return `${opcionais.qtd}x ${opcionais.Produto.nome}${index == item.Reservas.Opcionais.length - 1 ? '' : ', '}` })}
+                          </TD> */}
+                          <TD>
+                            {item.Onibus[0]?.numeroCadeira}
                           </TD>
                           <TD>
                             <ButtonIcon tooltip="Venda">
@@ -166,7 +180,7 @@ const PassageirosList = () => {
                                 size={20}
                                 cursor="pointer"
                                 onClick={() => {
-                                  setDataPassageiro({ id: item.Pessoa.id, nome: item.Pessoa.nome })
+                                  setDataPassageiro({ id: item.Pessoa.id, nome: item.Pessoa.nome, reserva: item.Reservas.id })
                                   setModalVenda(true)
                                 }}
                               />
@@ -178,6 +192,24 @@ const PassageirosList = () => {
                   </Table>
                 </TableContainer>
 
+                <h1>Opcionais Adquiridos</h1>
+
+                {summary && (
+                  <>
+                    {summary.map((value) => (
+                      <>
+                        <span><b>{`${value.nome}:`}</b> {`${value.sum}`}</span>
+                      </>
+                    ))}
+                    <br />
+                    <span><b>Total:</b> {total}</span>
+                  </>
+                )}
+
+                {data.length === 0 && (
+                  <AlertNoDataFound title="Nenhum passageiro encontrado" />
+                )}
+
                 <Pagination
                   registerPerPage={registerPerPage}
                   totalRegisters={count}
@@ -185,10 +217,6 @@ const PassageirosList = () => {
                   handleChangePage={(page) => setCurrentPage(page)}
                 />
               </>
-            )}
-
-            {data.length === 0 && (
-              <AlertNoDataFound title="Nenhum passageiro encontrado" />
             )}
           </>
         )}

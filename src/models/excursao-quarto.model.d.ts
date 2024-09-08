@@ -25,8 +25,11 @@ export interface IExcursaoQuartoArgs {
 }
 
 export interface IDataPassageiroExcursaoQuarto {
-  id: string,
-  nome: string,
+  id: string
+  Pessoa: {
+    id: string
+    nome: string
+  }
   reserva: string
 }
 

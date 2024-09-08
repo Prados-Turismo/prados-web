@@ -18,7 +18,16 @@ export interface IExcursaoPassageiro {
   hasBoarded: string
   horaEmbarque: string
   Reservas: {
+    id: string
     reserva: string
+    Opcionais: {
+      id: string,
+      qtd: number
+      Produto: {
+        id: string
+        nome: string
+      }
+    }[]
   },
   dataCadastro: string
   LocalEmbarque: {
@@ -61,12 +70,16 @@ export interface IExcursaoPassageiro {
     codigoPacote: string
     usuarioCadastro: string
   }
+  Onibus: {
+    numeroCadeira: string
+  }[]
 }
 
 export interface IExcursaoPassageiroResponse {
   data: IExcursaoPassageiro[];
   count: number;
   isLoading: boolean;
+  summary?: IExcursaoPassageiroSummary[]
 }
 
 export interface IUpdateExcursaoPassageiroArgs extends ICreateExcursaoPassageiroArgs {
@@ -86,4 +99,9 @@ export interface IUpdateExcursaoPassageiroResponse {
 export interface IDeleteExcursaoPassageiroResponse {
   isLoading: boolean;
   mutate: UseMutateFunction<void, unknown, string, unknown>;
+}
+
+export interface IExcursaoPassageiroSummary {
+  nome: string
+  sum: number
 }

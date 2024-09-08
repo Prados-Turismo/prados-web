@@ -80,10 +80,10 @@ const createLocalEmbarque = (
 
       try {
         await apiPrados.post(urlPath, data).then(() => {
+          queryClient.invalidateQueries([keys.localEmbarque])
           reset()
           handleClose()
 
-          queryClient.invalidateQueries([keys.localEmbarque])
 
           useToastStandalone({
             title: "Cadastro concluído!",

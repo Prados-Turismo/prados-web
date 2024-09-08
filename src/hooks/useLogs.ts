@@ -35,11 +35,14 @@ const getLogs = ({ page, size }: ILogsArgs): ILogsResponse => {
         if (data?.rows) {
           for (const value of data.rows) {
             if (value.tipo === 'UPDATE') {
-              let newData = JSON.parse(value.newData);
-              let oldData = JSON.parse(value.oldData);
-              let changes = getDifferencesWithNewValues(newData, oldData);
+              let changes
+              let newData = value.newData && value.newData !== '' ? JSON.parse(value.newData) : null;
+              let oldData = value.oldData && value.oldData !== '' ? JSON.parse(value.oldData) : null;
 
-              Object.assign(value, { changes });
+              if (newData && oldData) {
+                changes = getDifferencesWithNewValues(newData, oldData);
+                Object.assign(value, { changes });
+              }
             }
           }
         }

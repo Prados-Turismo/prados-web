@@ -159,7 +159,7 @@ const ModalRegisterReservas = ({
           setProdutoData(data.Pacotes.Produto)
           setSubtotal(data.valor)
           calculateTotal(quantidade, data.valor, desconto)
-          calculateDesconto(quantidade, getValues("desconto") || 0)
+          calculateDesconto(getValues("desconto") || 0)
         }
       });
     }
@@ -170,17 +170,17 @@ const ModalRegisterReservas = ({
     setQuantidade(qtd)
     setValue('quantidade', qtd)
     calculateTotal(qtd, subTotal, desconto)
-    calculateDesconto(qtd, desconto)
+    calculateDesconto(desconto)
   }
 
   const calculateTotal = async (qtd: number, valorPacote: number, discount: number, totalOpcionais?: number) => {
-    let result = (((qtd || 1) * valorPacote) - (discount * qtd)) + (totalOpcionais || 0)
+    let result = (((qtd || 1) * valorPacote) + (totalOpcionais || 0)) - (discount)
     setTotal(result)
     setValue('total', result)
   }
 
-  const calculateDesconto = async (qtd: number, desconto: number) => {
-    let valorDesconto = desconto * qtd
+  const calculateDesconto = async (desconto: number) => {
+    let valorDesconto = desconto
     setValorDesconto(valorDesconto)
     setValue('valorDesconto', valorDesconto)
   }
@@ -216,7 +216,7 @@ const ModalRegisterReservas = ({
             setValue("idExcursao", option?.value);
             onSelectExcursao(option?.value || '')
             calculateTotal(quantidade, subTotal, desconto)
-            calculateDesconto(quantidade, getValues("desconto") || 0)
+            calculateDesconto(getValues("desconto") || 0)
           }}
           options={dataExcursoes
             ?.map((codigoExcursao) => ({
@@ -319,7 +319,7 @@ const ModalRegisterReservas = ({
               }}
               onBlur={() => {
                 setDesconto(getValues("desconto") || 0)
-                calculateDesconto(quantidade, getValues("desconto") || 0)
+                calculateDesconto(getValues("desconto") || 0)
                 calculateTotal(quantidade, subTotal, getValues("desconto") || 0)
               }}
               minW="250px"

@@ -18,6 +18,7 @@ import ReactSelect from "react-select";
 import { IExcursaoQuarto, IUpdateExcursaoQuartoArgs } from "../../../../../../models/excursao-quarto.model";
 import { useGlobal } from "../../../../../../contexts/UserContext";
 import { useParams } from "react-router-dom";
+import useTipoQuarto from "../../../../../../hooks/useTipoQuarto";
 // import { useGlobal } from "../../../../contexts/UserContext";
 
 const handleSubmitRegisterSchema = z.object({
@@ -29,7 +30,12 @@ const handleSubmitRegisterSchema = z.object({
       message: fieldRequired("Passageiro"),
     }),
   numeroQuarto: z
+    .string(),
+  idTipoQuarto: z
     .string()
+    .min(1, {
+      message: fieldRequired("Tipo Quarto")
+    })
 });
 
 type IhandleSubmitRegister = z.infer<typeof handleSubmitRegisterSchema>;
@@ -46,6 +52,7 @@ const ModalUpdateQuarto = ({
   const { user } = useGlobal();
   const { updateExcursaoQuarto } = useExcursaoQuarto();
   const { listExcursaoPassageirosNoRoom } = useExcursaoQuarto();
+  const { getAllTipoQuartos } = useTipoQuarto()
   const {
     setValue,
     reset,
@@ -55,16 +62,19 @@ const ModalUpdateQuarto = ({
   } = useForm<IhandleSubmitRegister>({
     resolver: zodResolver(handleSubmitRegisterSchema),
     defaultValues: {
-      numeroQuarto: data.numeroQuarto
+      numeroQuarto: data.numeroQuarto,
+      idTipoQuarto: data.TipoQuarto.id
     }
   });
   const { id: idExcursao } = useParams();
   const { mutate, isLoading } = updateExcursaoQuarto(reset, handleClose);
   const { data: dataPassageiros, isLoading: loadingPassageiros } = listExcursaoPassageirosNoRoom(idExcursao || '');
+  const { data: dataTipoQuarto, isLoading: loadingTipoQuarto } = getAllTipoQuartos()
 
   let passageiros = data.Passageiros.map((value) => {
-    return { id: value.Pessoa.id, nome: value.Pessoa.nome, reserva: value.Reservas.reserva }
+    return { id: value.id, Pessoa: { id: value.id, nome: value.Pessoa.nome }, reserva: value.Reservas.reserva }
   })
+
   const allOptions = [...dataPassageiros, ...passageiros]
 
   const handleSubmitRegister = (submitData: IhandleSubmitRegister) => {
@@ -101,8 +111,8 @@ const ModalUpdateQuarto = ({
               noOptionsMessage={() => "Não há passageiros cadastrados"}
               options={allOptions
                 ?.map((passageiro) => ({
-                  label: `${passageiro.reserva} - ${passageiro?.nome}`,
-                  value: passageiro?.id,
+                  label: `${passageiro.reserva} - ${passageiro?.Pessoa.nome}`,
+                  value: passageiro?.Pessoa.id,
                 }))}
               name="passageiros"
               id="passageiros"
@@ -111,8 +121,41 @@ const ModalUpdateQuarto = ({
               }}
               defaultValue={
                 data.Passageiros.map((passageiro) => {
-                  return { value: passageiro.Pessoa.id, label: `${passageiro.Reservas.reserva} - ${passageiro.Pessoa.nome}` }
+                  return { value: passageiro.id, label: `${passageiro.Reservas.reserva} - ${passageiro.Pessoa.nome}` }
                 })}
+            />
+          </Box>
+          {errors.passageiros && <p className="error">{errors.passageiros.message}</p>}
+        </FieldWrap>
+
+        <FieldWrap>
+          <span>Tipo do Quarto <Asterisk /></span>
+
+          <Box display="flex" gap="10px">
+            <ReactSelect
+              isLoading={loadingTipoQuarto}
+              isMulti={false}
+              className="select-fields multi"
+              classNamePrefix="select"
+              closeMenuOnSelect={true}
+              {...register?.("idTipoQuarto")}
+              isSearchable={true}
+              placeholder="Selecione"
+              noOptionsMessage={() => "Não há tipos cadastrados"}
+              options={dataTipoQuarto
+                .map((tipo) => ({
+                  label: tipo?.nome,
+                  value: tipo?.id,
+                }))}
+              name="idTipoQuarto"
+              id="idTipoQuarto"
+              onChange={(option) => {
+                setValue("idTipoQuarto", option?.value || '');
+              }}
+              defaultValue={{
+                value: data.TipoQuarto.id,
+                label: data.TipoQuarto.nome
+              }}
             />
           </Box>
           {errors.passageiros && <p className="error">{errors.passageiros.message}</p>}

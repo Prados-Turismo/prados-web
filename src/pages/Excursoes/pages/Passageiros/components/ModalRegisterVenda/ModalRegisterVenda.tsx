@@ -40,7 +40,7 @@ const handleSubmitRegisterSchema = z.object({
         .min(1, {
             message: fieldRequired("Valor"),
         }),
-    valor: z
+    valorTotal: z
         .number()
         .min(1, {
             message: fieldRequired("Total"),
@@ -57,6 +57,7 @@ type IhandleSubmitRegister = z.infer<typeof handleSubmitRegisterSchema>;
 interface Cliente {
     id: string
     nome: string
+    reserva: string
 }
 
 interface IModalRegisterVenda {
@@ -97,7 +98,8 @@ const ModalRegisterVenda = ({
             ativo: true,
             usuarioCadastro: user?.id,
             codigoCliente: dataCliente?.id,
-            codigoExcursao: _id
+            codigoExcursao: _id,
+            reserva: dataCliente?.reserva
         })
     };
 
@@ -105,13 +107,13 @@ const ModalRegisterVenda = ({
         setValor(pacote.valor)
         setTotal(pacote.valor)
         setValue('valorUnitario', pacote.valor)
-        setValue('valor', pacote.valor)
+        setValue('valorTotal', pacote.valor)
     }
 
     const calculateTotal = (qtd: number) => {
         let total = valor * qtd
         setTotal(total)
-        setValue('valor', total)
+        setValue('valorTotal', total)
     }
 
     return (
@@ -247,7 +249,7 @@ const ModalRegisterVenda = ({
                     <FormInputNumber
                         height="40px"
                         label="Total"
-                        {...register("valor")}
+                        {...register("valorTotal")}
                         setValue={setValue}
                         isMoneyValue={true}
                         flex="1.01"

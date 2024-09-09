@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Box, Button, Flex, HStack, Input, Select, Text, useNumberInput } from "@chakra-ui/react";
+import { Box, Button, Flex, Input } from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -20,7 +20,6 @@ import SelectForm from "../../../../components/SelectForm";
 import useExcursoes from "../../../../hooks/useExcursao";
 import { FormEvent, useState } from "react";
 import { cpfMask } from "../../../../utils";
-import usePessoas from "../../../../hooks/usePessoas";
 import ReactSelect from "react-select";
 import { IOption } from "../../../../components/SelectForm/types";
 import useFormaPagamento from "../../../../hooks/useFormaPagamento";
@@ -29,6 +28,7 @@ import { IExcursao } from "../../../../models/excursao.model";
 import useLocalEmbarque from "../../../../hooks/useLocalEmbarque";
 import { formattingDate } from "../../../../utils/formattingDate";
 import Opcionais from "../Opcionais";
+import SelectAsyncPaginate from "../../../../components/SelectAsyncPaginate";
 
 const opcionalSchema = z.object({
   id: z.string(),
@@ -99,12 +99,10 @@ const ModalRegisterReservas = ({
   const { user } = useGlobal();
   const { createReserva } = useReservas()
   const { getExcursoes, findExcursao } = useExcursoes()
-  const { getAllPessoas } = usePessoas()
   const { getAllFormaPagamentos } = useFormaPagamento()
   const { getAllContaBancaria } = useContaBancaria()
   const { getLocalEmbarque } = useLocalEmbarque()
 
-  const { data: dataClientes, isLoading: loadingClientes } = getAllPessoas();
   const { data: dataExcursoes, isLoading: loadingExcursoes } = getExcursoes({ page: 1, size: 100 });
   const { data: dataFormaPagamentos, isLoading: loadingFormaPagamentos } = getAllFormaPagamentos();
   const { data: dataContaBancaria, isLoading: isLoadingContaBancaria } = getAllContaBancaria();
@@ -226,7 +224,7 @@ const ModalRegisterReservas = ({
           errors={errors.idExcursao}
         />
 
-        <SelectForm
+        <SelectAsyncPaginate
           name="passageiros"
           placeholder="Selecione"
           label="Passageiros"
@@ -234,16 +232,10 @@ const ModalRegisterReservas = ({
           isRequired
           isMulti
           isSearchable
-          isLoading={loadingClientes}
           handleChange={(option) => {
             setValue("passageiros", option?.map((item: IOption) => item?.value.toString()) || []);
             onSelectPassageiros(option)
           }}
-          options={dataClientes
-            ?.map((codigoPessoa) => ({
-              label: codigoPessoa?.nome,
-              value: codigoPessoa?.id,
-            }))}
           errors={errors.passageiros}
         />
 

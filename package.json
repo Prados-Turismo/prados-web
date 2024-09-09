@@ -45,6 +45,7 @@
     "react-query": "^3.39.3",
     "react-router-dom": "^6.8.1",
     "react-select": "^5.7.0",
+    "react-select-async-paginate": "^0.7.5",
     "react-to-print": "^2.14.15",
     "react-youtube": "^10.1.0",
     "showdown": "^2.1.0",

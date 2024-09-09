@@ -33,11 +33,10 @@ function OnibusList() {
   const navigate = useNavigate();
   const { user } = useGlobal();
   const { id: _id } = useParams();
-  const { listExcursaoPassageirosNoRoom } = useExcursaoQuarto();
   const { getExcursao } = useExcursoes();
-  const { getAcentos, createExcursaoOnibus } = useExcursaoOnibus();
+  const { getAcentos, createExcursaoOnibus, listExcursaoPassageirosNoChair } = useExcursaoOnibus();
   const { data: dataExcursao, isLoading: loadingExcursao } = getExcursao(_id || '');
-  const { data: dataPassageiros, isLoading: loadingPassageiros } = listExcursaoPassageirosNoRoom(_id || '');
+  const { data: dataPassageiros, isLoading: loadingPassageiros } = listExcursaoPassageirosNoChair(_id || '');
   const registerPerPage = 10
   const [currentPage, setCurrentPage] = useState(1);
   const [acentos, setAcentoName] = useState('')
@@ -118,21 +117,20 @@ function OnibusList() {
                           maxW='100px'
                           isRequired
                           handleChange={(option) => {
-                            debugger
                             setValue("codigoPassageiro", option?.value);
                             saveAcentoOnibus(option.value || '', option.data.index)
                           }}
                           options={dataPassageiros
                             ?.map((passageiro) => ({
-                              label: passageiro?.nome,
+                              label: passageiro?.Pessoa?.nome,
                               value: passageiro?.id,
                               data: {
                                 index: currentPage == 1 ? `${index + 1}` : `${currentPage - 1}${index}`
                               }
                             }))}
                           defaultValue={{
-                            label: item.Pessoa.nome,
-                            value: item.Pessoa.id
+                            label: item?.Passageiro?.Pessoa.nome,
+                            value: item?.id
                           }}
                           errors={errors.codigoPassageiro}
                         />

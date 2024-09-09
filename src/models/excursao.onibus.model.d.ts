@@ -4,9 +4,11 @@ export interface IExcursaoOnibus {
   codigoPassageiro: string
   codigoExcursao: string
   usuarioCadastro: string
-  Pessoa: {
-    id: string
-    nome: string
+  Passageiro: {
+    Pessoa: {
+      id: string
+      nome: string
+    }
   }
 }
 
@@ -42,4 +44,18 @@ export interface ICreateExcursaoOnibusResponse {
 export interface IOnibusAcentos {
   data: Array<number>
   count: number
+}
+
+
+export interface IPassageiroExcursaoOnibusResponse {
+  data: {
+    id: string
+    Pessoa: {
+      id: string
+      nome: string
+    }
+    reserva: number
+  }[]
+  count: number
+  isLoading: boolean
 }

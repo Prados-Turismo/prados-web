@@ -58,6 +58,7 @@ import Usuarios from "../pages/Usuarios";
 import RankingCliente from "../pages/RankingCliente";
 import RelatorioClientes from "../pages/RelatorioClientes";
 import Vendas from "../pages/Vendas";
+import Auditoria from "../pages/Auditoria";
 
 export const AppRoutes = () => {
   const location = useLocation();
@@ -109,6 +110,7 @@ export const AppRoutes = () => {
         <Route path="/ranking-clientes" element={<RankingCliente />} />
         <Route path="/relatorios/clientes" element={<RelatorioClientes />} />
         <Route path="/vendas" element={<Vendas />} />
+        <Route path="/relatorios/auditoria" element={<Auditoria />} />
 
         <Route path="/politica-privacidade" element={<PrivacyPolicy />} />
 

@@ -33,6 +33,7 @@ import { isDateLessThan150YearsAgo } from '../../../../utils/formattingDate';
 import { IoAddCircleOutline } from 'react-icons/io5';
 import useFornecedor from '../../../../hooks/useFornecedor';
 import { dateFormat } from '../../../../utils';
+import useFormaPagamento from '../../../../hooks/useFormaPagamento';
 
 const handleSubmitRegisterSchema = z.object({
   nome: z
@@ -82,9 +83,14 @@ const ModalRegisterExcursao = ({ handleClose }: IModalRecordCollaborator) => {
   const { getAllPacotes } = usePacotes();
   const { getAllFornecedores } = useFornecedor();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { getAllFormaPagamentos } = useFormaPagamento()
 
   const [items, setItems] = useState<{
     fornecedor: {
+      id: string;
+      nome: string;
+    };
+    formaPagamento: {
       id: string;
       nome: string;
     };
@@ -93,6 +99,10 @@ const ModalRegisterExcursao = ({ handleClose }: IModalRecordCollaborator) => {
   }[]>([]);
   const [errorDate, setErrorDate] = useState({ message: '' });
   const [fornecedor, setFornecedor] = useState({
+    id: '',
+    nome: '',
+  });
+  const [formaPagamento, setFormaPagamento] = useState({
     id: '',
     nome: '',
   });
@@ -112,6 +122,7 @@ const ModalRegisterExcursao = ({ handleClose }: IModalRecordCollaborator) => {
   const { mutate, isLoading } = createExcursao(reset, handleClose);
   const { data: dataPacotes, isLoading: loadingPacotes } = getAllPacotes();
   const { data: dataFornecedores, isLoading: loadingFornecedores } = getAllFornecedores();
+  const { data: dataFormaPagamento, isLoading: loadingFormaPagamento } = getAllFormaPagamentos();
 
   const handleSubmitRegister = (submitData: IhandleSubmitRegister) => {
     mutate({
@@ -122,6 +133,7 @@ const ModalRegisterExcursao = ({ handleClose }: IModalRecordCollaborator) => {
         idFornecedor: item.fornecedor.id,
         valor: item.valor,
         data: item.data,
+        codigoFormaPagamento: item.formaPagamento.id
       }))
     });
   };
@@ -131,6 +143,10 @@ const ModalRegisterExcursao = ({ handleClose }: IModalRecordCollaborator) => {
       fornecedor: {
         id: fornecedor.id,
         nome: fornecedor.nome,
+      },
+      formaPagamento: {
+        id: formaPagamento.id,
+        nome: formaPagamento.nome
       },
       valor,
       data
@@ -278,6 +294,7 @@ const ModalRegisterExcursao = ({ handleClose }: IModalRecordCollaborator) => {
             {items.map((item, index) => (
               <Box key={index} p="10px" border="1px solid #ccc" borderRadius="5px" m="10px">
                 <p><b>Fornecedor:</b> {item.fornecedor.nome}</p>
+                <p><b>Forma de Pagamento:</b> {item.formaPagamento.nome}</p>
                 <p><b>Valor:</b> {item.valor}</p>
                 <p><b>Data:</b> {dateFormat(new Date(item.data))}</p>
               </Box>
@@ -327,6 +344,39 @@ const ModalRegisterExcursao = ({ handleClose }: IModalRecordCollaborator) => {
                 />
               </Box>
             </FieldWrap>
+
+            <br />
+
+            <FieldWrap>
+              <span>Forma Pagamento <Asterisk /></span>
+
+              <Box display="flex" gap="10px">
+                <ReactSelect
+                  required
+                  isLoading={loadingFormaPagamento}
+                  className="select-fields large"
+                  classNamePrefix="select"
+                  closeMenuOnSelect={true}
+                  isSearchable={true}
+                  placeholder="Selecione"
+                  noOptionsMessage={() => "Não há forma pagamento cadastrada"}
+                  options={dataFormaPagamento
+                    ?.map((fornecedor) => ({
+                      label: fornecedor?.nome,
+                      value: fornecedor?.id,
+                    }))}
+                  name="codigoFormaPagamento"
+                  id="codigoFormaPagamento"
+                  onChange={(option) => {
+                    setFormaPagamento({
+                      id: option?.value.toString() || "",
+                      nome: option?.label || "",
+                    })
+                  }}
+                />
+              </Box>
+            </FieldWrap>
+
             <FormControl mt="4">
               <FormInputNumber
                 height="40px"

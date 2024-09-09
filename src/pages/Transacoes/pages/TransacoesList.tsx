@@ -234,7 +234,7 @@ const TransacoesList = () => {
                       <TD>Data</TD>
                       <TD>Valor</TD>
                       <TD>Conta</TD>
-                      <TD>Forma de pagamento</TD>
+                      <TD>Pagamento</TD>
                       <TD>Fornecedor</TD>
                       <TD>Excursão</TD>
                       <TD>Destino</TD>
@@ -287,7 +287,7 @@ const TransacoesList = () => {
                             {item.Excursao?.nome}
                           </TD>
                           <TD>
-                            {item.Pacotes?.nome}
+                            {item.Excursao?.Pacotes?.nome}
                           </TD>
                           <TD>
                             {item?.CategoriaTransacao?.nome || ''} {item?.CategoriaTransacao?.SubCategoria?.id ? '/' : ''} {item?.CategoriaTransacao?.SubCategoria?.nome || ''}

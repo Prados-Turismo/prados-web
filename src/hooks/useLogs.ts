@@ -2,34 +2,50 @@ import { useMutation, useQuery } from "react-query";
 import { useToastStandalone } from "./useToastStandalone";
 import { apiPrados } from "../services/api";
 import {
-  IVendasArgs,
-  IVendasResponse,
-  ICreateVendasArgs,
-  ICreateVendasResponse,
-  IUpdateVendasArgs,
-  IUpdateVendasResponse,
-  IDeleteVendasResponse
-} from "../models/vendas.model";
+  ILogsArgs,
+  ILogsResponse,
+  ICreateLogsArgs,
+  ICreateLogsResponse,
+  IUpdateLogsArgs,
+  IUpdateLogsResponse,
+  IDeleteLogsResponse
+} from "../models/logs.model";
 import { Warning } from "../errors";
 import { keys, queryClient } from "../services/query";
+import { getDifferencesWithNewValues } from "../utils/logDataFormater";
 
-const getVendas = ({ page, size }: IVendasArgs): IVendasResponse => {
+const getLogs = ({ page, size }: ILogsArgs): ILogsResponse => {
 
   const { data, isLoading } = useQuery(
     [
-      keys.vendas,
+      keys.logs,
       page
     ],
     async () => {
-      const path = 'vendas/index';
+      const path = 'log/index';
 
       try {
         const { data } = await apiPrados.get(path, {
           params: {
             page,
-            size,
+            size
           },
         });
+
+        if (data?.rows) {
+          for (const value of data.rows) {
+            if (value.tipo === 'UPDATE') {
+              let changes
+              let newData = value.newData && value.newData !== '' ? JSON.parse(value.newData) : null;
+              let oldData = value.oldData && value.oldData !== '' ? JSON.parse(value.oldData) : null;
+
+              if (newData && oldData) {
+                changes = getDifferencesWithNewValues(newData, oldData);
+                Object.assign(value, { changes });
+              }
+            }
+          }
+        }
 
         return data
       } catch (error: any) {
@@ -45,14 +61,14 @@ const getVendas = ({ page, size }: IVendasArgs): IVendasResponse => {
   };
 }
 
-const getAllVendas = (): IVendasResponse => {
+const getAllLogs = (): ILogsResponse => {
 
   const { data, isLoading } = useQuery(
     [
-      keys.vendas,
+      keys.logs,
     ],
     async () => {
-      const path = 'vendas/findAll';
+      const path = 'log/findAll';
 
       try {
         const { data } = await apiPrados.get(path);
@@ -71,26 +87,24 @@ const getAllVendas = (): IVendasResponse => {
   };
 }
 
-const createVendas = (
+const createLogs = (
   reset: () => void,
   handleClose: () => void
-): ICreateVendasResponse => {
+): ICreateLogsResponse => {
 
   const { isLoading, mutate } = useMutation(
-    async (data: ICreateVendasArgs) => {
-      const urlPath = 'vendas/create'
+    async (data: ICreateLogsArgs) => {
+      const urlPath = 'log/create'
 
       try {
         await apiPrados.post(urlPath, data).then(() => {
-          queryClient.invalidateQueries([keys.vendas])
-          queryClient.invalidateQueries([keys.excursaoPassageiro])
-          
           reset()
           handleClose()
 
+          queryClient.invalidateQueries([keys.logs])
 
           useToastStandalone({
-            title: "Venda realizada!",
+            title: "Cadastro concluído!",
             status: "success",
           });
         })
@@ -106,20 +120,20 @@ const createVendas = (
   }
 }
 
-const updateVendas = (
+const updateLogs = (
   reset: () => void,
   handleClose: () => void
-): IUpdateVendasResponse => {
+): IUpdateLogsResponse => {
 
   const { isLoading, mutate } = useMutation(
-    async (data: IUpdateVendasArgs) => {
-      const urlPath = `vendas/update/${data.id}`;
+    async (data: IUpdateLogsArgs) => {
+      const urlPath = `log/update/${data.id}`;
 
       try {
         await apiPrados.put(urlPath, data).then(() => {
           reset()
           handleClose()
-          queryClient.invalidateQueries([keys.vendas])
+          queryClient.invalidateQueries([keys.logs])
 
           useToastStandalone({
             title: "Atualizado com sucesso!",
@@ -138,14 +152,15 @@ const updateVendas = (
   }
 }
 
-const deleteVendas = (): IDeleteVendasResponse => {
+const deleteLogs = (): IDeleteLogsResponse => {
 
   const { isLoading, mutate } = useMutation(
     async (id: string) => {
-      const urlPath = `vendas/delete/${id}`
+      const urlPath = `log/delete/${id}`
+
       try {
         await apiPrados.delete(urlPath).then(function () {
-          queryClient.invalidateQueries([keys.vendas])
+          queryClient.invalidateQueries([keys.logs])
 
           useToastStandalone({
             title: "Excluída com sucesso!",
@@ -164,68 +179,12 @@ const deleteVendas = (): IDeleteVendasResponse => {
   }
 }
 
-const efetivarVenda = (): IDeleteVendasResponse => {
-
-  const { isLoading, mutate } = useMutation(
-    async (id: string) => {
-      const urlPath = `vendas/efetivar/${id}`
-
-      try {
-        await apiPrados.patch(urlPath).then(function () {
-          queryClient.invalidateQueries([keys.vendas])          
-
-          useToastStandalone({
-            title: "Efetivada com sucesso!",
-            status: "success"
-          })
-        })
-      } catch (error: any) {
-        throw new Warning(error.response.data.message, error?.response?.status);
-      }
-    }
-  )
-
+export default function useLogs() {
   return {
-    isLoading,
-    mutate
-  }
-}
-
-const desEfetivarVenda = (): IDeleteVendasResponse => {
-
-  const { isLoading, mutate } = useMutation(
-    async (id: string) => {
-      const urlPath = `vendas/desefetivar/${id}`
-
-      try {
-        await apiPrados.patch(urlPath).then(function () {
-          queryClient.invalidateQueries([keys.vendas])
-
-          useToastStandalone({
-            title: "Desefetivada com sucesso!",
-            status: "success"
-          })
-        })
-      } catch (error: any) {
-        throw new Warning(error.response.data.message, error?.response?.status);
-      }
-    }
-  )
-
-  return {
-    isLoading,
-    mutate
-  }
-}
-
-export default function useVendas() {
-  return {
-    getVendas,
-    getAllVendas,
-    createVendas,
-    updateVendas,
-    deleteVendas,
-    efetivarVenda,
-    desEfetivarVenda
+    getLogs,
+    getAllLogs,
+    createLogs,
+    updateLogs,
+    deleteLogs
   }
 }

@@ -40,9 +40,10 @@ const getAllPassageiros = ({ page, size, localEmbarque }: IExcursaoPassageiroArg
   );
 
   return {
-    data: data?.rows || [],
-    count: data?.count || 0,
-    isLoading
+    data: data?.passageiros?.rows || [],
+    count: data?.passageiros?.count || 0,
+    isLoading,
+    summary: data?.summary || []
   };
 };
 

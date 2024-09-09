@@ -9,6 +9,7 @@ import {
   IExcursaoOnibusArgs,
   IExcursaoOnibusResponse,
   IOnibusAcentos,
+  IPassageiroExcursaoOnibusResponse,
 } from "../models/excursao.onibus.model";
 import { Warning } from "../errors";
 import { keys, queryClient } from "../services/query";
@@ -22,6 +23,7 @@ const createExcursaoOnibus = (): ICreateExcursaoOnibusResponse => {
       try {
         await apiPrados.post(urlPath, data).then(() => {
 
+          queryClient.invalidateQueries([keys.excursaoOnibus])
           useToastStandalone({
             title: "Assento(s) Registrado(s)!",
             status: "success",
@@ -55,9 +57,11 @@ const getAcentos = ({ page, size }: IExcursaoOnibusArgs, idExcursao: string): IE
           codigoPassageiro: '',
           codigoExcursao: '',
           usuarioCadastro: '',
-          Pessoa: {
-            id: '',
-            nome: ''
+          Passageiro: {
+            Pessoa: {
+              id: '',
+              nome: ''
+            }
           }
         }, 0, 63)
         const startIndex = (page - 1) * size;
@@ -77,14 +81,16 @@ const getAcentos = ({ page, size }: IExcursaoOnibusArgs, idExcursao: string): IE
         if (data.rows.length) {
           data.rows.map((value: IExcursaoOnibus) => {
             acentos[parseInt(value.numeroCadeira) - 1] = {
-              id: '',
+              id: value.id,
               numeroCadeira: '',
               codigoPassageiro: '',
               codigoExcursao: '',
               usuarioCadastro: '',
-              Pessoa: {
-                id: value.Pessoa.id,
-                nome: value.Pessoa.nome
+              Passageiro: {
+                Pessoa: {
+                  id: value.Passageiro.Pessoa.id,
+                  nome: value.Passageiro.Pessoa.nome
+                }
               }
             }
           })
@@ -134,6 +140,29 @@ const getExcursaoOnibus = (idExcursao?: string): IExcursaoOnibusResponse => {
   }
 }
 
+const listExcursaoPassageirosNoChair = (idExcursao: string): IPassageiroExcursaoOnibusResponse => {
+  const { data, isLoading } = useQuery(
+    [keys.excursaoOnibus],
+    async () => {
+      const path = `excursao-passageiros/list-passageiros-no-chair/${idExcursao}`;
+
+      try {
+        const { data } = await apiPrados.get(path);
+
+        return data
+      } catch (error: any) {
+        throw new Warning(error.response.data.message, error.response.status);
+      }
+    }
+  );
+
+  return {
+    data: data || [],
+    count: data?.count || 0,
+    isLoading
+  };
+}
+
 // const updateExcursaoOnibus = (): IUpdateExcursaoOnibusResponse => {
 
 //   const { isLoading, mutate } = useMutation(
@@ -165,7 +194,8 @@ export default function useExcursaoOnibus() {
   return {
     createExcursaoOnibus,
     getAcentos,
-    getExcursaoOnibus
+    getExcursaoOnibus,
+    listExcursaoPassageirosNoChair
     // updateExcursaoOnibus
   }
 }

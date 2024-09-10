@@ -105,3 +105,12 @@ export interface IExcursaoPassageiroSummary {
   nome: string
   sum: number
 }
+
+export interface IOpcionais {
+  id: string,
+  qtd: number
+  Produto: {
+    id: string
+    nome: string
+  }
+}

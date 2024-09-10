@@ -30,295 +30,296 @@ import { useNavigate } from "react-router-dom";
 import ModalRegisterCredito from "../components/ModalRegisterCredito";
 
 const ReservasList = () => {
-    const { getReserva, deleteReserva } = useReservas();
-    const [statusSelected, setStatusSelected] = useState<ISelect | null>();
-    const [resetFilter, setResetFilter] = useState(false);
-    const [modalRegisterReserva, setModalRegisterReserva] = useState(false);
-    const [modalUpdateReserva, setModalUpdateReserva] = useState(false);
-    const [modalRemoveReserva, setModalRemoveReserva] = useState(false);
-    const [modalRegisterCredito, setModalRegisterCredito] = useState(false);
-    const [valorPacote, setvalorPacote] = useState(0)
-    const [creditoData, setCreditoData] = useState<IReserva>();
-    const [reservaData, setReservaData] = useState<IReserva | undefined>();
-    const [currentPage, setCurrentPage] = useState(1);
-    const registerPerPage = 10;
-    const navigate = useNavigate()
+  const { getReserva, deleteReserva } = useReservas();
+  const [statusSelected, setStatusSelected] = useState<ISelect | null>();
+  const [resetFilter, setResetFilter] = useState(false);
+  const [modalRegisterReserva, setModalRegisterReserva] = useState(false);
+  const [modalUpdateReserva, setModalUpdateReserva] = useState(false);
+  const [modalRemoveReserva, setModalRemoveReserva] = useState(false);
+  const [modalRegisterCredito, setModalRegisterCredito] = useState(false);
+  const [valorPacote, setvalorPacote] = useState(0)
+  const [creditoData, setCreditoData] = useState<IReserva>();
+  const [reservaData, setReservaData] = useState<IReserva | undefined>();
+  const [currentPage, setCurrentPage] = useState(1);
 
-    const { mutate: mutateToDeleteReserva } = deleteReserva();
-    const [deleteItemId, setDeleteReservaId] = useState('');
+  const registerPerPage = 10;
+  const navigate = useNavigate()
 
-    const { data, count, isLoading } = getReserva({
-        size: registerPerPage,
-        page: currentPage
-    });
+  const { mutate: mutateToDeleteReserva } = deleteReserva();
+  const [deleteItemId, setDeleteReservaId] = useState('');
 
-    const onConfirmRemoveReserva = () => {
-        mutateToDeleteReserva(deleteItemId || "");
-        setModalRemoveReserva(false);
-    };
+  const { data, count, isLoading } = getReserva({
+    size: registerPerPage,
+    page: currentPage
+  });
 
-    return (
-        <>
-            <Flex>
-                <SectionTop className="contentTop" gap="30px">
-                    <Flex gap="10px" flexWrap="wrap">
-                        <Text fontSize="2xl" fontWeight="bold">
-                            Reservas
-                        </Text>
-                    </Flex>
-                </SectionTop>
+  const onConfirmRemoveReserva = () => {
+    mutateToDeleteReserva(deleteItemId || "");
+    setModalRemoveReserva(false);
+  };
 
-                <SectionTop className="contentTop">
-                    <Button
-                        leftIcon={<IoIosAdd />}
-                        onClick={() => {
-                            setModalRegisterReserva(true);
-                        }}
-                    >
-                        Cadastrar Reserva
-                    </Button>
-                </SectionTop>
-            </Flex>
-            <Content className="contentMain">
-                <Flex width="100%" gap="15px" alignItems="flex-end" flexWrap="wrap">
-                    <div className="searchWrap">
-                        <span>Buscar Reserva</span>
-                        <FieldSearch
-                            placeholder="Nome"
-                            handleSearch={() => {
-                                setResetFilter(false);
-                                setCurrentPage(1);
-                            }}
-                            reset={resetFilter}
-                        />
-                    </div>
-                    <Flex flexDirection="column" gap="5px" width="300px">
-                        <span>Status</span>
+  return (
+    <>
+      <Flex>
+        <SectionTop className="contentTop" gap="30px">
+          <Flex gap="10px" flexWrap="wrap">
+            <Text fontSize="2xl" fontWeight="bold">
+              Reservas
+            </Text>
+          </Flex>
+        </SectionTop>
 
-                        <ReactSelect
-                            className="select-fields"
-                            classNamePrefix="select"
-                            closeMenuOnSelect={true}
-                            isSearchable={true}
-                            value={statusSelected}
-                            placeholder="Selecionar"
-                            noOptionsMessage={() => "Nenhum Status encontrado"}
-                            onChange={(item) => {
-                                setStatusSelected(item);
-                            }}
-                            options={[
-                                {
-                                    label: "Completo",
-                                    value: 1,
-                                },
-                                {
-                                    label: "Incompleto",
-                                    value: 2,
-                                },
-                            ]}
-                        />
-                    </Flex>
-                    <Button
-                        borderRadius="5px"
-                        variant="outline"
-                        onClick={() => {
-                            setResetFilter(true);
-                            setStatusSelected(null);
-                        }}
-                    >
-                        Limpar Filtros
-                    </Button>
-                </Flex>
+        <SectionTop className="contentTop">
+          <Button
+            leftIcon={<IoIosAdd />}
+            onClick={() => {
+              setModalRegisterReserva(true);
+            }}
+          >
+            Cadastrar Reserva
+          </Button>
+        </SectionTop>
+      </Flex>
+      <Content className="contentMain">
+        <Flex width="100%" gap="15px" alignItems="flex-end" flexWrap="wrap">
+          <div className="searchWrap">
+            <span>Buscar Reserva</span>
+            <FieldSearch
+              placeholder="Nome"
+              handleSearch={() => {
+                setResetFilter(false);
+                setCurrentPage(1);
+              }}
+              reset={resetFilter}
+            />
+          </div>
+          <Flex flexDirection="column" gap="5px" width="300px">
+            <span>Status</span>
 
-                {isLoading && (
-                    <Flex h="100%" alignItems="center">
-                        <Loading />
-                    </Flex>
-                )}
+            <ReactSelect
+              className="select-fields"
+              classNamePrefix="select"
+              closeMenuOnSelect={true}
+              isSearchable={true}
+              value={statusSelected}
+              placeholder="Selecionar"
+              noOptionsMessage={() => "Nenhum Status encontrado"}
+              onChange={(item) => {
+                setStatusSelected(item);
+              }}
+              options={[
+                {
+                  label: "Completo",
+                  value: 1,
+                },
+                {
+                  label: "Incompleto",
+                  value: 2,
+                },
+              ]}
+            />
+          </Flex>
+          <Button
+            borderRadius="5px"
+            variant="outline"
+            onClick={() => {
+              setResetFilter(true);
+              setStatusSelected(null);
+            }}
+          >
+            Limpar Filtros
+          </Button>
+        </Flex>
 
-                {!isLoading && (
-                    <>
-                        {data.length > 0 && (
-                            <>
-                                <TableContainer marginBottom="10px">
-                                    <Table>
-                                        <THead padding="0 30px 0 30px">
-                                            <TD>Situação</TD>
-                                            <TD>Reseva</TD>
-                                            <TD>Vouchers</TD>
-                                            <TD>Detalhes</TD>
-                                            <TD>Excursão</TD>
-                                            <TD>Data / Hora</TD>
-                                            <TD></TD>
-                                        </THead>
+        {isLoading && (
+          <Flex h="100%" alignItems="center">
+            <Loading />
+          </Flex>
+        )}
 
-                                        <TBody>
-                                            {data.map((item) => (
-                                                <TR key={item.id}>
-                                                    <TD>
-                                                        {item.status ? (
-                                                            <Tooltip label="Efetivado" placement="top" hasArrow>
-                                                                <div style={{
-                                                                    backgroundColor: "green",
-                                                                    borderRadius: "50%",
-                                                                    width: "10px",
-                                                                    height: "10px"
-                                                                }} />
-                                                            </Tooltip>
-                                                        ) : (
-                                                            <Tooltip label="Pendente" placement="top" hasArrow>
-                                                                <div style={{
-                                                                    backgroundColor: "red",
-                                                                    borderRadius: "50%",
-                                                                    width: "10px",
-                                                                    height: "10px"
-                                                                }} />
-                                                            </Tooltip>
-                                                        )}
-                                                    </TD>
-                                                    <TD>
-                                                        {item.reserva}
-                                                    </TD>
-                                                    <TD>
-                                                        {item.Pessoa?.length}
-                                                    </TD>
-                                                    <TD>
-                                                        {item.plataforma == 1 ? (
-                                                            <ButtonIcon tooltip="Loja">
-                                                                <FaShoppingCart />
-                                                            </ButtonIcon>
+        {!isLoading && (
+          <>
+            {data.length > 0 && (
+              <>
+                <TableContainer marginBottom="10px">
+                  <Table>
+                    <THead padding="0 30px 0 30px">
+                      <TD>Situação</TD>
+                      <TD>Reseva</TD>
+                      <TD>Vouchers</TD>
+                      <TD>Detalhes</TD>
+                      <TD>Excursão</TD>
+                      <TD>Data / Hora</TD>
+                      <TD></TD>
+                    </THead>
 
-                                                        ) : (
-                                                            <ButtonIcon tooltip={`Sistema Por: ${item.Usuario.nome}`}>
-                                                                <GrSystem />
-                                                            </ButtonIcon>
-                                                        )}
-                                                    </TD>
-                                                    <TD>
-                                                        {item.Excursao?.nome}
-                                                    </TD>
-                                                    <TD>
-                                                        {formattingDate(item.dataCadastro, true)}
-                                                    </TD>
-                                                    <TD gap={3}>
+                    <TBody>
+                      {data.map((item) => (
+                        <TR key={item.id}>
+                          <TD>
+                            {item.status ? (
+                              <Tooltip label="Efetivado" placement="top" hasArrow>
+                                <div style={{
+                                  backgroundColor: "green",
+                                  borderRadius: "50%",
+                                  width: "10px",
+                                  height: "10px"
+                                }} />
+                              </Tooltip>
+                            ) : (
+                              <Tooltip label="Pendente" placement="top" hasArrow>
+                                <div style={{
+                                  backgroundColor: "red",
+                                  borderRadius: "50%",
+                                  width: "10px",
+                                  height: "10px"
+                                }} />
+                              </Tooltip>
+                            )}
+                          </TD>
+                          <TD>
+                            {item.reserva}
+                          </TD>
+                          <TD>
+                            {item.Pessoa?.length}
+                          </TD>
+                          <TD>
+                            {item.plataforma == 1 ? (
+                              <ButtonIcon tooltip="Loja">
+                                <FaShoppingCart />
+                              </ButtonIcon>
 
-                                                        {!item.status && (
-                                                            <ButtonIcon tooltip="Editar">
-                                                                <MdEdit
-                                                                    size={20}
-                                                                    cursor="pointer"
-                                                                    onClick={() => {
-                                                                        setReservaData(item)
-                                                                        setModalUpdateReserva(true)
-                                                                    }}
-                                                                />
-                                                            </ButtonIcon>
-                                                        )}
+                            ) : (
+                              <ButtonIcon tooltip={`Sistema Por: ${item.Usuario.nome}`}>
+                                <GrSystem />
+                              </ButtonIcon>
+                            )}
+                          </TD>
+                          <TD>
+                            {item.Excursao?.nome}
+                          </TD>
+                          <TD>
+                            {formattingDate(item.dataCadastro, true)}
+                          </TD>
+                          <TD gap={3}>
 
-                                                        <ButtonIcon tooltip="Ver Reserva">
-                                                            <IoTicket
-                                                                size={20}
-                                                                onClick={() => { navigate(`/reservas/${item.id}/voucher`) }}
-                                                            />
-                                                        </ButtonIcon>
-
-                                                        <ButtonIcon tooltip="Enviar E-mail com voucher">
-                                                            <MdOutgoingMail
-                                                                size={20}
-                                                                onClick={() => { }}
-                                                            />
-                                                        </ButtonIcon>
-
-                                                        <ButtonIcon tooltip="Cancelar reserva">
-                                                            <IoMdClose
-                                                                size={20}
-                                                                onClick={() => {
-                                                                    if (item.status) {
-                                                                        setCreditoData(item)
-                                                                        setvalorPacote((item.Excursao.valor - item.desconto) * item.Pessoa.length)
-                                                                        setModalRegisterCredito(true)
-                                                                    } else {
-                                                                        setDeleteReservaId(item.id)
-                                                                        setModalRemoveReserva(true)
-                                                                    }
-                                                                }}
-                                                            />
-                                                        </ButtonIcon>
-                                                    </TD>
-                                                </TR>
-                                            ))}
-                                        </TBody>
-                                    </Table>
-                                </TableContainer>
-
-                                <Pagination
-                                    registerPerPage={registerPerPage}
-                                    totalRegisters={count}
-                                    currentPage={currentPage}
-                                    handleChangePage={(page) => setCurrentPage(page)}
+                            {!item.status && (
+                              <ButtonIcon tooltip="Editar">
+                                <MdEdit
+                                  size={20}
+                                  cursor="pointer"
+                                  onClick={() => {
+                                    setReservaData(item)
+                                    setModalUpdateReserva(true)
+                                  }}
                                 />
-                            </>
-                        )}
+                              </ButtonIcon>
+                            )}
 
-                        {data.length === 0 && (
-                            <AlertNoDataFound title="Nenhuma reserva encontrada" />
-                        )}
-                    </>
-                )}
-            </Content>
+                            <ButtonIcon tooltip="Ver Reserva">
+                              <IoTicket
+                                size={20}
+                                onClick={() => { navigate(`/reservas/${item.id}/voucher`) }}
+                              />
+                            </ButtonIcon>
 
-            <SimpleModal
-                title="Reserva"
-                size="xl"
-                isOpen={modalRegisterReserva}
-                handleModal={setModalRegisterReserva}
-            >
-                <ModalRegisterReservas
-                    handleClose={() => setModalRegisterReserva(false)}
+                            <ButtonIcon tooltip="Enviar E-mail com voucher">
+                              <MdOutgoingMail
+                                size={20}
+                                onClick={() => { }}
+                              />
+                            </ButtonIcon>
+
+                            <ButtonIcon tooltip="Cancelar reserva">
+                              <IoMdClose
+                                size={20}
+                                onClick={() => {
+                                  if (item.status) {
+                                    setCreditoData(item)
+                                    setvalorPacote((item.Excursao.valor - item.desconto) * item.Pessoa.length)
+                                    setModalRegisterCredito(true)
+                                  } else {
+                                    setDeleteReservaId(item.id)
+                                    setModalRemoveReserva(true)
+                                  }
+                                }}
+                              />
+                            </ButtonIcon>
+                          </TD>
+                        </TR>
+                      ))}
+                    </TBody>
+                  </Table>
+                </TableContainer>
+
+                <Pagination
+                  registerPerPage={registerPerPage}
+                  totalRegisters={count}
+                  currentPage={currentPage}
+                  handleChangePage={(page) => setCurrentPage(page)}
                 />
-            </SimpleModal>
-
-            {reservaData && (
-                <SimpleModal
-                    title="Reserva"
-                    size="xl"
-                    isOpen={modalUpdateReserva}
-                    handleModal={setModalUpdateReserva}
-                >
-                    <ModalUpdateReservas
-                        handleClose={() => setModalUpdateReserva(false)}
-                        data={reservaData}
-                    />
-                </SimpleModal>
+              </>
             )}
 
-            {modalRegisterCredito && creditoData && (
-                <SimpleModal
-                    title="Gerar Crédito"
-                    size="xl"
-                    isOpen={modalRegisterCredito}
-                    handleModal={setModalRegisterCredito}
-                >
-                    <ModalRegisterCredito
-                        handleClose={() => setModalRegisterCredito(false)}
-                        valorPacote={valorPacote}
-                        data={creditoData}
-                    />
-                </SimpleModal>
+            {data.length === 0 && (
+              <AlertNoDataFound title="Nenhuma reserva encontrada" />
             )}
+          </>
+        )}
+      </Content>
 
-            {modalRemoveReserva && (
-                <AlertModal
-                    title="Cancelar Reserva"
-                    question="Deseja realmente cancelar essa reserva?"
-                    request={onConfirmRemoveReserva}
-                    showModal={modalRemoveReserva}
-                    setShowModal={setModalRemoveReserva}
-                    size="md"
-                ></AlertModal>
-            )}
-        </>
-    );
+      <SimpleModal
+        title="Reserva"
+        size="xl"
+        isOpen={modalRegisterReserva}
+        handleModal={setModalRegisterReserva}
+      >
+        <ModalRegisterReservas
+          handleClose={() => setModalRegisterReserva(false)}
+        />
+      </SimpleModal>
+
+      {reservaData && (
+        <SimpleModal
+          title="Reserva"
+          size="xl"
+          isOpen={modalUpdateReserva}
+          handleModal={setModalUpdateReserva}
+        >
+          <ModalUpdateReservas
+            handleClose={() => setModalUpdateReserva(false)}
+            data={reservaData}
+          />
+        </SimpleModal>
+      )}
+
+      {modalRegisterCredito && creditoData && (
+        <SimpleModal
+          title="Gerar Crédito"
+          size="xl"
+          isOpen={modalRegisterCredito}
+          handleModal={setModalRegisterCredito}
+        >
+          <ModalRegisterCredito
+            handleClose={() => setModalRegisterCredito(false)}
+            valorPacote={valorPacote}
+            data={creditoData}
+          />
+        </SimpleModal>
+      )}
+
+      {modalRemoveReserva && (
+        <AlertModal
+          title="Cancelar Reserva"
+          question="Deseja realmente cancelar essa reserva?"
+          request={onConfirmRemoveReserva}
+          showModal={modalRemoveReserva}
+          setShowModal={setModalRemoveReserva}
+          size="md"
+        ></AlertModal>
+      )}
+    </>
+  );
 };
 
 export default ReservasList;

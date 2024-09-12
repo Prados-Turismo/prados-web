@@ -267,6 +267,33 @@ const removeVistoTransacao = (): IDeleteTransacaoResponse => {
   }
 }
 
+const clone = (): IDeleteTransacaoResponse => {
+  const { isLoading, mutate } = useMutation(
+    async (id: string) => {
+      const urlPath = `financeiro/clone/${id}`
+
+      try {
+        await apiPrados.put(urlPath).then(function () {
+          queryClient.invalidateQueries([keys.financeiro])
+
+          useToastStandalone({
+            title: "Clonada com sucesso!",
+            status: "success"
+          })
+        })
+      } catch (error: any) {
+        throw new Warning(error.response.data.message, error?.response?.status);
+      }
+    }
+  )
+
+  return {
+    isLoading,
+    mutate
+  }
+
+}
+
 export default function useTransacao() {
   return {
     getTransacoes,
@@ -276,6 +303,7 @@ export default function useTransacao() {
     efetivarTransacao,
     desefetivarTransacao,
     setVistoTransacao,
-    removeVistoTransacao
+    removeVistoTransacao,
+    clone
   }
 }

@@ -25,6 +25,7 @@ import { formattingDate } from "../../../utils/formattingDate";
 import { ITransacao } from "../../../models/transacao.model";
 import { IoCheckmarkCircle, IoCheckmarkDoneSharp, IoCloseCircle } from "react-icons/io5";
 import { IoMdClose } from "react-icons/io";
+import { HiOutlineDuplicate } from "react-icons/hi";
 import { currencyBRLFormat } from "../../../utils/currencyBRLFormat";
 import useContaBancaria from "../../../hooks/useContaBancaria";
 
@@ -34,7 +35,8 @@ const TransacoesList = () => {
     efetivarTransacao,
     desefetivarTransacao,
     setVistoTransacao,
-    removeVistoTransacao } = useTransacao();
+    removeVistoTransacao,
+    clone } = useTransacao();
   const [statusSelected, setStatusSelected] = useState<ISelect | null>();
   const [resetFilter, setResetFilter] = useState(false);
   const [modalRecordTransacao, setModalRecordProduct] = useState(false);
@@ -44,6 +46,7 @@ const TransacoesList = () => {
   const [modalDesfetivaTransacao, setModalDesfetivaTransacao] = useState(false);
   const [modalSetVistoTransacao, setModalSetVistoTransacao] = useState(false);
   const [modalRemoveVistoTransacao, setModalRemoveVistoTransacao] = useState(false);
+  const [modalClonarTransacao, setModalClonarTransacao] = useState(false);
   const [transacaoData, setTransacaoData] = useState<ITransacao | undefined>();
   const [currentPage, setCurrentPage] = useState(1);
   const registerPerPage = 10;
@@ -60,6 +63,7 @@ const TransacoesList = () => {
   const { mutate: mutateToDesefetivarTransacao } = desefetivarTransacao();
   const { mutate: mutateToSetVistoTransacao } = setVistoTransacao();
   const { mutate: mutateToRemoveVistoTransacao } = removeVistoTransacao();
+  const { mutate: mutateToCloneTransacao } = clone();
   const { data: dataContaBancaria, isLoading: isLoadingContaBancaria } = getAllContaBancaria();
 
   const { data, count, isLoading } = getTransacoes({
@@ -96,6 +100,11 @@ const TransacoesList = () => {
     mutateToRemoveVistoTransacao(transacaoId || "");
     setModalRemoveVistoTransacao(false);
   };
+
+  const onConfirmCloneTransacao = () => {
+    mutateToCloneTransacao(transacaoId || '')
+    setModalClonarTransacao(false)
+  }
 
   return (
     <>
@@ -166,9 +175,8 @@ const TransacoesList = () => {
               isSearchable={true}
               value={codigoContaBancaria}
               placeholder="Selecionar"
-              noOptionsMessage={() => "Nenhum Status encontrado"}
+              noOptionsMessage={() => "Nenhuma Conta encontrada"}
               onChange={(item) => {
-                debugger
                 setContaBancaria(item.map((val) => { return val }));
               }}
               options={dataContaBancaria.map((conta, index) => {
@@ -374,6 +382,17 @@ const TransacoesList = () => {
                               </ButtonIcon>
                             )}
 
+                            <ButtonIcon tooltip="Clonar">
+                              <HiOutlineDuplicate
+                                size={20}
+                                cursor="pointer"
+                                onClick={() => {
+                                  setTransacaoId(item.id)
+                                  setModalClonarTransacao(true)
+                                }}
+                              />
+                            </ButtonIcon>
+
                           </TD>
                         </TR>
                       ))}
@@ -473,6 +492,17 @@ const TransacoesList = () => {
           request={onConfirmRemoveVistoTransacao}
           showModal={modalRemoveVistoTransacao}
           setShowModal={setModalRemoveVistoTransacao}
+          size="md"
+        ></AlertModal>
+      )}
+
+      {modalClonarTransacao && (
+        <AlertModal
+          title="Clonar"
+          question="Deseja realmente clonar esta transação?"
+          request={onConfirmCloneTransacao}
+          showModal={modalClonarTransacao}
+          setShowModal={setModalClonarTransacao}
           size="md"
         ></AlertModal>
       )}

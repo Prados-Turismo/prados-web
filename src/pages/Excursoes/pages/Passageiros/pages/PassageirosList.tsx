@@ -14,16 +14,18 @@ import useExcursaoPassageiros from "../../../../../hooks/useExcursaoPassageiros"
 import useExcursao from "../../../../../hooks/useExcursao";
 import { useNavigate, useParams } from "react-router-dom";
 import { TBody, TD, THead, TR } from "../../../../../components/Table";
-import { dateFormat, phoneMask } from "../../../../../utils";
+import { phoneMask } from "../../../../../utils";
 import ButtonIcon from "../../../../../components/ButtonIcon";
 import { FaFileExcel } from "react-icons/fa";
 import useFiles from "../../../../../hooks/useFiles";
 import SimpleModal from "../../../../../components/SimpleModal";
 import ModalRegisterVenda from "../components/ModalRegisterVenda"
+import ModalListOpcionais from "../components/ModalListOpcionais"
 import { FaShoppingCart } from "react-icons/fa";
 import { FaWhatsapp } from "react-icons/fa6";
-
-
+import { FaListOl } from "react-icons/fa";
+import { IExcursaoPassageiro, IOpcionais } from "../../../../../models/excursao-passageiro.model";
+import ModalDetailSummary from "../components/ModalDetailSummary";
 
 const PassageirosList = () => {
   const { id: _id } = useParams();
@@ -35,6 +37,9 @@ const PassageirosList = () => {
   const { isLoading: isLoadingCsv, csv } = generateCsvPassageiros()
   const [dataPassageiro, setDataPassageiro] = useState<{ nome: string, id: string, reserva: string }>()
   const [modalVenda, setModalVenda] = useState(false)
+  const [modalOpcionais, setModalOpcionais] = useState(false)
+  const [dataOpcionais, setDataOpcionais] = useState<IOpcionais[]>([])
+  const [modalAllOpcionais, setModalAllOpcionais] = useState(false)
 
   const [statusSelected, setStatusSelected] = useState<ISelect | null>();
   const [currentPage, setCurrentPage] = useState(1);
@@ -50,6 +55,18 @@ const PassageirosList = () => {
   if (!isLoading && summary) {
     total = summary.reduce((previousValue, currentValue) => previousValue + currentValue.sum, 0)
   }
+
+  if (!isLoading && data.length) {
+    data.sort((a, b) => {
+
+      const getNumeroCadeira = (item: IExcursaoPassageiro) => {
+        return item.Onibus[0]?.numeroCadeira ? parseInt(item.Onibus[0].numeroCadeira, 10) : 0;
+      }
+
+      return getNumeroCadeira(a) - getNumeroCadeira(b);
+    })
+  }
+
 
   return (
     <>
@@ -145,7 +162,6 @@ const PassageirosList = () => {
                       <TD>Reserva</TD>
                       <TD>Telefone  <FaWhatsapp style={{ color: 'green', fontSize: '24px', marginLeft: '5px' }} /></TD>
                       <TD>Local de Embarque</TD>
-                      {/* <TD>Opcionais</TD> */}
                       <TD>Poltrona</TD>
                       <TD></TD>
                     </THead>
@@ -168,11 +184,8 @@ const PassageirosList = () => {
                           <TD>
                             {item.LocalEmbarque.nome}
                           </TD>
-                          {/* <TD>
-                            {item.Reservas.Opcionais.map((opcionais, index) => { return `${opcionais.qtd}x ${opcionais.Produto.nome}${index == item.Reservas.Opcionais.length - 1 ? '' : ', '}` })}
-                          </TD> */}
                           <TD>
-                            {item.Onibus[0]?.numeroCadeira}
+                            {item.Onibus[0]?.numeroCadeira || 'Sem Poltrona'}
                           </TD>
                           <TD>
                             <ButtonIcon tooltip="Venda">
@@ -185,6 +198,19 @@ const PassageirosList = () => {
                                 }}
                               />
                             </ButtonIcon>
+
+                            {item.Reservas.Opcionais.length && (
+                              <ButtonIcon tooltip="Opcionais" style={{ marginLeft: '5px' }}>
+                                <FaListOl
+                                  size={20}
+                                  cursor='pointer'
+                                  onClick={() => {
+                                    setDataOpcionais(item.Reservas.Opcionais)
+                                    setModalOpcionais(true)
+                                  }}
+                                />
+                              </ButtonIcon>
+                            )}
                           </TD>
                         </TR>
                       ))}
@@ -202,7 +228,13 @@ const PassageirosList = () => {
                       </>
                     ))}
                     <br />
-                    <span><b>Total:</b> {total}</span>
+                    <span style={{ cursor: 'pointer' }}
+                      onClick={() => {
+                        setModalAllOpcionais(true)
+                      }}
+                    >
+                      <b>Total:</b> {total}
+                    </span>
                   </>
                 )}
 
@@ -232,6 +264,34 @@ const PassageirosList = () => {
           <ModalRegisterVenda
             handleClose={() => setModalVenda(false)}
             dataCliente={dataPassageiro}
+          />
+        </SimpleModal>
+      )}
+
+      {modalOpcionais && (
+        <SimpleModal
+          title="Opcionais"
+          size="6xl"
+          isOpen={modalOpcionais}
+          handleModal={setModalOpcionais}
+        >
+          <ModalListOpcionais
+            handleClose={() => setModalOpcionais(false)}
+            data={dataOpcionais}
+          />
+        </SimpleModal>
+      )}
+
+      {modalAllOpcionais && (
+        <SimpleModal
+          title="Opcionais"
+          size="6xl"
+          isOpen={modalAllOpcionais}
+          handleModal={setModalAllOpcionais}
+        >
+          <ModalDetailSummary
+            handleClose={() => setModalAllOpcionais(false)}
+            data={summary}
           />
         </SimpleModal>
       )}

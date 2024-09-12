@@ -120,11 +120,11 @@ const RelatorioClientesList = () => {
               <>
                 <Accordion allowMultiple>
                   {data.map((item, index) => {
-                    const query = queries[item.id];
-                    const isLoadingTransacoes = query?.isLoadingTransacoes;
-                    const dataTransacoes = query?.dataTransacoes;
-                    const countTransacoes = query?.countTransacoes;
-                    const sumTransacoes = query?.sumTransacoes;
+                    // const query = queries[item.id];
+                    // const isLoadingTransacoes = query?.isLoadingTransacoes;
+                    // const dataTransacoes = query?.dataTransacoes;
+                    // const countTransacoes = query?.countTransacoes;
+                    // const sumTransacoes = query?.sumTransacoes;
 
                     return (
                       <AccordionItem key={item.id}>

@@ -98,7 +98,7 @@ const ModalRegisterOnibus = ({
                             noOptionsMessage={() => "Não há passageiros cadastrados"}
                             options={dataPassageiros
                                 .map((passageiro) => ({
-                                    label: `${passageiro?.reserva} - ${passageiro?.nome}`,
+                                    label: `${passageiro?.reserva} - ${passageiro?.Pessoa.nome}`,
                                     value: passageiro?.id,
                                 }))}
                             name="codigoPassageiro"

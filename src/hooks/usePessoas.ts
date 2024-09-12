@@ -7,6 +7,7 @@ import {
   ICreatePessoaArgs,
   ICreatePessoaResponse,
   IDeletePessoaResponse,
+  IPessoa,
   IPessoaArgs,
   IPessoaResponse,
   IUpdatePessoaArgs,
@@ -176,12 +177,38 @@ const deletePessoa = (): IDeletePessoaResponse => {
   }
 }
 
+const pessoaPromiseOptions = async (search: string, _loadedOptions: any, { page }: any) => {
+  const path = 'pessoas/index';
+  const itensPerPage = 20;
+
+  const { data } = await apiPrados.get(path, {
+    params: {
+      page,
+      size: itensPerPage,
+      nome: search,
+      orderBy: 'nome'
+    },
+  });
+
+  return {
+    options: data.rows.map((item: IPessoa) => ({
+      label: item.nome,
+      value: item.id
+    })),
+    hasMore: data.count > (page * itensPerPage),
+    additional: {
+      page: page + 1,
+    }
+  }
+}
+
 export default function usePessoas() {
   return {
     getPessoas,
     getAllPessoas,
     createPessoa,
     updatePessoa,
-    deletePessoa
+    deletePessoa,
+    pessoaPromiseOptions
   }
 }

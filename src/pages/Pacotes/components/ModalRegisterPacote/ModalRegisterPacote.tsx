@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Box, Button, Flex, Input, FormControl, FormLabel } from "@chakra-ui/react";
+import { Box, Button, Flex, Input } from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -17,10 +17,9 @@ import { FieldWrap } from "./styled";
 import ReactSelect from "react-select";
 import { useGlobal } from "../../../../contexts/UserContext";
 import FormInput from "../../../../components/FormInput";
-import { useState } from "react";
 import useProduct from "../../../../hooks/useProducts";
 import SelectForm from "../../../../components/SelectForm";
-import { IOption } from "../../../../components/SelectForm/types";
+import SelectImageOption from "../../../../components/SelectImageOption";
 
 const handleSubmitRegisterSchema = z.object({
   nome: z
@@ -29,6 +28,9 @@ const handleSubmitRegisterSchema = z.object({
       message: fieldRequired("nome"),
     }),
   descricao: z
+    .string()
+    .optional(),
+  foto: z
     .string()
     .optional(),
   origem: z
@@ -139,6 +141,25 @@ const ModalRegisterPacote = ({
             setValue("descricao", event.target.value || '');
           }}
         />
+
+        <SelectForm
+          name="foto"
+          label="Foto"
+          minW="135px"
+          isSearchable
+          isLoading={isLoadingProduto}
+          handleChange={(option) => {
+              setValue("foto", option?.value);
+          }}
+          options={dataProduto
+              ?.map((foto) => ({
+                  label: foto?.nome,
+                  value: foto?.id,
+                  imageUrl: "https://www.petz.com.br/blog/wp-content/uploads/2022/06/animais-selvagens-3.jpg"
+              }))}
+          CustomOption={SelectImageOption}
+          errors={errors.foto}
+      />
 
         <FieldWrap>
           <span>Origem</span>

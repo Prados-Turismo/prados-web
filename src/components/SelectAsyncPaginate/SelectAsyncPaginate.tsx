@@ -1,13 +1,12 @@
 import { Box, Popover, PopoverBody, PopoverCloseButton, PopoverContent, Stack, Text, useDisclosure } from "@chakra-ui/react";
 import { AsyncPaginate } from "react-select-async-paginate";
-import { apiPrados } from "../../services/api";
-import { IPessoa } from "../../models/pessoa.model";
 import { IOption, ISelectAsyncPaginate } from "./types";
 import Asterisk from "../Asterisk";
 import { IoHelp } from "react-icons/io5";
 import { customTheme } from "../../theme";
 
 const SelectAsyncPaginate = ({
+  promiseOptions,
   register,
   name,
   options,
@@ -28,33 +27,9 @@ const SelectAsyncPaginate = ({
   helpText,
   noOptionsMessage = "Não há itens para selecionar",
   helpIcon,
+  CustomOption
 }: ISelectAsyncPaginate) => {
   const { isOpen, onToggle, onClose } = useDisclosure();
-
-  const promiseOptions = async (search: string, _loadedOptions: any, { page }: any) => {
-    const path = 'pessoas/index';
-    const itensPerPage = 20;
-
-    const { data } = await apiPrados.get(path, {
-      params: {
-        page,
-        size: itensPerPage,
-        nome: search,
-        orderBy: 'nome'
-      },
-    });
-
-    return {
-      options: data.rows.map((item: IPessoa) => ({
-        label: item.nome,
-        value: item.id
-      })),
-      hasMore: data.count > (page * itensPerPage),
-      additional: {
-        page: page + 1,
-      }
-    }
-  }
 
   return (
     <Stack sx={styles} flex="1" minW={minW} maxW={maxW} position="relative">
@@ -158,10 +133,10 @@ const SelectAsyncPaginate = ({
             }),
           }}
           isDisabled={isDisabled}
+          components={CustomOption && { Option: CustomOption }} // Use the custom option component
         />
         {errors && label && (
           <Text color="brand.500" fontSize={14}>
-            {/* O campo {label.replace("?", " ").replace(":", " ")} é obrigatório */}
             {errors.message}
           </Text>
         )}

@@ -36,6 +36,7 @@ const SelectForm = ({
   helpText,
   noOptionsMessage = "Não há itens para selecionar",
   helpIcon,
+  CustomOption
 }: ISelectForm) => {
   const { isOpen, onToggle, onClose } = useDisclosure();
 
@@ -137,6 +138,7 @@ const SelectForm = ({
             }),
           }}
           isDisabled={isDisabled}
+          components={CustomOption && { Option: CustomOption }}
         />
         {errors && label && (
           <Text color="brand.500" fontSize={14}>

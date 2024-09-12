@@ -1,6 +1,7 @@
 import { SystemStyleObject } from "@chakra-ui/react"
 import { ReactNode } from "react"
 import { UseFormRegister } from "react-hook-form"
+import { SelectComponents } from "react-select/dist/declarations/src/components"
 
 export interface ISelectForm {
   register?: UseFormRegister<any>
@@ -24,6 +25,7 @@ export interface ISelectForm {
   helpText?: ReactNode
   noOptionsMessage?: string
   helpIcon?: JSX.Element
+  CustomOption?: SelectComponents
 }
 export interface IOption {
   label: string

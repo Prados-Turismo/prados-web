@@ -29,6 +29,7 @@ import useLocalEmbarque from "../../../../hooks/useLocalEmbarque";
 import { formattingDate } from "../../../../utils/formattingDate";
 import Opcionais from "../Opcionais";
 import SelectAsyncPaginate from "../../../../components/SelectAsyncPaginate";
+import usePessoas from "../../../../hooks/usePessoas";
 
 const opcionalSchema = z.object({
   id: z.string(),
@@ -97,6 +98,7 @@ const ModalRegisterReservas = ({
   handleClose,
 }: IModalRegisterReserva) => {
   const { user } = useGlobal();
+  const { pessoaPromiseOptions } = usePessoas();
   const { createReserva } = useReservas()
   const { getExcursoes, findExcursao } = useExcursoes()
   const { getAllFormaPagamentos } = useFormaPagamento()
@@ -232,6 +234,7 @@ const ModalRegisterReservas = ({
           isRequired
           isMulti
           isSearchable
+          promiseOptions={pessoaPromiseOptions}
           handleChange={(option) => {
             setValue("passageiros", option?.map((item: IOption) => item?.value.toString()) || []);
             onSelectPassageiros(option)

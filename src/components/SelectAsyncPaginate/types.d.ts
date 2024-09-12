@@ -3,6 +3,7 @@ import { ReactNode } from "react"
 import { UseFormRegister } from "react-hook-form"
 
 export interface ISelectAsyncPaginate {
+  promiseOptions: AsyncPaginate.IPromiseOptions<IOption>
   register?: UseFormRegister<any>
   name: string
   label?: string | JSX.Element
@@ -23,6 +24,7 @@ export interface ISelectAsyncPaginate {
   helpText?: ReactNode
   noOptionsMessage?: string
   helpIcon?: JSX.Element
+  CustomOption?: SelectComponents
 }
 export interface IOption {
   label: string

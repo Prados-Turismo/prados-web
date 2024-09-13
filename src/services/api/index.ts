@@ -59,6 +59,7 @@ apiPrados.interceptors.request.use((config) => {
 
   if (accessToken) {
     config.headers.Authorization = accessToken
+    config.headers["ngrok-skip-browser-warning"] = "true"
   }
   return config
 })

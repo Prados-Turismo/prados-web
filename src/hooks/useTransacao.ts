@@ -138,7 +138,8 @@ const deleteTransacao = (): IDeleteTransacaoResponse => {
 
       try {
         await apiPrados.patch(urlPath).then(function () {
-          queryClient.invalidateQueries([keys.financeiro, keys.contaBancaria])
+          queryClient.invalidateQueries([keys.financeiro])
+          queryClient.invalidateQueries([keys.contaBancaria])
 
           useToastStandalone({
             title: "Excluída com sucesso!",

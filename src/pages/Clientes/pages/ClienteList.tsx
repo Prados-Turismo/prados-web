@@ -27,7 +27,9 @@ import useFiles from "../../../hooks/useFiles";
 import { FaFileExcel } from "react-icons/fa";
 import { currencyBRLFormat } from "../../../utils/currencyBRLFormat";
 import { formattingDate } from "../../../utils/formattingDate";
-
+import { FcMoneyTransfer } from "react-icons/fc";
+import { ICreditoCliente } from "../../../models/credito-cliente.model";
+import ModalCreditoCliente from "../components/ModalCreditoCliente";
 
 const ClienteList = () => {
     const { getPessoas, deletePessoa } = usePessoas();
@@ -38,6 +40,8 @@ const ClienteList = () => {
     const [modalRemoveCliente, setModalRemoveCliente] = useState(false);
     const [clienteData, setClienteData] = useState<IPessoa | undefined>();
     const [currentPage, setCurrentPage] = useState(1);
+    const [modalCreditoCliente, setModalCreditoCliente] = useState(false)
+    const [dataCreditoCliente, setDataCreditoCliente] = useState<string>('')
     const { generateCsvPessoas } = useFiles()
     const registerPerPage = 10;
 
@@ -192,15 +196,18 @@ const ClienteList = () => {
                                                         {formattingDate(item.CreditoClientes[item.CreditoClientes.length - 1]?.dataCadastro)}
                                                     </TD>
                                                     <TD gap={3}>
-                                                        <MdEdit
-                                                            size={20}
-                                                            // color={customTheme.colors.brandSecond.first}
-                                                            cursor="pointer"
-                                                            onClick={() => {
-                                                                setClienteData(item)
-                                                                setModalUpdateCliente(true)
-                                                            }}
-                                                        />
+
+                                                        <ButtonIcon tooltip="Editar">
+                                                            <MdEdit
+                                                                size={20}
+                                                                // color={customTheme.colors.brandSecond.first}
+                                                                cursor="pointer"
+                                                                onClick={() => {
+                                                                    setClienteData(item)
+                                                                    setModalUpdateCliente(true)
+                                                                }}
+                                                            />
+                                                        </ButtonIcon>
 
                                                         <ButtonIcon tooltip="Excluir Cliente">
                                                             <Button
@@ -216,6 +223,19 @@ const ClienteList = () => {
                                                                 <FiTrash />
                                                             </Button>
                                                         </ButtonIcon>
+
+                                                        {item.CreditoClientes.length ? (
+                                                            <ButtonIcon tooltip="Ver Crédito">
+                                                                <FcMoneyTransfer
+                                                                    size={20}
+                                                                    onClick={() => {
+                                                                        setDataCreditoCliente(item.id)
+                                                                        setModalCreditoCliente(true)
+                                                                    }}
+                                                                />
+                                                            </ButtonIcon>
+                                                        ) : ('')}
+
                                                     </TD>
                                                 </TR>
                                             ))}
@@ -233,7 +253,7 @@ const ClienteList = () => {
                         )}
 
                         {data.length === 0 && (
-                            <AlertNoDataFound title="Nenhuma cliente encontrado" />
+                            <AlertNoDataFound title="Nenhum cliente encontrado" />
                         )}
                     </>
                 )}
@@ -274,6 +294,18 @@ const ClienteList = () => {
                     size="md"
                 ></AlertModal>
             )}
+
+            <SimpleModal
+                title="Crédito Cliente"
+                size="full"
+                isOpen={modalCreditoCliente}
+                handleModal={setModalCreditoCliente}
+            >
+                <ModalCreditoCliente
+                    handleClose={() => setModalCreditoCliente(false)}
+                    id={dataCreditoCliente}
+                />
+            </SimpleModal>
         </>
     );
 };

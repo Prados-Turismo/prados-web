@@ -41,4 +41,3 @@ export interface IDeleteContaBancariaResponse {
   isLoading: boolean;
   mutate: UseMutateFunction<void, unknown, string, unknown>;
 }
-

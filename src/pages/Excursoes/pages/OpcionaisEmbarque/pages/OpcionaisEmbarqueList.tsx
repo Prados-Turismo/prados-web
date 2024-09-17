@@ -19,7 +19,7 @@ import useExcursaoEmbarque from "../../../../../hooks/useExcursaoEmbarque";
 import { useGlobal } from "../../../../../contexts/UserContext";
 import useLocalEmbarque from "../../../../../hooks/useLocalEmbarque";
 
-const EmbarqueList = () => {
+const OpcionaisEmbarqueList = () => {
   const { id: _id } = useParams();
   const navigate = useNavigate();
   const { getAllPassageiros } = useExcursaoPassageiro();
@@ -161,7 +161,7 @@ const EmbarqueList = () => {
                                 setcheckEmbarqueDesembarque(event.target.checked ? true : false)
                                 if (!isLoadingCreateEmbarque && !isLoadingUpdateEmbarque) {
                                   embarqueDesembarque({
-                                    'codigoPassageiro': item.id,
+                                    'codigoPassageiro': item.Pessoa.id,
                                     'codigoLocalEmbarque': item.LocalEmbarque.id,
                                     'embarcou': event.target.checked ? true : false,
                                     'horaEmbarque': new Date().toTimeString().split(' ')[0],
@@ -199,4 +199,4 @@ const EmbarqueList = () => {
   );
 };
 
-export default EmbarqueList;
+export default OpcionaisEmbarqueList;

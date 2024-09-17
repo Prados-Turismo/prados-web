@@ -224,15 +224,16 @@ const PassageirosList = () => {
                   <>
                     {summary.map((value) => (
                       <>
-                        <span><b>{`${value.nome}:`}</b> {`${value.sum}`}</span>
+                        <span
+                          onClick={() => {
+                            navigate(`/${value.id}`)
+                          }}>
+                          <b>{`${value.nome}:`}</b> {`${value.sum}`}
+                        </span>
                       </>
                     ))}
                     <br />
-                    <span style={{ cursor: 'pointer' }}
-                      onClick={() => {
-                        setModalAllOpcionais(true)
-                      }}
-                    >
+                    <span style={{ cursor: 'pointer' }}>
                       <b>Total:</b> {total}
                     </span>
                   </>

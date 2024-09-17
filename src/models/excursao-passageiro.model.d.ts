@@ -102,6 +102,7 @@ export interface IDeleteExcursaoPassageiroResponse {
 }
 
 export interface IExcursaoPassageiroSummary {
+  id: string
   nome: string
   sum: number
 }

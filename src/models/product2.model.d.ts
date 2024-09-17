@@ -37,6 +37,12 @@ export interface IProductResponse {
   isLoading: boolean;
 }
 
+export interface IProductListResponse {
+  data: IDataProduct;
+  isLoading: boolean;
+}
+
+
 export interface ICreateProductArgs {
   nome: string;
   estoque: number

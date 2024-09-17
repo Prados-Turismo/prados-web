@@ -8,42 +8,32 @@ import { TBody, TD, THead, TR, Table } from "../../../../../components/Table";
 import { Content, SectionTop } from "./styled";
 
 // Hooks and utils
-import ReactSelect from "react-select";
-import { ISelect } from "../../../../../models/generics.model";
 import AlertNoDataFound from "../../../../../components/AlertNoDataFound";
 import { useNavigate, useParams } from "react-router-dom";
-import useExcursaoPassageiro from "../../../../../hooks/useExcursaoPassageiros";
-import useExcursao from "../../../../../hooks/useExcursao";
-import { IExcursaoEmbarque, IUpdateExcursaoEmbarqueArgs, IUpdateExcursaoEmbarqueResponse } from "../../../../../models/excursao-embarque.model";
-import useExcursaoEmbarque from "../../../../../hooks/useExcursaoEmbarque";
-import { useGlobal } from "../../../../../contexts/UserContext";
-import useLocalEmbarque from "../../../../../hooks/useLocalEmbarque";
+import useOpcionalEmbarque from "../../../../../hooks/useOpcionalEmbarque";
+import useProduct from "../../../../../hooks/useProducts";
+import { IUpdateOpcionalEmbarqueArgs } from "../../../../../models/opcional-embarque.model";
+import { formattingDate } from "../../../../../utils/formattingDate";
 
 const OpcionaisEmbarqueList = () => {
-  const { id: _id } = useParams();
+  const { id: _id, idExcursao: _idExcursao } = useParams();
   const navigate = useNavigate();
-  const { getAllPassageiros } = useExcursaoPassageiro();
-  const { getExcursao } = useExcursao();
-  const { createExcursaoEmbarque, updateExcursaoEmbarque } = useExcursaoEmbarque()
-  const { getLocalEmbarque } = useLocalEmbarque()
-  const [checkEmbarqueDesembarque, setcheckEmbarqueDesembarque] = useState<boolean>(false);
-  const { user } = useGlobal();
+  const { getOpcionalEmbarque, createOpcionalEmbarque, updateOpcionalEmbarque, } = useOpcionalEmbarque();
+  const { findProduto } = useProduct();
 
-  const { data: dataExcursao, isLoading: loadingExcursao } = getExcursao(_id || '');
-  const [localEmbarqueSelected, setLocalEmbarqueSelected] = useState<ISelect | null>();
+  const { data: dataProduto, isLoading: loadingOpcional } = findProduto(_id || '');
   const [currentPage, setCurrentPage] = useState(1);
   const registerPerPage = 10;
 
-  const { data, count, isLoading } = getAllPassageiros({
+  const { data, count, isLoading } = getOpcionalEmbarque({
     size: registerPerPage,
     page: currentPage,
-    localEmbarque: typeof localEmbarqueSelected?.value == 'string' ? localEmbarqueSelected.value : null
-  }, _id || '');
-  const { mutate: mutateToCreateEmbarque, isLoading: isLoadingCreateEmbarque } = createExcursaoEmbarque()
-  const { mutate: mutateToUpdateEmbarque, isLoading: isLoadingUpdateEmbarque } = updateExcursaoEmbarque()
-  const { data: localEmbarqueData, isLoading: isLoadingLocalEmbarque } = getLocalEmbarque()
+  }, _id || '', _idExcursao || '');
 
-  const embarqueDesembarque = (dadosEmbarque: IUpdateExcursaoEmbarqueArgs) => {
+  const { mutate: mutateToCreateEmbarque, isLoading: isLoadingCreateEmbarque } = createOpcionalEmbarque()
+  const { mutate: mutateToUpdateEmbarque, isLoading: isLoadingUpdateEmbarque } = updateOpcionalEmbarque()
+
+  const embarqueDesembarque = (dadosEmbarque: IUpdateOpcionalEmbarqueArgs) => {
     if (!isLoadingCreateEmbarque && !isLoadingUpdateEmbarque) {
       if (dadosEmbarque.id) {
         mutateToUpdateEmbarque(dadosEmbarque)
@@ -59,7 +49,7 @@ const OpcionaisEmbarqueList = () => {
         <Button
           variant="outline"
           width="74px"
-          onClick={() => navigate("/excursoes")}
+          onClick={() => navigate(`/excursoes/${_idExcursao}/passageiros`)}
         >
           Voltar
         </Button>
@@ -69,50 +59,20 @@ const OpcionaisEmbarqueList = () => {
             Embarque:
           </Text>
           <Text fontSize="2xl">
-            {dataExcursao.nome}
+            {dataProduto.nome}
           </Text>
         </Flex>
       </SectionTop>
 
       <Content className="contentMain">
-        <Flex width="100%" gap="15px" alignItems="flex-end" flexWrap="wrap">
-          <Flex flexDirection="column" gap="5px" width="500px">
-            <span>Local de Embarque</span>
 
-            <ReactSelect
-              className="select-fields"
-              classNamePrefix="select"
-              closeMenuOnSelect={true}
-              isSearchable={true}
-              value={localEmbarqueSelected}
-              placeholder="Selecionar"
-              noOptionsMessage={() => "Nenhum local encontrado"}
-              onChange={(item) => {
-                setLocalEmbarqueSelected(item);
-              }}
-              options={localEmbarqueData.map((local) => {
-                return { value: local.id, label: local.nome }
-              })}
-            />
-          </Flex>
-          <Button
-            borderRadius="5px"
-            variant="outline"
-            onClick={() => {
-              setLocalEmbarqueSelected(null);
-            }}
-          >
-            Limpar Filtros
-          </Button>
-        </Flex>
-
-        {isLoading && (
+        {isLoading || loadingOpcional && (
           <Flex h="100%" alignItems="center">
             <Loading />
           </Flex>
         )}
 
-        {!isLoading && (
+        {!isLoading && !loadingOpcional && (
           <>
             {data.length > 0 && (
               <>
@@ -120,26 +80,18 @@ const OpcionaisEmbarqueList = () => {
                   <Table>
                     <THead padding="0 30px 0 30px">
                       <TD>Passageiro</TD>
-                      <TD>Local de Embarque</TD>
-                      <TD>Hora Prevista</TD>
                       <TD>Hora Embarque</TD>
                       <TD>Embarcou?</TD>
                     </THead>
 
                     <TBody>
                       {data.map((item) => (
-                        <TR key={item.Pessoa.id}>
+                        <TR key={item.id}>
                           <TD>
                             {item.Pessoa.nome}
                           </TD>
                           <TD>
-                            {item?.LocalEmbarque.nome}
-                          </TD>
-                          <TD>
-                            {item.LocalEmbarque.horaEmbarque}
-                          </TD>
-                          <TD>
-                            {item.horaEmbarque}
+                            {formattingDate(item.data, true)}
                           </TD>
                           <TD>
                             <Checkbox
@@ -158,16 +110,14 @@ const OpcionaisEmbarqueList = () => {
                                 },
                               }}
                               onChange={(event) => {
-                                setcheckEmbarqueDesembarque(event.target.checked ? true : false)
                                 if (!isLoadingCreateEmbarque && !isLoadingUpdateEmbarque) {
+                                  let opcionalId = item.Reservas.Opcionais.find((opcional) => opcional.Produto.id == _id)?.id || ''
                                   embarqueDesembarque({
-                                    'codigoPassageiro': item.Pessoa.id,
-                                    'codigoLocalEmbarque': item.LocalEmbarque.id,
-                                    'embarcou': event.target.checked ? true : false,
-                                    'horaEmbarque': new Date().toTimeString().split(' ')[0],
-                                    'codigoExcursao': _id || '',
-                                    'usuarioCadastro': user?.id || '',
-                                    'id': item.hasBoarded
+                                    idPassageiro: item.id,
+                                    idOpcional: opcionalId,
+                                    embarcou: event.target.checked ? true : false,
+                                    data: new Date(),
+                                    id: item.hasBoarded
                                   })
                                   item.embarcou = event.target.checked ? true : false
                                 }

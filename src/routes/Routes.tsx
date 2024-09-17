@@ -59,6 +59,7 @@ import RankingCliente from "../pages/RankingCliente";
 import RelatorioClientes from "../pages/RelatorioClientes";
 import Vendas from "../pages/Vendas";
 import Auditoria from "../pages/Auditoria";
+import OpcionaisEmbarque from "../pages/Excursoes/pages/OpcionaisEmbarque";
 
 export const AppRoutes = () => {
   const location = useLocation();
@@ -111,6 +112,7 @@ export const AppRoutes = () => {
         <Route path="/relatorios/clientes" element={<RelatorioClientes />} />
         <Route path="/vendas" element={<Vendas />} />
         <Route path="/relatorios/auditoria" element={<Auditoria />} />
+        <Route path="/excursoes/:idExcursao/opcional-embarque/:id" element={<OpcionaisEmbarque />} />
 
         <Route path="/politica-privacidade" element={<PrivacyPolicy />} />
 

@@ -13,7 +13,8 @@ import {
   ICreateProductArgs,
   ICreateProductResponse,
   IUpdateProductArgs,
-  IUpdateProductResponse
+  IUpdateProductResponse,
+  IProductListResponse
 } from "../models/product2.model";
 
 // Keys
@@ -168,12 +169,37 @@ const deleteProduto = (): IUpdateProductResponse => {
   }
 }
 
+const findProduto = (id: string): IProductListResponse => {
+
+  const { data, isLoading } = useQuery(
+    [keys.products],
+
+    async () => {
+      const path = `produtos/find/${id}`
+      try {
+        const { data } = await apiPrados.get(path)
+
+        return data
+      } catch (error: any) {
+        throw new Warning(error.response.data.message, error.response.status);
+      }
+    }
+  )
+
+  return {
+    data: data || [],
+    isLoading
+  };
+
+}
+
 export default function useProduct() {
   return {
     getProducts,
     createProduct,
     updateProduct,
     deleteProduto,
-    getAllProducts
+    getAllProducts,
+    findProduto
   };
 }

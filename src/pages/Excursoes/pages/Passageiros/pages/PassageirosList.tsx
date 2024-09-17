@@ -26,6 +26,7 @@ import { FaWhatsapp } from "react-icons/fa6";
 import { FaListOl } from "react-icons/fa";
 import { IExcursaoPassageiro, IOpcionais } from "../../../../../models/excursao-passageiro.model";
 import ModalDetailSummary from "../components/ModalDetailSummary";
+import { formattingDate } from "../../../../../utils/formattingDate";
 
 const PassageirosList = () => {
   const { id: _id } = useParams();
@@ -98,7 +99,7 @@ const PassageirosList = () => {
                   Passageiros:
                 </Text>
                 <Text fontSize="2xl">
-                  {dataExcursao.nome}
+                  {`${formattingDate(dataExcursao.dataInicio)} à ${formattingDate(dataExcursao.dataFim)} ${dataExcursao.nome}`}
                 </Text>
               </Flex>
             </SectionTop>
@@ -224,9 +225,9 @@ const PassageirosList = () => {
                   <>
                     {summary.map((value) => (
                       <>
-                        <span
+                        <span style={{ cursor: 'pointer' }}
                           onClick={() => {
-                            navigate(`/${value.id}`)
+                            navigate(`/excursoes/${_id}/opcional-embarque/${value.id}`)
                           }}>
                           <b>{`${value.nome}:`}</b> {`${value.sum}`}
                         </span>

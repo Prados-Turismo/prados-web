@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Box, Button, Flex, Input, FormControl, FormLabel } from "@chakra-ui/react";
+import { Box, Button, Flex, Input } from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -17,12 +17,11 @@ import { FieldWrap } from "./styled";
 import ReactSelect from "react-select";
 // import useOrigem from "../../../../hooks/useOrigem";
 import { useGlobal } from "../../../../contexts/UserContext";
-import FormInputNumber from "../../../../components/FormInputNumber";
 import FormInput from "../../../../components/FormInput";
-import { useState } from "react";
 import { IDataPacote } from "../../../../models/pacote.model";
-import SelectForm from "../../../../components/SelectForm";
 import useProduct from "../../../../hooks/useProducts";
+import SelectForm from "../../../../components/SelectForm";
+import SelectImageOption from "../../../../components/SelectImageOption";
 
 const handleSubmitRegisterSchema = z.object({
   nome: z
@@ -31,6 +30,12 @@ const handleSubmitRegisterSchema = z.object({
       message: fieldRequired("nome"),
     }),
   descricao: z
+    .string()
+    .optional(),
+  foto: z
+    .string()
+    .optional(),
+  fotoEsgotado: z
     .string()
     .optional(),
   origem: z
@@ -67,7 +72,6 @@ const ModalUpdatePacote = ({
 
   const {
     setValue,
-    getValues,
     reset,
     register,
     handleSubmit,
@@ -77,6 +81,8 @@ const ModalUpdatePacote = ({
     defaultValues: {
       nome: data.nome,
       descricao: data.descricao || '',
+      foto: 'data.Foto.id',
+      fotoEsgotado: 'data.fotoEsgotado.id',
       origem: data.origem,
       tipoTransporte: data.tipoTransporte,
       opcionais: data.Produto.map((opcional) => { return opcional.id })
@@ -154,6 +160,52 @@ const ModalUpdatePacote = ({
           onChangeTextarea={(event) => {
             setValue("descricao", event.target.value || '');
           }}
+        />
+
+        <SelectForm
+          name="foto"
+          label="Foto"
+          minW="135px"
+          isSearchable
+          isLoading={isLoadingProduto}
+          handleChange={(option) => {
+              setValue("foto", option?.value);
+          }}
+          options={dataProduto
+              ?.map((foto) => ({
+                  label: foto?.nome,
+                  value: foto?.id,
+                  imageUrl: "https://www.petz.com.br/blog/wp-content/uploads/2022/06/animais-selvagens-3.jpg"
+              }))}
+          defaultValue={{
+            value: 'data.Foto.id',
+            label: 'data.Foto.nome',
+          }}
+          CustomOption={SelectImageOption}
+          errors={errors.foto}
+        />
+
+        <SelectForm
+          name="fotoEsgotado"
+          label="Foto Esgotado"
+          minW="135px"
+          isSearchable
+          isLoading={isLoadingProduto}
+          handleChange={(option) => {
+              setValue("fotoEsgotado", option?.value);
+          }}
+          options={dataProduto
+              ?.map((foto) => ({
+                  label: foto?.nome,
+                  value: foto?.id,
+                  imageUrl: "https://www.petz.com.br/blog/wp-content/uploads/2022/06/animais-selvagens-3.jpg"
+              }))}
+          defaultValue={{
+            value: 'data.FotoEsgotado.id',
+            label: 'data.FotoEsgotado.nome',
+          }}
+          CustomOption={SelectImageOption}
+          errors={errors.fotoEsgotado}
         />
 
         <FieldWrap>

@@ -41,6 +41,7 @@ const ReservasList = () => {
   const [creditoData, setCreditoData] = useState<IReserva>();
   const [reservaData, setReservaData] = useState<IReserva | undefined>();
   const [currentPage, setCurrentPage] = useState(1);
+  const [nome, setNome] = useState(null || '')
 
   const registerPerPage = 10;
   const navigate = useNavigate()
@@ -50,7 +51,9 @@ const ReservasList = () => {
 
   const { data, count, isLoading } = getReserva({
     size: registerPerPage,
-    page: currentPage
+    page: currentPage,
+    status: statusSelected?.value,
+    filter: nome
   });
 
   const onConfirmRemoveReserva = () => {
@@ -86,9 +89,10 @@ const ReservasList = () => {
             <span>Buscar Reserva</span>
             <FieldSearch
               placeholder="Nome"
-              handleSearch={() => {
+              handleSearch={(event) => {
                 setResetFilter(false);
                 setCurrentPage(1);
+                setNome(event)
               }}
               reset={resetFilter}
             />
@@ -109,12 +113,16 @@ const ReservasList = () => {
               }}
               options={[
                 {
-                  label: "Completo",
-                  value: 1,
+                  label: 'Todos',
+                  value: 'all'
                 },
                 {
-                  label: "Incompleto",
-                  value: 2,
+                  label: "Pendente",
+                  value: 0,
+                },
+                {
+                  label: "Efetivado",
+                  value: 1,
                 },
               ]}
             />

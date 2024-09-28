@@ -32,6 +32,7 @@ const CategoriaTransacaoList = () => {
     const [modalRemoveCategoriaTransacao, setModalRemoveCategoriaTransacao] = useState(false);
     const [categoriaTransacaoData, setCategoriaTransacaoData] = useState<ICategoriaTransacao | undefined>();
     const [currentPage, setCurrentPage] = useState(1);
+    const [nome, setNome] = useState(null || '')
     const registerPerPage = 10;
 
     const { mutate: mutateToDeleteCategoriaTransacao } = deleteCategoriaTransacao();
@@ -39,7 +40,8 @@ const CategoriaTransacaoList = () => {
 
     const { data, count, isLoading } = getCategoriaTransacao({
         size: registerPerPage,
-        page: currentPage
+        page: currentPage,
+        nome
     });
 
     const onConfirmRemoveCategoria = () => {
@@ -76,39 +78,14 @@ const CategoriaTransacaoList = () => {
                         <span>Buscar Categoria Transação</span>
                         <FieldSearch
                             placeholder="Nome"
-                            handleSearch={() => {
+                            handleSearch={(event) => {
                                 setResetFilter(false);
                                 setCurrentPage(1);
+                                setNome(event)
                             }}
                             reset={resetFilter}
                         />
                     </div>
-                    <Flex flexDirection="column" gap="5px" width="300px">
-                        <span>Status</span>
-
-                        <ReactSelect
-                            className="select-fields"
-                            classNamePrefix="select"
-                            closeMenuOnSelect={true}
-                            isSearchable={true}
-                            value={statusSelected}
-                            placeholder="Selecionar"
-                            noOptionsMessage={() => "Nenhum Status encontrado"}
-                            onChange={(item) => {
-                                setStatusSelected(item);
-                            }}
-                            options={[
-                                {
-                                    label: "Completo",
-                                    value: 1,
-                                },
-                                {
-                                    label: "Incompleto",
-                                    value: 2,
-                                },
-                            ]}
-                        />
-                    </Flex>
                     <Button
                         borderRadius="5px"
                         variant="outline"

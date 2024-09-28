@@ -1,6 +1,7 @@
 export interface ISubCategoriaTransacaoArgs {
   page: number;
   size: number;
+  nome: string
 }
 
 export interface ISubCategoriaTransacao {

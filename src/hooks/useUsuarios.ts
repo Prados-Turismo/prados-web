@@ -13,12 +13,14 @@ import {
 import { Warning } from "../errors";
 import { keys, queryClient } from "../services/query";
 
-const getUsuario = ({ page, size }: IUsuarioArgs): IUsuarioResponse => {
+const getUsuario = ({ page, size, nome, status }: IUsuarioArgs): IUsuarioResponse => {
 
   const { data, isLoading } = useQuery(
     [
       keys.usuario,
-      page
+      page,
+      nome,
+      status
     ],
     async () => {
       const path = 'usuarios/index';
@@ -28,6 +30,8 @@ const getUsuario = ({ page, size }: IUsuarioArgs): IUsuarioResponse => {
           params: {
             page,
             size,
+            nome,
+            status,
             orderBy: 'nome'
           },
         });

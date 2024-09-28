@@ -1,6 +1,8 @@
 export interface IUsuarioArgs {
   page: number;
   size: number;
+  status?: string | number | null
+  nome: string
 }
 
 export interface IUsuario {

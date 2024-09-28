@@ -33,6 +33,7 @@ const FornecedorList = () => {
     const [modalRemoveFornecedor, setModalRemoveFornecedor] = useState(false);
     const [fornecedorData, setFornecedorData] = useState<IFornecedor | undefined>();
     const [currentPage, setCurrentPage] = useState(1);
+    const [nome, setNome] = useState(null || '')
     const registerPerPage = 10;
 
     const { mutate: mutateToDeleteFornecedor } = deleteFornecedor();
@@ -40,7 +41,9 @@ const FornecedorList = () => {
 
     const { data, count, isLoading } = getFornecedores({
         size: registerPerPage,
-        page: currentPage
+        page: currentPage,
+        nome,
+        status: statusSelected?.value
     });
 
     const onConfirmRemoveFornecedor = () => {
@@ -77,9 +80,10 @@ const FornecedorList = () => {
                         <span>Buscar Fornecedor</span>
                         <FieldSearch
                             placeholder="Nome/CNPJ"
-                            handleSearch={() => {
+                            handleSearch={(event) => {
                                 setResetFilter(false);
                                 setCurrentPage(1);
+                                setNome(event)
                             }}
                             reset={resetFilter}
                         />
@@ -100,12 +104,16 @@ const FornecedorList = () => {
                             }}
                             options={[
                                 {
-                                    label: "Completo",
+                                    label: "Todos",
+                                    value: "all"
+                                },
+                                {
+                                    label: "Ativo",
                                     value: 1,
                                 },
                                 {
-                                    label: "Incompleto",
-                                    value: 2,
+                                    label: "Inativo",
+                                    value: 0,
                                 },
                             ]}
                         />

@@ -1,4 +1,4 @@
-import { Button, Flex, TableContainer, Text } from "@chakra-ui/react";
+import { Button, Flex, Input, TableContainer, Text } from "@chakra-ui/react";
 import { useState } from "react";
 import { IoIosAdd, IoIosPeople, IoMdBus, IoMdPaper, IoMdTrash } from "react-icons/io";
 import FieldSearch from "../../../components/FieldSearch";
@@ -40,13 +40,17 @@ const ExcursaoList = () => {
   const [nome, setNome] = useState(null || '')
   const [excursaoData, setExcursaoData] = useState<IExcursao | undefined>();
   const [currentPage, setCurrentPage] = useState(1);
+  const [dataInicio, setDataInicio] = useState(null || '')
+  const [dataFim, setDataFim] = useState(null || '')
   const registerPerPage = 10;
 
   const { data, count, isLoading } = getExcursoes({
     size: registerPerPage,
     page: currentPage,
-    concluida: statusSelected?.value,
-    nome
+    status: statusSelected?.value,
+    nome,
+    dataInicio,
+    dataFim
   });
 
   const { mutate: mutateToDeleteExcursao, isLoading: isLoadingDelete } = deleteExcursao();
@@ -110,6 +114,35 @@ const ExcursaoList = () => {
               reset={resetFilter}
             />
           </div>
+
+          <Flex flexDirection="column" gap="5px" width="160px">
+            <span>Data Início</span>
+            <Input
+              type="date"
+              placeholder="dd/mm/aaaa"
+              max="2099-12-31"
+              maxLength={10}
+              value={dataInicio}
+              onChange={(event) => {
+                setDataInicio(event.target.value)
+              }}
+            />
+          </Flex>
+
+          <Flex flexDirection="column" gap="5px" width="160px">
+            <span>Data Fim</span>
+            <Input
+              type="date"
+              placeholder="dd/mm/aaaa"
+              value={dataFim}
+              max="2099-12-31"
+              maxLength={10}
+              onChange={(event) => {
+                setDataFim(event.target.value)
+              }}
+            />
+          </Flex>
+
           <Flex flexDirection="column" gap="5px" width="300px">
             <span>Status</span>
 
@@ -146,6 +179,8 @@ const ExcursaoList = () => {
             onClick={() => {
               setResetFilter(true);
               setStatusSelected(null);
+              setDataInicio('')
+              setDataFim('')
             }}
           >
             Limpar Filtros

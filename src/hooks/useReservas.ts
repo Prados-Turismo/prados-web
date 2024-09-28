@@ -15,21 +15,42 @@ import {
 import { Warning } from "../errors";
 import { keys, queryClient } from "../services/query";
 
-const getReserva = ({ page, size }: IReservaArgs): IReservaResponse => {
+const getReserva = (
+  {
+    page,
+    size,
+    status,
+    filter
+  }: IReservaArgs): IReservaResponse => {
 
   const { data, isLoading } = useQuery(
     [
       keys.reserva,
-      page
+      page,
+      status,
+      filter
     ],
     async () => {
       const path = 'reserva/index';
+      let nome, reserva
+
+      if (filter) {
+
+        if (/\d/.test(filter)) {
+          reserva = parseInt(filter)
+        } else {
+          nome = filter
+        }
+      }
 
       try {
         const { data } = await apiPrados.get(path, {
           params: {
             page,
-            size
+            size,
+            status,
+            reserva,
+            nome
           },
         });
 

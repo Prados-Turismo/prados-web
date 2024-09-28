@@ -1,6 +1,8 @@
 export interface IReservaArgs {
   page: number;
   size: number;
+  status?: number | string | null
+  filter?: string
 }
 
 export interface IReserva {

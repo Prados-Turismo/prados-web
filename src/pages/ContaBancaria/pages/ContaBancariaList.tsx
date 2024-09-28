@@ -33,6 +33,7 @@ const ContaBancariaList = () => {
     const [modalRemoveContaBancaria, setModalRemoveContaBancaria] = useState(false);
     const [contaBancariaData, setContaBancariaData] = useState<IContaBancaria | undefined>();
     const [currentPage, setCurrentPage] = useState(1);
+    const [nome, setNome] = useState(null || '')
     const registerPerPage = 10;
 
     const { mutate: mutateToDeleteContaBancaria } = deleteContaBancaria();
@@ -40,7 +41,9 @@ const ContaBancariaList = () => {
 
     const { data, count, isLoading } = getContaBancaria({
         size: registerPerPage,
-        page: currentPage
+        page: currentPage,
+        nome,
+        status: statusSelected?.value
     });
 
     const onConfirmRemoveContaBancaria = () => {
@@ -58,7 +61,7 @@ const ContaBancariaList = () => {
                         </Text>
                     </Flex>
                 </SectionTop>
-                
+
                 <SectionTop className="contentTop">
                     <Button
                         leftIcon={<IoIosAdd />}
@@ -77,9 +80,10 @@ const ContaBancariaList = () => {
                         <span>Buscar Conta Bancária</span>
                         <FieldSearch
                             placeholder="Nome"
-                            handleSearch={() => {
+                            handleSearch={(event) => {
                                 setResetFilter(false);
                                 setCurrentPage(1);
+                                setNome(event)
                             }}
                             reset={resetFilter}
                         />
@@ -100,12 +104,16 @@ const ContaBancariaList = () => {
                             }}
                             options={[
                                 {
-                                    label: "Completo",
+                                    label: 'Todos',
+                                    value: 'all'
+                                },
+                                {
+                                    label: "Ativo",
                                     value: 1,
                                 },
                                 {
-                                    label: "Incompleto",
-                                    value: 2,
+                                    label: "Inativo",
+                                    value: 0,
                                 },
                             ]}
                         />

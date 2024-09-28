@@ -13,21 +13,27 @@ import {
 import { Warning } from "../errors";
 import { keys, queryClient } from "../services/query";
 
-const getContaBancaria = ({ page, size }: IContaBancariaArgs): IContaBancariaResponse => {
+const getContaBancaria = ({ page, size, nome, status }: IContaBancariaArgs): IContaBancariaResponse => {
 
   const { data, isLoading } = useQuery(
     [
       keys.contaBancaria,
-      page
+      page,
+      nome,
+      status
     ],
     async () => {
       const path = 'conta-bancaria/index';
+      let saldo = /\d/.test(nome) ? parseInt(nome) : null
 
       try {
         const { data } = await apiPrados.get(path, {
           params: {
             page,
             size,
+            saldo,
+            nome,
+            status,
             orderBy: 'nome'
           },
         });

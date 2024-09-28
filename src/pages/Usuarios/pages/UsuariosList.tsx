@@ -32,6 +32,7 @@ const UsuariosList = () => {
     const [modalRemoveUsuario, setModalRemoveUsuario] = useState(false);
     const [UsuarioData, setUsuarioData] = useState<IUsuario | undefined>();
     const [currentPage, setCurrentPage] = useState(1);
+    const [nome, setNome] = useState(null || '')
     const registerPerPage = 10;
 
     const { mutate: mutateToDeleteUsuario } = deleteUsuario();
@@ -39,7 +40,9 @@ const UsuariosList = () => {
 
     const { data, count, isLoading } = getUsuario({
         size: registerPerPage,
-        page: currentPage
+        page: currentPage,
+        nome,
+        status: statusSelected?.value
     });
 
     const onConfirmRemoveUsuario = () => {
@@ -76,9 +79,10 @@ const UsuariosList = () => {
                         <span>Buscar Usuário</span>
                         <FieldSearch
                             placeholder="Nome"
-                            handleSearch={() => {
+                            handleSearch={(event) => {
                                 setResetFilter(false);
                                 setCurrentPage(1);
+                                setNome(event)
                             }}
                             reset={resetFilter}
                         />
@@ -99,11 +103,15 @@ const UsuariosList = () => {
                             }}
                             options={[
                                 {
-                                    label: "Completo",
+                                    label: "Todos",
+                                    value: 'all'
+                                },
+                                {
+                                    label: "Ativo",
                                     value: 1,
                                 },
                                 {
-                                    label: "Incompleto",
+                                    label: "Inativo",
                                     value: 2,
                                 },
                             ]}

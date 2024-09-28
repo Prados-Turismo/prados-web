@@ -67,8 +67,10 @@ export interface IExcursao {
 export interface IExcursaoArgs {
   page: number;
   size: number;
-  concluida?: string | number
   nome?: string | null
+  dataInicio?: string | null
+  dataFim?: string | null
+  status?: number | string | null
 }
 
 export interface IDataExcursao {

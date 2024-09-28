@@ -50,12 +50,14 @@ const getAllFornecedores = (): IFornecedorResponse => {
   };
 }
 
-const getFornecedores = ({ page, size }: IFornecedorArgs): IFornecedorResponse => {
+const getFornecedores = ({ page, size, status, nome }: IFornecedorArgs): IFornecedorResponse => {
 
   const { data, isLoading } = useQuery(
     [
       keys.fornecedores,
-      page
+      page,
+      status,
+      nome
     ],
     async () => {
       const path = 'fornecedor/index';
@@ -65,6 +67,8 @@ const getFornecedores = ({ page, size }: IFornecedorArgs): IFornecedorResponse =
           params: {
             page,
             size,
+            status,
+            nome,
             orderBy: 'nome'
           },
         });
@@ -94,6 +98,7 @@ const createFornecedor = (
       const urlPath = 'fornecedor/create'
       data.telefone = data.telefone ? extractNumbers(data.telefone) : null
       data.telefoneContato = data.telefoneContato ? extractNumbers(data.telefoneContato) : null
+      data.cnpj = extractNumbers(data.cnpj) || ''
 
       try {
         await apiPrados.post(urlPath, data).then(() => {
@@ -130,6 +135,7 @@ const updateFornecedor = (
       const urlPath = `fornecedor/update/${data.id}`;
       data.telefone = data.telefone ? extractNumbers(data.telefone) : null
       data.telefoneContato = data.telefoneContato ? extractNumbers(data.telefoneContato) : null
+      data.cnpj = extractNumbers(data.cnpj) || ''
 
       try {
         await apiPrados.put(urlPath, data).then(() => {

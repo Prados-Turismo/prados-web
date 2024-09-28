@@ -1,6 +1,8 @@
 export interface IContaBancariaArgs {
   page: number;
   size: number;
+  nome: string
+  status?: number | string | null
 }
 
 export interface IContaBancaria {

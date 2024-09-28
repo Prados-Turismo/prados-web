@@ -13,25 +13,39 @@ import {
 import { Warning } from "../errors";
 import { keys, queryClient } from "../services/query";
 
-const getExcursoes = ({ page, size, concluida, nome }: IExcursaoArgs): IExcursaoResponse => {
+const getExcursoes = (
+  { page,
+    size,
+    nome,
+    dataInicio,
+    dataFim,
+    status
+  }: IExcursaoArgs): IExcursaoResponse => {
 
   const { data, isLoading } = useQuery(
     [
       keys.excursao,
       page,
-      concluida,
-      nome
+      nome,
+      dataInicio,
+      dataFim,
+      status
     ],
     async () => {
       const path = 'excursao/index';
+
+      dataInicio = dataInicio ? dataInicio : null
+      dataFim = dataFim ? dataFim : null
 
       try {
         const { data } = await apiPrados.get(path, {
           params: {
             page,
             size,
-            concluida,
-            nome
+            nome,
+            dataInicio,
+            dataFim,
+            status
           },
         });
 

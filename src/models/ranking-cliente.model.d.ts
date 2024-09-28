@@ -1,6 +1,7 @@
 export interface IRankingClienteArgs {
   page: number;
   size: number;
+  nome: string
 }
 
 export interface IRankingCliente {

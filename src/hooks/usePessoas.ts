@@ -15,13 +15,14 @@ import {
 } from "../models/pessoa.model";
 import { extractNumbers } from "../utils/fieldValidation";
 
-const getPessoas = ({ page, size, nome }: IPessoaArgs): IPessoaResponse => {
+const getPessoas = ({ page, size, nome, status }: IPessoaArgs): IPessoaResponse => {
 
   const { data, isLoading } = useQuery(
     [
       keys.pessoas,
       page,
-      nome
+      nome,
+      status
     ],
     async () => {
       const path = 'pessoas/index';
@@ -32,6 +33,7 @@ const getPessoas = ({ page, size, nome }: IPessoaArgs): IPessoaResponse => {
             page,
             size,
             nome,
+            status,
             orderBy: 'nome'
           },
         });
@@ -88,6 +90,7 @@ const createPessoa = (
       data.telefoneWpp = data.telefoneWpp ? extractNumbers(data.telefoneWpp) : null
       data.telefoneContato = data.telefoneContato ? extractNumbers(data.telefoneContato) : null
       data.dataNascimento = data.dataNascimento ? data.dataNascimento : null
+      data.cpf = extractNumbers(data.cpf) || ''
 
       try {
         await apiPrados.post(urlPath, data).then(() => {
@@ -126,6 +129,7 @@ const updatePessoa = (
       data.telefoneWpp = data.telefoneWpp ? extractNumbers(data.telefoneWpp) : null
       data.telefoneContato = data.telefoneContato ? extractNumbers(data.telefoneContato) : null
       data.dataNascimento = data.dataNascimento ? data.dataNascimento : null
+      data.cpf = extractNumbers(data.cpf) || ''
 
       try {
         await apiPrados.put(urlPath, data).then(() => {

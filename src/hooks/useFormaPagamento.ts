@@ -42,21 +42,27 @@ const getAllFormaPagamentos = (): IFormaPagamentoResponse => {
   };
 }
 
-const getFormaPagamento = ({ page, size }: IFormaPagamentoArgs): IFormaPagamentoResponse => {
+const getFormaPagamento = ({ page, size, nome, status }: IFormaPagamentoArgs): IFormaPagamentoResponse => {
 
   const { data, isLoading } = useQuery(
     [
       keys.formaPagamento,
-      page
+      page,
+      nome,
+      status
     ],
     async () => {
       const path = 'forma-pagamento/index';
+      let taxa = /\d/.test(nome) ? parseInt(nome) : null
 
       try {
         const { data } = await apiPrados.get(path, {
           params: {
             page,
-            size
+            size,
+            nome,
+            status,
+            taxa
           },
         });
 

@@ -38,7 +38,8 @@ export interface IPessoa {
 export interface IPessoaArgs {
   page: number;
   size: number;
-  nome?: string
+  nome: string
+  status?: string | null | number
 }
 
 export interface IPessoaResponse {

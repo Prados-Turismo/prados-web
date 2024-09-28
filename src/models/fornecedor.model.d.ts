@@ -1,6 +1,8 @@
 export interface IFornecedorArgs {
   page: number;
   size: number;
+  status?: string | number | null
+  nome: string
 }
 
 export interface IFornecedor {

@@ -43,6 +43,7 @@ const ClienteList = () => {
     const [modalCreditoCliente, setModalCreditoCliente] = useState(false)
     const [dataCreditoCliente, setDataCreditoCliente] = useState<string>('')
     const { generateCsvPessoas } = useFiles()
+    const [nome, setNome] = useState(null || '')
     const registerPerPage = 10;
 
     const { mutate: mutateToDeleteCliente } = deletePessoa();
@@ -50,7 +51,9 @@ const ClienteList = () => {
 
     const { data, count, isLoading } = getPessoas({
         size: registerPerPage,
-        page: currentPage
+        page: currentPage,
+        nome,
+        status: statusSelected?.value
     });
 
     const { isLoading: isLoadingCsv, csv } = generateCsvPessoas()
@@ -102,10 +105,11 @@ const ClienteList = () => {
                     <div className="searchWrap">
                         <span>Buscar Cliente</span>
                         <FieldSearch
-                            placeholder="Nome/E-mail"
-                            handleSearch={() => {
+                            placeholder="Nome/E-mail/CPF"
+                            handleSearch={(event) => {
                                 setResetFilter(false);
                                 setCurrentPage(1);
+                                setNome(event)
                             }}
                             reset={resetFilter}
                         />
@@ -126,12 +130,16 @@ const ClienteList = () => {
                             }}
                             options={[
                                 {
-                                    label: "Completo",
+                                    label: "Todos",
+                                    value: 'all'
+                                },
+                                {
+                                    label: "Ativo",
                                     value: 1,
                                 },
                                 {
-                                    label: "Incompleto",
-                                    value: 2,
+                                    label: "Inativo",
+                                    value: 0,
                                 },
                             ]}
                         />

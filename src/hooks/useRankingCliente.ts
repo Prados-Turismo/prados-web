@@ -13,12 +13,13 @@ import {
 import { Warning } from "../errors";
 import { keys, queryClient } from "../services/query";
 
-const getRankingCliente = ({ page, size }: IRankingClienteArgs): IRankingClienteResponse => {
+const getRankingCliente = ({ page, size, nome }: IRankingClienteArgs): IRankingClienteResponse => {
 
   const { data, isLoading } = useQuery(
     [
       keys.rankingCliente,
-      page
+      page,
+      nome
     ],
     async () => {
       const path = 'ranking-clientes/index';
@@ -28,6 +29,7 @@ const getRankingCliente = ({ page, size }: IRankingClienteArgs): IRankingCliente
           params: {
             page,
             size,
+            nome,
             orderBy: 'nome'
           },
         });

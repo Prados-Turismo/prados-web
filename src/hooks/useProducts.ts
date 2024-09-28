@@ -23,21 +23,27 @@ import { keys, queryClient } from "../services/query";
 
 const getProducts = ({
   page,
-  size
+  size,
+  nome
 }: IProductArgs): IProductResponse => {
   const { data, isLoading } = useQuery(
     [
       keys.products,
-      page
+      page,
+      nome
     ],
     async () => {
       const path = 'produtos/index';
+
+      let estoque = /\d/.test(nome) ? parseInt(nome) : null
 
       try {
         const { data } = await apiPrados.get(path, {
           params: {
             page,
-            size
+            size,
+            nome,
+            estoque
           },
         });
 

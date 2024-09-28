@@ -1,6 +1,7 @@
 export interface IProductArgs {
   page: number;
   size: number;
+  nome: string
 }
 
 export interface IDataProduct {

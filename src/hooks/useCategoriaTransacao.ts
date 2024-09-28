@@ -13,12 +13,13 @@ import {
 import { Warning } from "../errors";
 import { keys, queryClient } from "../services/query";
 
-const getCategoriaTransacao = ({ page, size }: ICategoriaTransacaoArgs): ICategoriaTransacaoResponse => {
+const getCategoriaTransacao = ({ page, size, nome }: ICategoriaTransacaoArgs): ICategoriaTransacaoResponse => {
 
   const { data, isLoading } = useQuery(
     [
       keys.categoriaTransacao,
-      page
+      page,
+      nome
     ],
     async () => {
       const path = 'categoria-transacao/index';
@@ -27,7 +28,8 @@ const getCategoriaTransacao = ({ page, size }: ICategoriaTransacaoArgs): ICatego
         const { data } = await apiPrados.get(path, {
           params: {
             page,
-            size
+            size,
+            nome
           },
         });
 

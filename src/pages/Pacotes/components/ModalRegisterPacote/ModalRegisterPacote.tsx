@@ -33,6 +33,9 @@ const handleSubmitRegisterSchema = z.object({
   foto: z
     .string()
     .optional(),
+  fotoEsgotado: z
+    .string()
+    .optional(),
   origem: z
     .number()
     .min(1, {
@@ -159,7 +162,26 @@ const ModalRegisterPacote = ({
               }))}
           CustomOption={SelectImageOption}
           errors={errors.foto}
-      />
+        />
+
+        <SelectForm
+          name="fotoEsgotado"
+          label="Foto Esgotado"
+          minW="135px"
+          isSearchable
+          isLoading={isLoadingProduto}
+          handleChange={(option) => {
+              setValue("fotoEsgotado", option?.value);
+          }}
+          options={dataProduto
+              ?.map((foto) => ({
+                  label: foto?.nome,
+                  value: foto?.id,
+                  imageUrl: "https://www.petz.com.br/blog/wp-content/uploads/2022/06/animais-selvagens-3.jpg"
+              }))}
+          CustomOption={SelectImageOption}
+          errors={errors.fotoEsgotado}
+        />
 
         <FieldWrap>
           <span>Origem</span>

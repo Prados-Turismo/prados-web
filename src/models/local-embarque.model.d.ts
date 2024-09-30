@@ -27,6 +27,8 @@ export interface ILocalEmbarqueResponse {
 export interface ILocalEmbarqueArgs {
   page: number;
   size: number;
+  nome: string
+  status?: string | number | null
 }
 
 export interface ICreateLocalEmbarqueArgs {

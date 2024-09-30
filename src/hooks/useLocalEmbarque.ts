@@ -38,11 +38,14 @@ const getLocalEmbarque = (): ILocalEmbarqueResponse => {
   };
 }
 
-const getAllLocalEmbarque = ({ page, size }: ILocalEmbarqueArgs): ILocalEmbarqueResponse => {
+const getAllLocalEmbarque = ({ page, size, nome, status }: ILocalEmbarqueArgs): ILocalEmbarqueResponse => {
 
   const { data, isLoading } = useQuery(
     [
       keys.localEmbarque,
+      page,
+      nome,
+      status
     ],
     async () => {
       const path = 'local-embarque/index';
@@ -51,7 +54,9 @@ const getAllLocalEmbarque = ({ page, size }: ILocalEmbarqueArgs): ILocalEmbarque
         const { data } = await apiPrados.get(path, {
           params: {
             page,
-            size
+            size,
+            nome,
+            status
           }
         });
 

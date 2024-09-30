@@ -42,12 +42,15 @@ const getAllPacotes = (): IPacoteResponse => {
   };
 };
 
-const getPacotes = ({ page, size }: IPacoteArgs): IPacoteResponse => {
+const getPacotes = ({ page, size, nome, status, origem }: IPacoteArgs): IPacoteResponse => {
 
   const { data, isLoading } = useQuery(
     [
       keys.pacotes,
-      page
+      page,
+      nome,
+      status,
+      origem
     ],
     async () => {
       const path = 'pacotes/index';
@@ -56,7 +59,10 @@ const getPacotes = ({ page, size }: IPacoteArgs): IPacoteResponse => {
         const { data } = await apiPrados.get(path, {
           params: {
             page,
-            size
+            size,
+            nome,
+            status,
+            origem
           },
         });
 

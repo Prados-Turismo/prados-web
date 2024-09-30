@@ -13,12 +13,14 @@ import {
 import { Warning } from "../errors";
 import { keys, queryClient } from "../services/query";
 
-const getTipoQuartos = ({ page, size }: ITipoQuartoArgs): ITipoQuartoResponse => {
+const getTipoQuartos = ({ page, size, nome, status }: ITipoQuartoArgs): ITipoQuartoResponse => {
 
   const { data, isLoading } = useQuery(
     [
       keys.tipoQuarto,
-      page
+      page,
+      nome,
+      status
     ],
     async () => {
       const path = 'tipo-quarto/index';
@@ -27,7 +29,9 @@ const getTipoQuartos = ({ page, size }: ITipoQuartoArgs): ITipoQuartoResponse =>
         const { data } = await apiPrados.get(path, {
           params: {
             page,
-            size
+            size,
+            nome,
+            status
           },
         });
 

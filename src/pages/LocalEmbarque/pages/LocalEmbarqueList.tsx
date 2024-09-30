@@ -32,6 +32,7 @@ const LocalEmbarqueList = () => {
     const [modalRemoveLocalEmbarque, setModalRemoveLocalEmbarque] = useState(false);
     const [localEmbarque, setLocalEmbarqueData] = useState<ILocalEmbarque | undefined>();
     const [currentPage, setCurrentPage] = useState(1);
+    const [nome, setNome] = useState(null || '')
     const registerPerPage = 10;
 
     const { mutate: mutateToDeleteLocalEmbarque } = deleteLocalEmbarque();
@@ -39,7 +40,9 @@ const LocalEmbarqueList = () => {
 
     const { data, count, isLoading } = getAllLocalEmbarque({
         size: registerPerPage,
-        page: currentPage
+        page: currentPage,
+        nome,
+        status: statusSelected?.value
     });
 
     const onConfirmRemoveLocalEmbarque = () => {
@@ -57,7 +60,7 @@ const LocalEmbarqueList = () => {
                         </Text>
                     </Flex>
                 </SectionTop>
-                
+
                 <SectionTop className="contentTop">
                     <Button
                         leftIcon={<IoIosAdd />}
@@ -76,9 +79,10 @@ const LocalEmbarqueList = () => {
                         <span>Buscar Local Embarque</span>
                         <FieldSearch
                             placeholder="Nome"
-                            handleSearch={() => {
+                            handleSearch={(event) => {
                                 setResetFilter(false);
                                 setCurrentPage(1);
+                                setNome(event)
                             }}
                             reset={resetFilter}
                         />
@@ -99,12 +103,16 @@ const LocalEmbarqueList = () => {
                             }}
                             options={[
                                 {
-                                    label: "Completo",
+                                    label: "Todos",
+                                    value: "all"
+                                },
+                                {
+                                    label: "Ativo",
                                     value: 1,
                                 },
                                 {
-                                    label: "Incompleto",
-                                    value: 2,
+                                    label: "Inativo",
+                                    value: 0,
                                 },
                             ]}
                         />

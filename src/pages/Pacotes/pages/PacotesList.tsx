@@ -32,6 +32,8 @@ const PacotesList = () => {
   const [modalRemovePacote, setModalRemovePacote] = useState(false);
   const [pacoteData, setPacoteData] = useState<IDataPacote | undefined>();
   const [currentPage, setCurrentPage] = useState(1);
+  const [nome, setNome] = useState(null || '')
+  const [origem, setOrigemSelected] = useState<ISelect | null>()
   const registerPerPage = 10;
 
   const { mutate: mutateToDeletePacote } = deletePacote();
@@ -40,7 +42,10 @@ const PacotesList = () => {
 
   const { data, count, isLoading } = getPacotes({
     size: registerPerPage,
-    page: currentPage
+    page: currentPage,
+    nome,
+    status: statusSelected?.value,
+    origem: origem?.value
   });
 
   const onConfirmRemovePacote = () => {
@@ -77,9 +82,10 @@ const PacotesList = () => {
             <span>Buscar destino</span>
             <FieldSearch
               placeholder="Nome ou Destino"
-              handleSearch={() => {
+              handleSearch={(event) => {
                 setResetFilter(false);
                 setCurrentPage(1);
+                setNome(event)
               }}
               reset={resetFilter}
             />
@@ -100,11 +106,45 @@ const PacotesList = () => {
               }}
               options={[
                 {
-                  label: "Completo",
+                  label: "Todos",
+                  value: 'all'
+                },
+                {
+                  label: "Ativo",
                   value: 1,
                 },
                 {
-                  label: "Incompleto",
+                  label: "Inativo",
+                  value: 0,
+                },
+              ]}
+            />
+          </Flex>
+          <Flex flexDirection="column" gap="5px" width="300px">
+            <span>Origem</span>
+
+            <ReactSelect
+              className="select-fields"
+              classNamePrefix="select"
+              closeMenuOnSelect={true}
+              isSearchable={true}
+              value={statusSelected}
+              placeholder="Selecionar"
+              noOptionsMessage={() => "Nenhum Status encontrado"}
+              onChange={(item) => {
+                setOrigemSelected(item);
+              }}
+              options={[
+                {
+                  label: "Todos",
+                  value: 'all'
+                },
+                {
+                  label: "Fortaleza",
+                  value: 1,
+                },
+                {
+                  label: "Tianguá",
                   value: 2,
                 },
               ]}

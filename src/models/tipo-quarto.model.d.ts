@@ -1,6 +1,8 @@
 export interface ITipoQuartoArgs {
   page: number;
   size: number;
+  nome: string
+  status?: string | null | number
 }
 
 export interface ITipoQuarto {

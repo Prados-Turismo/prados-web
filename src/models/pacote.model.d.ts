@@ -1,6 +1,9 @@
 export interface IPacoteArgs {
   page: number;
   size: number;
+  nome: string
+  status?: number | string | null
+  origem?: number | string | null
 }
 
 export interface IDataPacote {

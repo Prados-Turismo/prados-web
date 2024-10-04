@@ -89,7 +89,7 @@ const ModalRegisterTransacao = ({
   const { user } = useGlobal();
   const { createTransacao } = useTransacao();
   const { getAllFormaPagamentos } = useFormaPagamento();
-  const { getProducts } = useProduct();
+  const { getAllProducts } = useProduct();
   const { getAllFornecedores } = useFornecedor();
   const { getExcursoes } = useExcursoes();
   const { getAllReservas } = useReservas();
@@ -115,7 +115,7 @@ const ModalRegisterTransacao = ({
   const { data: dataClientes, isLoading: loadingClientes } = getAllPessoas();
   const { data: dataReservas, isLoading: loadingReservas } = getAllReservas();
   const { data: dataFornecedores, isLoading: loadingFornecedores } = getAllFornecedores();
-  const { data: dataProdutos, isLoading: loadingProdutos } = getProducts({ page: 1, size: 100 });
+  const { data: dataProdutos, isLoading: loadingProdutos } = getAllProducts();
   const { data: dataContaBancaria, isLoading: isLoadingContaBancaria } = getAllContaBancaria();
   const { data: dataCategoria, isLoading: isLoadingCategoria } = getAllCategoriaTransacao()
 

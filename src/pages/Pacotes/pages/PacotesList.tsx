@@ -32,7 +32,7 @@ const PacotesList = () => {
   const [modalRemovePacote, setModalRemovePacote] = useState(false);
   const [pacoteData, setPacoteData] = useState<IDataPacote | undefined>();
   const [currentPage, setCurrentPage] = useState(1);
-  const [nome, setNome] = useState(null || '')
+  const [nome, setNome] = useState('')
   const [origem, setOrigemSelected] = useState<ISelect | null>()
   const registerPerPage = 10;
 

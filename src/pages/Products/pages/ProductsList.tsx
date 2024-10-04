@@ -32,7 +32,7 @@ const ProductsList = () => {
   const [modalRemoveProduto, setModalRemoveProduto] = useState(false);
   const [productData, setProductData] = useState<IDataProduct | undefined>();
   const [currentPage, setCurrentPage] = useState(1);
-  const [nome, setNome] = useState(null || '')
+  const [nome, setNome] = useState('')
   const registerPerPage = 10;
 
   const { mutate: mutateToDeleteProduto } = deleteProduto();

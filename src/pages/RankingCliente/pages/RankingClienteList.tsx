@@ -32,7 +32,7 @@ const RankingClienteList = () => {
     const [modalRemoveRankingCliente, setModalRemoveRankingCliente] = useState(false);
     const [rankingClienteData, setRankingClienteData] = useState<IRankingCliente | undefined>();
     const [currentPage, setCurrentPage] = useState(1);
-    const [nome, setNome] = useState(null || '')
+    const [nome, setNome] = useState('')
     const registerPerPage = 10;
 
     const { mutate: mutateToDeleteRankingCliente } = deleteRankingCliente();

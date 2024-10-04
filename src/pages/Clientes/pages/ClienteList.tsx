@@ -43,7 +43,7 @@ const ClienteList = () => {
     const [modalCreditoCliente, setModalCreditoCliente] = useState(false)
     const [dataCreditoCliente, setDataCreditoCliente] = useState<string>('')
     const { generateCsvPessoas } = useFiles()
-    const [nome, setNome] = useState(null || '')
+    const [nome, setNome] = useState('')
     const registerPerPage = 10;
 
     const { mutate: mutateToDeleteCliente } = deletePessoa();

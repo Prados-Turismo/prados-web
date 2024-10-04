@@ -1,10 +1,6 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
 
-import { Box, Button, Menu, MenuButton, Tooltip, useMediaQuery } from "@chakra-ui/react";
-
-// Icons
-import { TfiHeadphoneAlt } from "react-icons/tfi";
+import { Box, Menu, MenuButton } from "@chakra-ui/react";
 
 // Types
 import { ILinksMenu } from "./types";
@@ -20,8 +16,6 @@ import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
 
 
 const LinksMenu = ({ onClose }: ILinksMenu) => {
-  const [activeLink] = useState(window.location.href.split("/")[3]);
-  const [break1280] = useMediaQuery("(max-width: 1279px)");
 
   return (
     <Links>
@@ -199,43 +193,8 @@ const LinksMenu = ({ onClose }: ILinksMenu) => {
         )}
       </Menu>
 
-      <Box display="flex" width="100%" flex="1">
-        {/* break900 && company && <Notification /> */}
-      </Box>
+      <Link to="/configuracoes">Configurações</Link>
 
-      {break1280 ? (
-        <Link
-          to="/central-de-ajuda"
-          onClick={onClose}
-          className={activeLink === "central-de-ajuda" ? "active-link" : ""}
-        >
-          Central de Ajuda
-        </Link>
-      ) : (
-        <Tooltip label="Central de Ajuda" background="brand.500" hasArrow>
-          <Link to="/central-de-ajuda" className="link-hover-disabled">
-            <Button
-              variant="unstyled"
-              margin={break1280 ? "unset" : "auto 0"}
-              display="flex"
-              justifyContent="center"
-              _hover={{ opacity: "0.7" }}
-            >
-              <TfiHeadphoneAlt color="#909090" size={22} />
-            </Button>
-          </Link>
-        </Tooltip>
-      )}
-      {break1280 && (
-        <Link
-          to="/notificacoes"
-          onClick={onClose}
-          className={activeLink === "notificacoes" ? "active-link" : ""}
-        >
-          Notificações
-        </Link>
-      )}
-      {/* {!break1280 && <Bell />} */}
     </Links>
   );
 };

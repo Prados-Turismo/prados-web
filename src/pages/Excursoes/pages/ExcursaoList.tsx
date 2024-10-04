@@ -37,7 +37,7 @@ const ExcursaoList = () => {
   const [modalRemoveExcursao, setModalRemoveExcursao] = useState(false);
   const [modalPublishExcursao, setModalPublishExcursao] = useState(false);
   const [modalFinishExcursao, setModalFinishExcursao] = useState(false);
-  const [nome, setNome] = useState(null || '')
+  const [nome, setNome] = useState('')
   const [excursaoData, setExcursaoData] = useState<IExcursao | undefined>();
   const [currentPage, setCurrentPage] = useState(1);
   const [dataInicio, setDataInicio] = useState(null || '')

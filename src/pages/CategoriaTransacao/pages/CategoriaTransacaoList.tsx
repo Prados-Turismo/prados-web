@@ -32,7 +32,7 @@ const CategoriaTransacaoList = () => {
     const [modalRemoveCategoriaTransacao, setModalRemoveCategoriaTransacao] = useState(false);
     const [categoriaTransacaoData, setCategoriaTransacaoData] = useState<ICategoriaTransacao | undefined>();
     const [currentPage, setCurrentPage] = useState(1);
-    const [nome, setNome] = useState(null || '')
+    const [nome, setNome] = useState('')
     const registerPerPage = 10;
 
     const { mutate: mutateToDeleteCategoriaTransacao } = deleteCategoriaTransacao();

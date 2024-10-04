@@ -52,7 +52,7 @@ const TransacoesList = () => {
   const registerPerPage = 10;
   const [dataInicio, setDataInicio] = useState(null || '')
   const [dataFim, setDataFim] = useState(null || '')
-  const [nome, setNome] = useState(null || '')
+  const [nome, setNome] = useState('')
   const [codigoContaBancaria, setContaBancaria] = useState<Array<ISelect> | null>();
   const { getAllContaBancaria } = useContaBancaria()
 

@@ -41,7 +41,7 @@ const ReservasList = () => {
   const [creditoData, setCreditoData] = useState<IReserva>();
   const [reservaData, setReservaData] = useState<IReserva | undefined>();
   const [currentPage, setCurrentPage] = useState(1);
-  const [nome, setNome] = useState(null || '')
+  const [nome, setNome] = useState('')
 
   const registerPerPage = 10;
   const navigate = useNavigate()

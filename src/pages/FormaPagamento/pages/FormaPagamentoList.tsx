@@ -32,7 +32,7 @@ const FormaPagamentoList = () => {
     const [modalRemoveFormaPagamento, setModalRemoveFormaPagamento] = useState(false);
     const [formaPagamentoData, setFormaPagamentoData] = useState<IFormaPagamento | undefined>();
     const [currentPage, setCurrentPage] = useState(1);
-    const [nome, setNome] = useState(null || '')
+    const [nome, setNome] = useState('')
     const registerPerPage = 10;
 
     const { mutate: mutateToDeleteFormaPagamento } = deleteFormaPagamento();

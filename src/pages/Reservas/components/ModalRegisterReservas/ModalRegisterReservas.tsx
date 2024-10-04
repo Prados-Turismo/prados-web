@@ -355,7 +355,7 @@ const ModalRegisterReservas = ({
               setValue('localEmbarqueId', item?.value || '')
             }}
             options={localEmbarqueData.map((local) => {
-              return { value: local.id, label: local.nome }
+              return { value: local.id, label: `${local.horaEmbarque} - ${local.nome}` }
             })}
           />
 

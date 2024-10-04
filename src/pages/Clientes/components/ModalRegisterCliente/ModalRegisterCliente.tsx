@@ -41,9 +41,7 @@ const handleSubmitRegisterSchema = z.object({
     }),
   sexo: z
     .string()
-    .min(1, {
-      message: fieldRequired('sexo')
-    }),
+    .optional(),
   observacoes: z
     .string(),
   contato: z
@@ -232,7 +230,6 @@ const ModalRegisterCliente = ({
           <SelectForm
             name="sexo"
             label="Sexo"
-            isRequired
             handleChange={(option) => {
               setValue("sexo", option?.value);
             }}

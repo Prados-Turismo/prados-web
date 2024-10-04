@@ -129,7 +129,6 @@ const createReserva = (
     async (data: ICreateReservaArgs) => {
       const urlPath = 'reserva/create'
       data.plataforma = 2
-      debugger
 
       try {
         await apiPrados.post(urlPath, data).then(() => {
@@ -247,6 +246,33 @@ const createCreditoCliente = (
   }
 }
 
+const sendTicketMail = (): IDeleteReservaResponse => {
+
+  const { isLoading, mutate } = useMutation(
+    async (id: string) => {
+      const urlPath = `reserva/send-ticket-mail/${id}`;
+
+      try {
+
+        await apiPrados.get(urlPath)
+
+        useToastStandalone({
+          title: "E-mail enviado com sucesso!",
+          status: "success"
+        })
+
+      } catch (error: any) {
+        throw new Warning(error.response.data.message, error?.response?.status)
+      }
+    }
+  )
+
+  return {
+    isLoading,
+    mutate
+  }
+}
+
 export default function useReserva() {
   return {
     getReserva,
@@ -255,6 +281,7 @@ export default function useReserva() {
     updateReserva,
     deleteReserva,
     findReserva,
-    createCreditoCliente
+    createCreditoCliente,
+    sendTicketMail
   }
 }

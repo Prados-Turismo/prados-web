@@ -30,7 +30,7 @@ import { useNavigate } from "react-router-dom";
 import ModalRegisterCredito from "../components/ModalRegisterCredito";
 
 const ReservasList = () => {
-  const { getReserva, deleteReserva } = useReservas();
+  const { getReserva, deleteReserva, sendTicketMail } = useReservas();
   const [statusSelected, setStatusSelected] = useState<ISelect | null>();
   const [resetFilter, setResetFilter] = useState(false);
   const [modalRegisterReserva, setModalRegisterReserva] = useState(false);
@@ -47,6 +47,7 @@ const ReservasList = () => {
   const navigate = useNavigate()
 
   const { mutate: mutateToDeleteReserva } = deleteReserva();
+  const { mutate: mutateToSendEmail, isLoading: isLoadingEmail } = sendTicketMail();
   const [deleteItemId, setDeleteReservaId] = useState('');
 
   const { data, count, isLoading } = getReserva({
@@ -234,7 +235,11 @@ const ReservasList = () => {
                             <ButtonIcon tooltip="Enviar E-mail com voucher">
                               <MdOutgoingMail
                                 size={20}
-                                onClick={() => { }}
+                                onClick={() => {
+                                  if (!isLoadingEmail) {
+                                    mutateToSendEmail(item.id)
+                                  }
+                                }}
                               />
                             </ButtonIcon>
 

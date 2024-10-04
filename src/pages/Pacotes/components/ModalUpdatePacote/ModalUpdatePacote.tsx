@@ -31,7 +31,9 @@ const handleSubmitRegisterSchema = z.object({
     }),
   descricao: z
     .string()
-    .optional(),
+    .min(1, {
+      message: fieldRequired("Descrição")
+    }),
   foto: z
     .string()
     .optional(),
@@ -149,6 +151,7 @@ const ModalUpdatePacote = ({
         <FormInput
           id="descricao"
           label="Descrição"
+          isRequired
           type="text"
           {...register?.("descricao")}
           inputArea={true}
@@ -169,14 +172,14 @@ const ModalUpdatePacote = ({
           isSearchable
           isLoading={isLoadingProduto}
           handleChange={(option) => {
-              setValue("foto", option?.value);
+            setValue("foto", option?.value);
           }}
           options={dataProduto
-              ?.map((foto) => ({
-                  label: foto?.nome,
-                  value: foto?.id,
-                  imageUrl: "https://www.petz.com.br/blog/wp-content/uploads/2022/06/animais-selvagens-3.jpg"
-              }))}
+            ?.map((foto) => ({
+              label: foto?.nome,
+              value: foto?.id,
+              imageUrl: "https://www.petz.com.br/blog/wp-content/uploads/2022/06/animais-selvagens-3.jpg"
+            }))}
           defaultValue={{
             value: 'data.Foto.id',
             label: 'data.Foto.nome',
@@ -192,14 +195,14 @@ const ModalUpdatePacote = ({
           isSearchable
           isLoading={isLoadingProduto}
           handleChange={(option) => {
-              setValue("fotoEsgotado", option?.value);
+            setValue("fotoEsgotado", option?.value);
           }}
           options={dataProduto
-              ?.map((foto) => ({
-                  label: foto?.nome,
-                  value: foto?.id,
-                  imageUrl: "https://www.petz.com.br/blog/wp-content/uploads/2022/06/animais-selvagens-3.jpg"
-              }))}
+            ?.map((foto) => ({
+              label: foto?.nome,
+              value: foto?.id,
+              imageUrl: "https://www.petz.com.br/blog/wp-content/uploads/2022/06/animais-selvagens-3.jpg"
+            }))}
           defaultValue={{
             value: 'data.FotoEsgotado.id',
             label: 'data.FotoEsgotado.nome',

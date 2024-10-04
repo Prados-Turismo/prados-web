@@ -29,7 +29,9 @@ const handleSubmitRegisterSchema = z.object({
     }),
   descricao: z
     .string()
-    .optional(),
+    .min(1, {
+      message: fieldRequired("Descrição")
+    }),
   foto: z
     .string()
     .optional(),
@@ -135,6 +137,7 @@ const ModalRegisterPacote = ({
         <FormInput
           id="descricao"
           label="Descrição"
+          isRequired
           type="text"
           {...register("descricao")}
           inputArea={true}

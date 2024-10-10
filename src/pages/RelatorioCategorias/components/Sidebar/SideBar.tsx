@@ -1,19 +1,16 @@
-import { Aside, AsideTop, Wrap } from "./styled";
+import { Aside, AsideTop } from "./styled";
 
 import { Table, TableContainer, Tbody, Td, Thead, Tr } from "@chakra-ui/react";
-import { ISidebar } from "../../../../models/sidebar.model";
 import { currencyBRLFormat } from "../../../../utils/currencyBRLFormat";
-import useTransacao from "../../../../hooks/useTransacao";
+import { IRelatorioCategoriasSideBar } from "./types";
 
-const SideBar = ({ status }: ISidebar) => {
-  const { getTransacoesCategorias } = useTransacao();
+const SideBar = ({
+  status,
+  categoriasResponse
+}: IRelatorioCategoriasSideBar) => {
 
-  const { receitas, despesas, isLoading } = getTransacoesCategorias({
-    size: 10,
-    page: 1
-  });
-
-  const total = receitas - despesas;
+  const { receitas, despesas, isLoading } = categoriasResponse
+  const total = receitas - despesas
 
   return (
     <>

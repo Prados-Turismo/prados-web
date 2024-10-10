@@ -3,10 +3,13 @@ import RelatorioCategoriasList from "../../pages/RelatorioCategoriasList"
 
 // Interfaces
 import { ISection } from "../../../../models/sidebar.model"
+import { IRelatorioCategoriasList } from "../../pages/types"
 
-const Section = ({ menu }: ISection) => (
+interface ISectionProps extends ISection, IRelatorioCategoriasList {}
+
+const Section = ({ menu, ...relatorioCategoriasProps }: ISectionProps) => (
   <>
-    {menu === 1 && <RelatorioCategoriasList />}
+    {menu === 1 && <RelatorioCategoriasList {...relatorioCategoriasProps} />}
   </>
 )
 

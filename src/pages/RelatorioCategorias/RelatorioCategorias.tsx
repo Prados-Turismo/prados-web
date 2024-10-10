@@ -10,14 +10,32 @@ import { IStatus } from "../../models/sidebar.model";
 import { theme } from "../../theme";
 import { useLocation } from "react-router-dom";
 import SideBar from "./components/Sidebar/SideBar";
+import useTransacao from "../../hooks/useTransacao";
+import { ISelect } from "../../models/generics.model";
 
 const RelatorioCategorias = () => {
   const location = useLocation();
+  const { getTransacoesCategorias } = useTransacao();
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [codigoCategoria, setCategoria] = useState<ISelect | null>(null);
+  const [codigoSubCategoria, setSubCategoria] = useState<ISelect | null>(null);
+  const [dataTransacao, setDataTransacao] = useState('')
+
   const menuBack =
     parseInt(window.location.href?.split("menu=")[1]?.split("?")[0]) || null;
   const [status, setStatus] = useState<IStatus>({
     title: "Transações",
     menu: menuBack || 1,
+  });
+
+  const registerPerPage = 10;
+  const categoriasResponse = getTransacoesCategorias({
+    size: registerPerPage,
+    page: 1,
+    dataTransacao,
+    codigoCategoria: codigoCategoria?.value as string,
+    codigoSubCategoria: codigoSubCategoria?.value as string
   });
 
   useEffect(() => {
@@ -38,8 +56,31 @@ const RelatorioCategorias = () => {
   return (
     <Dashboard menu={<Menu />}>
       <PageWithMenu
-        aside={<SideBar status={status} onStatus={setStatus} />}
-        section={<Section menu={status.menu} />}
+        aside={
+          <SideBar
+            status={status}
+            onStatus={setStatus}
+            {...{
+              categoriasResponse
+            }}
+          />
+        }
+        section={
+          <Section
+            menu={status.menu}
+            {...{
+              categoriasResponse,
+              currentPage,
+              setCurrentPage,
+              codigoCategoria,
+              setCategoria,
+              codigoSubCategoria,
+              setSubCategoria,
+              dataTransacao,
+              setDataTransacao
+            }}
+          />
+        }
       />
     </Dashboard>
   );

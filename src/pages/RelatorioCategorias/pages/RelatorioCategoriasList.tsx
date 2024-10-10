@@ -10,27 +10,31 @@ import { Content, SectionTop } from "./styled";
 // Hooks and utils
 import ReactSelect from "react-select";
 import SimpleModal from "../../../components/SimpleModal";
-import { ISelect } from "../../../models/generics.model";
 import AlertNoDataFound from "../../../components/AlertNoDataFound";
 import { MdEdit } from "react-icons/md";
 import ButtonIcon from "../../../components/ButtonIcon";
 import ModalUpdateTransacao from "../components/ModalUpdateTransacao";
-import useTransacao from "../../../hooks/useTransacao";
 import { formattingDate } from "../../../utils/formattingDate";
 import { ITransacao } from "../../../models/transacao.model";
 import { currencyBRLFormat } from "../../../utils/currencyBRLFormat";
 import useCategoriaTransacao from "../../../hooks/useCategoriaTransacao";
 import useSubCategoriaTransacao from "../../../hooks/useSubCategoriaTransacao";
+import { IRelatorioCategoriasList } from "./types";
 
-const RelatorioCategoriasList = () => {
-  const { getTransacoesCategorias } = useTransacao();
+const RelatorioCategoriasList = ({
+  categoriasResponse,
+  currentPage,
+  setCurrentPage,
+  codigoCategoria,
+  setCategoria,
+  codigoSubCategoria,
+  setSubCategoria,
+  dataTransacao,
+  setDataTransacao
+}: IRelatorioCategoriasList) => {
   const [modalUpdateTransacao, setModalUpdateTransacao] = useState(false);
   const [transacaoData, setTransacaoData] = useState<ITransacao | undefined>();
-  const [currentPage, setCurrentPage] = useState(1);
   const registerPerPage = 10;
-  const [dataTransacao, setDataTransacao] = useState(null || '')
-  const [codigoCategoria, setCategoria] = useState<ISelect | null>();
-  const [codigoSubCategoria, setSubCategoria] = useState<ISelect | null>();
 
   const { getAllCategoriaTransacao } = useCategoriaTransacao()
   const { getAllSubCategoriaTransacao } = useSubCategoriaTransacao()
@@ -38,13 +42,7 @@ const RelatorioCategoriasList = () => {
   const { data: dataCategoria, isLoading: isLoadingCategoria } = getAllCategoriaTransacao();
   const { data: dataSubCategoria, isLoading: isLoadingSubCategoria } = getAllSubCategoriaTransacao();
 
-  const { data, count, isLoading } = getTransacoesCategorias({
-    size: registerPerPage,
-    page: currentPage,
-    dataTransacao,
-    codigoCategoria: codigoCategoria?.value as string,
-    codigoSubCategoria: codigoSubCategoria?.value as string
-  });
+  const { data, count, isLoading } = categoriasResponse
 
   return (
     <>

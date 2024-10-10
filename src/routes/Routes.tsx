@@ -60,6 +60,7 @@ import RelatorioClientes from "../pages/RelatorioClientes";
 import Vendas from "../pages/Vendas";
 import Auditoria from "../pages/Auditoria";
 import OpcionaisEmbarque from "../pages/Excursoes/pages/OpcionaisEmbarque";
+import RelatorioCategorias from "../pages/RelatorioCategorias";
 
 export const AppRoutes = () => {
   const location = useLocation();
@@ -112,6 +113,7 @@ export const AppRoutes = () => {
         <Route path="/relatorios/clientes" element={<RelatorioClientes />} />
         <Route path="/vendas" element={<Vendas />} />
         <Route path="/relatorios/auditoria" element={<Auditoria />} />
+        <Route path="/relatorios/categorias" element={<RelatorioCategorias />} />
         <Route path="/excursoes/:idExcursao/opcional-embarque/:id" element={<OpcionaisEmbarque />} />
 
         <Route path="/politica-privacidade" element={<PrivacyPolicy />} />

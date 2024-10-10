@@ -79,7 +79,7 @@ export interface ITransacao {
       codigoDestino: string | null
       usuarioCadastro: string
     } | null,
-  } | null, 
+  } | null,
   Usuarios: {
     id: string
     nome: string
@@ -158,6 +158,11 @@ export interface ITransacaoResponse {
   isLoading: boolean;
 }
 
+export interface ITransacaoCategoriasResponse extends ITransacaoResponse {
+  receitas: number
+  despesas: number
+}
+
 export interface ICreateTransacaoArgs {
   tipo: number
   valor: number
@@ -175,6 +180,14 @@ export interface ICreateTransacaoArgs {
   codigoFormaPagamento: string
   usuarioCadastro: string
   data?: string | null
+}
+
+export interface ITransacaoCategoriasArgs {
+  page: number;
+  size: number;
+  dataTransacao?: string
+  codigoCategoria?: string
+  codigoSubCategoria?: string
 }
 
 export interface IUpdateTransacaoArgs extends ICreateTransacaoArgs {

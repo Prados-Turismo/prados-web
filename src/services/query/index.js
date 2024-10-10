@@ -17,6 +17,7 @@ const keys = {
   tipoQuarto: "tipoQuarto",
   pessoas: "pessoas",
   financeiro: "financeiro",
+  financeiroCategorias: "financeiroCategorias",
   formaPagamento: "formaPagamento",
   localEmbarque: "localEmbarque",
   excursaoEmbarque: "excursaoEmbarque",

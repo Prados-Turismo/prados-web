@@ -8,7 +8,9 @@ import {
   ICreateTransacaoResponse,
   IUpdateTransacaoArgs,
   IUpdateTransacaoResponse,
-  IDeleteTransacaoResponse
+  IDeleteTransacaoResponse,
+  ITransacaoCategoriasArgs,
+  ITransacaoCategoriasResponse
 } from "../models/transacao.model";
 import { Warning } from "../errors";
 import { keys, queryClient } from "../services/query";
@@ -292,7 +294,53 @@ const clone = (): IDeleteTransacaoResponse => {
     isLoading,
     mutate
   }
+}
 
+const getTransacoesCategorias = (
+  {
+    page,
+    size,
+    dataTransacao,
+    codigoCategoria,
+    codigoSubCategoria
+  }: ITransacaoCategoriasArgs): ITransacaoCategoriasResponse => {
+
+  const { data, isLoading } = useQuery(
+    [
+      keys.financeiroCategorias,
+      page,
+      dataTransacao,
+      codigoCategoria,
+      codigoSubCategoria
+    ],
+    async () => {
+      const path = 'relatorios/categorias';
+
+      try {
+        const { data } = await apiPrados.get(path, {
+          params: {
+            page,
+            size,
+            data: dataTransacao || null,
+            codigoCategoria,
+            codigoSubCategoria
+          },
+        });
+
+        return data
+      } catch (error: any) {
+        throw new Warning(error.response.data.message, error.response.status);
+      }
+    }
+  )
+
+  return {
+    data: data?.rows || [],
+    count: data?.count || 0,
+    isLoading,
+    receitas: data?.receitas || 0,
+    despesas: data?.despesas || 0
+  };
 }
 
 export default function useTransacao() {
@@ -305,6 +353,7 @@ export default function useTransacao() {
     desefetivarTransacao,
     setVistoTransacao,
     removeVistoTransacao,
-    clone
+    clone,
+    getTransacoesCategorias
   }
 }

@@ -1,5 +1,5 @@
 import ReactGA from "react-ga4";
-import { Route, Routes, useLocation, Navigate } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 
 import { ProtectedRoute } from "./RoutesProtected";
 
@@ -38,18 +38,12 @@ import Vendas from "../pages/Vendas";
 import Auditoria from "../pages/Auditoria";
 import OpcionaisEmbarque from "../pages/Excursoes/pages/OpcionaisEmbarque";
 import Configuracao from "../pages/Configuracao";
+import RelatorioCategorias from "../pages/RelatorioCategorias";
 
 export const AppRoutes = () => {
   const location = useLocation();
-  const { user, role, roles, permissions, companyStatus, isBroker, company } =
+  const { user } =
     useGlobal();
-
-  const isNotApproved =
-    (companyStatus &&
-      companyStatus?.status !== "approved" &&
-      company &&
-      !isBroker) ||
-    false;
 
   ReactGA.initialize("G-HMJ7F7DKB5");
   ReactGA.send({
@@ -90,6 +84,7 @@ export const AppRoutes = () => {
         <Route path="/relatorios/clientes" element={<RelatorioClientes />} />
         <Route path="/vendas" element={<Vendas />} />
         <Route path="/relatorios/auditoria" element={<Auditoria />} />
+        <Route path="/relatorios/categorias" element={<RelatorioCategorias />} />
         <Route path="/excursoes/:idExcursao/opcional-embarque/:id" element={<OpcionaisEmbarque />} />
         <Route path="/configuracoes" element={<Configuracao />} />
 

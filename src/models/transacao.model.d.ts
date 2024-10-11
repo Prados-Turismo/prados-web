@@ -185,7 +185,8 @@ export interface ICreateTransacaoArgs {
 export interface ITransacaoCategoriasArgs {
   page: number;
   size: number;
-  dataTransacao?: string
+  dataInicio?: string
+  dataFim?: string
   codigoCategoria?: string
   codigoSubCategoria?: string
 }

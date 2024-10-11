@@ -20,7 +20,8 @@ const RelatorioCategorias = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [codigoCategoria, setCategoria] = useState<ISelect | null>(null);
   const [codigoSubCategoria, setSubCategoria] = useState<ISelect | null>(null);
-  const [dataTransacao, setDataTransacao] = useState('')
+  const [dataInicio, setDataInicio] = useState('')
+  const [dataFim, setDataFim] = useState('')
 
   const menuBack =
     parseInt(window.location.href?.split("menu=")[1]?.split("?")[0]) || null;
@@ -33,7 +34,8 @@ const RelatorioCategorias = () => {
   const categoriasResponse = getTransacoesCategorias({
     size: registerPerPage,
     page: 1,
-    dataTransacao,
+    dataInicio,
+    dataFim,
     codigoCategoria: codigoCategoria?.value as string,
     codigoSubCategoria: codigoSubCategoria?.value as string
   });
@@ -76,8 +78,10 @@ const RelatorioCategorias = () => {
               setCategoria,
               codigoSubCategoria,
               setSubCategoria,
-              dataTransacao,
-              setDataTransacao
+              dataInicio,
+              setDataInicio,
+              dataFim,
+              setDataFim
             }}
           />
         }

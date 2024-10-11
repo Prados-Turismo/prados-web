@@ -300,7 +300,8 @@ const getTransacoesCategorias = (
   {
     page,
     size,
-    dataTransacao,
+    dataInicio,
+    dataFim,
     codigoCategoria,
     codigoSubCategoria
   }: ITransacaoCategoriasArgs): ITransacaoCategoriasResponse => {
@@ -309,7 +310,8 @@ const getTransacoesCategorias = (
     [
       keys.financeiroCategorias,
       page,
-      dataTransacao,
+      dataInicio,
+      dataFim,
       codigoCategoria,
       codigoSubCategoria
     ],
@@ -321,7 +323,8 @@ const getTransacoesCategorias = (
           params: {
             page,
             size,
-            data: dataTransacao || null,
+            dataInicio: dataInicio || null,
+            dataFim: dataFim || null,
             codigoCategoria,
             codigoSubCategoria
           },

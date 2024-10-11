@@ -10,6 +10,8 @@ export interface IRelatorioCategoriasList {
   setCategoria: React.Dispatch<React.SetStateAction<ISelect | null>>
   codigoSubCategoria: ISelect | null
   setSubCategoria: React.Dispatch<React.SetStateAction<ISelect | null>>
-  dataTransacao: string
-  setDataTransacao: React.Dispatch<React.SetStateAction<string>>
+  dataInicio: string
+  setDataInicio: React.Dispatch<React.SetStateAction<string>>
+  dataFim: string
+  setDataFim: React.Dispatch<React.SetStateAction<string>>
 }

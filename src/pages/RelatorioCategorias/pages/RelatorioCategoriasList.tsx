@@ -29,8 +29,10 @@ const RelatorioCategoriasList = ({
   setCategoria,
   codigoSubCategoria,
   setSubCategoria,
-  dataTransacao,
-  setDataTransacao
+  dataInicio,
+  setDataInicio,
+  dataFim,
+  setDataFim
 }: IRelatorioCategoriasList) => {
   const [modalUpdateTransacao, setModalUpdateTransacao] = useState(false);
   const [transacaoData, setTransacaoData] = useState<ITransacao | undefined>();
@@ -92,25 +94,40 @@ const RelatorioCategoriasList = ({
           </Flex>
 
           <Flex flexDirection="column" gap="5px" width="160px">
-            <span>Data</span>
+            <span>Data Início</span>
             <Input
               type="date"
               placeholder="dd/mm/aaaa"
               max="2099-12-31"
               maxLength={10}
-              value={dataTransacao}
+              value={dataInicio}
               onChange={(event) => {
-                setDataTransacao(event.target.value)
+                setDataInicio(event.target.value)
               }}
             />
           </Flex>
+
+          <Flex flexDirection="column" gap="5px" width="160px">
+            <span>Data Fim</span>
+            <Input
+              type="date"
+              placeholder="dd/mm/aaaa"
+              max="2099-12-31"
+              maxLength={10}
+              value={dataFim}
+              onChange={(event) => {
+                setDataFim(event.target.value)
+              }}
+            />
+          </Flex>
+
           <Button
             borderRadius="5px"
             variant="outline"
             onClick={() => {
               setCategoria(null);
               setSubCategoria(null);
-              setDataTransacao('')
+              setDataInicio('')
             }}
           >
             Limpar Filtros

@@ -26,7 +26,7 @@ const RelatorioCategorias = () => {
   const menuBack =
     parseInt(window.location.href?.split("menu=")[1]?.split("?")[0]) || null;
   const [status, setStatus] = useState<IStatus>({
-    title: "Transações",
+    title: "Relatório de Categorias",
     menu: menuBack || 1,
   });
 
@@ -41,7 +41,7 @@ const RelatorioCategorias = () => {
   });
 
   useEffect(() => {
-    document.title = `${theme.content.project} - Transações`;
+    document.title = `${theme.content.project} - Relatório de Categorias`;
 
     const menuPath = parseInt(
       location.search?.split("menu=")[1]?.split("?")[0],
@@ -49,7 +49,7 @@ const RelatorioCategorias = () => {
 
     if (location?.search) {
       setStatus({
-        title: "Transações",
+        title: "Relatório de Categorias",
         menu: menuPath,
       });
     }

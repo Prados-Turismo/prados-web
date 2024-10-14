@@ -41,6 +41,8 @@ import Configuracao from "../pages/Configuracao";
 import RelatorioCategorias from "../pages/RelatorioCategorias";
 import RelatorioExcursao from "../pages/RelatorioExcursao";
 import RelatorioPacote from "../pages/RelatorioPacotes";
+import Comissao from "../pages/Comissao";
+import RelatorioVenda from "../pages/RelatorioVendas";
 
 export const AppRoutes = () => {
   const location = useLocation();
@@ -90,7 +92,9 @@ export const AppRoutes = () => {
         <Route path="/relatorios/categorias" element={<RelatorioCategorias />} />
         <Route path="/relatorios/excursoes" element={<RelatorioExcursao />} />
         <Route path="/relatorios/destinos" element={<RelatorioPacote />} />
+        <Route path="/relatorios/vendas" element={<RelatorioVenda />} />
         <Route path="/configuracoes" element={<Configuracao />} />
+        <Route path="/comissoes" element={<Comissao />} />
 
 
         <Route path="*" element={<PageNotFound />} />

@@ -2,29 +2,28 @@ import { useMutation, useQuery } from "react-query";
 import { useToastStandalone } from "./useToastStandalone";
 import { apiPrados } from "../services/api";
 import {
-  IUsuarioArgs,
-  IUsuarioResponse,
-  ICreateUsuarioArgs,
-  ICreateUsuarioResponse,
-  IUpdateUsuarioArgs,
-  IUpdateUsuarioResponse,
-  IDeleteUsuarioResponse,
-  IUsuario
-} from "../models/usuarios.model";
+  IComissaoArgs,
+  IComissaoResponse,
+  ICreateComissaoArgs,
+  ICreateComissaoResponse,
+  IUpdateComissaoArgs,
+  IUpdateComissaoResponse,
+  IDeleteComissaoResponse
+} from "../models/comissao.model";
 import { Warning } from "../errors";
 import { keys, queryClient } from "../services/query";
 
-const getUsuario = ({ page, size, nome, status }: IUsuarioArgs): IUsuarioResponse => {
+const getComissao = ({ page, size, nome, status }: IComissaoArgs): IComissaoResponse => {
 
   const { data, isLoading } = useQuery(
     [
-      keys.usuario,
+      keys.comissao,
       page,
       nome,
       status
     ],
     async () => {
-      const path = 'usuarios/index';
+      const path = 'comissao/index';
 
       try {
         const { data } = await apiPrados.get(path, {
@@ -33,7 +32,7 @@ const getUsuario = ({ page, size, nome, status }: IUsuarioArgs): IUsuarioRespons
             size,
             nome,
             status,
-            orderBy: 'nome'
+            orderBy: 'data'
           },
         });
 
@@ -51,14 +50,14 @@ const getUsuario = ({ page, size, nome, status }: IUsuarioArgs): IUsuarioRespons
   };
 }
 
-const getAllUsuario = (): IUsuarioResponse => {
+const getAllComissao = (): IComissaoResponse => {
 
   const { data, isLoading } = useQuery(
     [
-      keys.usuario,
+      keys.comissao,
     ],
     async () => {
-      const path = 'usuarios/findAll';
+      const path = 'comissao/findAll';
 
       try {
         const { data } = await apiPrados.get(path);
@@ -77,21 +76,21 @@ const getAllUsuario = (): IUsuarioResponse => {
   };
 }
 
-const createUsuario = (
+const createComissao = (
   reset: () => void,
   handleClose: () => void
-): ICreateUsuarioResponse => {
+): ICreateComissaoResponse => {
 
   const { isLoading, mutate } = useMutation(
-    async (data: ICreateUsuarioArgs) => {
-      const urlPath = 'usuarios/create'
+    async (data: ICreateComissaoArgs) => {
+      const urlPath = 'comissao/create'
 
       try {
         await apiPrados.post(urlPath, data).then(() => {
           reset()
           handleClose()
 
-          queryClient.invalidateQueries([keys.usuario])
+          queryClient.invalidateQueries([keys.comissao])
 
           useToastStandalone({
             title: "Cadastro concluído!",
@@ -110,20 +109,20 @@ const createUsuario = (
   }
 }
 
-const updateUsuario = (
+const updateComissao = (
   reset: () => void,
   handleClose: () => void
-): IUpdateUsuarioResponse => {
+): IUpdateComissaoResponse => {
 
   const { isLoading, mutate } = useMutation(
-    async (data: IUpdateUsuarioArgs) => {
-      const urlPath = `usuarios/update/${data.id}`;
+    async (data: IUpdateComissaoArgs) => {
+      const urlPath = `comissao/update/${data.id}`;
 
       try {
         await apiPrados.put(urlPath, data).then(() => {
           reset()
           handleClose()
-          queryClient.invalidateQueries([keys.usuario])
+          queryClient.invalidateQueries([keys.comissao])
 
           useToastStandalone({
             title: "Atualizado com sucesso!",
@@ -142,14 +141,14 @@ const updateUsuario = (
   }
 }
 
-const deleteUsuario = (): IDeleteUsuarioResponse => {
+const deleteComissao = (): IDeleteComissaoResponse => {
 
   const { isLoading, mutate } = useMutation(
     async (id: string) => {
-      const urlPath = `usuarios/delete/${id}`
+      const urlPath = `comissao/delete/${id}`
       try {
-        await apiPrados.patch(urlPath).then(function () {
-          queryClient.invalidateQueries([keys.usuario])
+        await apiPrados.delete(urlPath).then(function () {
+          queryClient.invalidateQueries([keys.comissao])
 
           useToastStandalone({
             title: "Excluída com sucesso!",
@@ -168,40 +167,12 @@ const deleteUsuario = (): IDeleteUsuarioResponse => {
   }
 }
 
-
-const usuarioPromiseOptions = async (search: string, _loadedOptions: any, { page }: any) => {
-
-  const path = 'usuarios/index';
-  const itensPerPage = 20;
-
-  const { data } = await apiPrados.get(path, {
-    params: {
-      page,
-      size: itensPerPage,
-      nome: search,
-      orderBy: 'nome'
-    },
-  });
-
+export default function useComissao() {
   return {
-    options: data.rows.map((item: IUsuario) => ({
-      label: item.nome,
-      value: item.id
-    })),
-    hasMore: data.count > (page * itensPerPage),
-    additional: {
-      page: page + 1,
-    }
-  }
-}
-
-export default function useUsuario() {
-  return {
-    getUsuario,
-    getAllUsuario,
-    createUsuario,
-    updateUsuario,
-    deleteUsuario,
-    usuarioPromiseOptions
+    getComissao,
+    getAllComissao,
+    createComissao,
+    updateComissao,
+    deleteComissao
   }
 }

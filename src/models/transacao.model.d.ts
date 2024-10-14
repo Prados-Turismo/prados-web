@@ -189,6 +189,10 @@ export interface ITransacaoPacoteResponse extends ITransacaoResponse {
   despesas: number
 }
 
+export interface ITransacaoVendaResponse extends ITransacaoResponse {
+  vendas: number
+}
+
 export interface ICreateTransacaoArgs {
   tipo: number
   valor: number
@@ -231,6 +235,14 @@ export interface ITransacaoPacoteArgs {
   dataInicio?: string
   dataFim?: string
   codigoPacote?: string
+}
+
+export interface ITransacaoVendaArgs {
+  page: number;
+  size: number;
+  dataInicio?: string
+  dataFim?: string
+  codigoUsuario?: string
 }
 
 export interface IUpdateTransacaoArgs extends ICreateTransacaoArgs {

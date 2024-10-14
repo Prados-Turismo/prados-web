@@ -13,7 +13,9 @@ import {
   ITransacaoCategoriasResponse,
   ITransacaoExcursaoArgs,
   ITransacaoExcursaoResponse,
-  ITransacaoPacoteArgs
+  ITransacaoPacoteArgs,
+  ITransacaoVendaArgs,
+  ITransacaoVendaResponse
 } from "../models/transacao.model";
 import { Warning } from "../errors";
 import { keys, queryClient } from "../services/query";
@@ -443,6 +445,53 @@ const getTransacoesPacote = (
   };
 }
 
+const getTransacoesVendas = (
+  {
+    page,
+    size,
+    dataInicio,
+    dataFim,
+    codigoUsuario
+  }: ITransacaoVendaArgs): ITransacaoVendaResponse => {
+
+  const { data, isLoading } = useQuery(
+    [
+      keys.financeiroCategorias,
+      page,
+      dataInicio,
+      dataFim,
+      codigoUsuario
+    ],
+    async () => {
+      const path = 'relatorios/vendas';
+
+      try {
+        const { data } = await apiPrados.get(path, {
+          params: {
+            page,
+            size,
+            dataInicio: dataInicio || null,
+            dataFim: dataFim || null,
+            codigoUsuario
+          },
+        });
+
+        return data
+      } catch (error: any) {
+        throw new Warning(error.response.data.message, error.response.status);
+      }
+    }
+  )
+
+  return {
+    data: data?.rows || [],
+    count: data?.count || 0,
+    isLoading,
+    vendas: data?.vendas || 0
+  };
+}
+
+
 export default function useTransacao() {
   return {
     getTransacoes,
@@ -456,6 +505,7 @@ export default function useTransacao() {
     clone,
     getTransacoesCategorias,
     getTransacoesExcursoes,
-    getTransacoesPacote
+    getTransacoesPacote,
+    getTransacoesVendas
   }
 }

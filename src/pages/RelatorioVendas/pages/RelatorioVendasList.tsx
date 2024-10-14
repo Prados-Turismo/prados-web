@@ -12,37 +12,53 @@ import SimpleModal from "../../../components/SimpleModal";
 import AlertNoDataFound from "../../../components/AlertNoDataFound";
 import { MdEdit } from "react-icons/md";
 import ButtonIcon from "../../../components/ButtonIcon";
-import ModalUpdateTransacao from "../components/ModalUpdateTransacao";
+import ModalRegisterComissao from "../components/ModalRegisterComissao";
 import { formattingDate } from "../../../utils/formattingDate";
 import { ITransacao } from "../../../models/transacao.model";
 import { currencyBRLFormat } from "../../../utils/currencyBRLFormat";
-import { IRelatorioPacoteList } from "./types";
-import useExcursoes from "../../../hooks/useExcursao";
+import { IRelatorioVendasList } from "./types";
+import useUsuario from "../../../hooks/useUsuarios";
 import SelectAsyncPaginate from "../../../components/SelectAsyncPaginate";
+import { IoIosAdd } from "react-icons/io";
 
-const RelatorioPacoteList = ({
-  pacoteResponse,
+const RelatorioVendaList = ({
+  vendaResponse,
   currentPage,
   setCurrentPage,
-  codigoPacote,
-  setPacote,
+  codigoUsuario,
+  setUsuario,
   dataInicio,
   setDataInicio,
   dataFim,
   setDataFim
-}: IRelatorioPacoteList) => {
-  const [modalUpdateTransacao, setModalUpdateTransacao] = useState(false);
+}: IRelatorioVendasList) => {
+  const [modalRegisterComissao, setModalRegisterComissao] = useState(false);
   const [transacaoData, setTransacaoData] = useState<ITransacao | undefined>();
   const registerPerPage = 10;
 
-  const { excursaoPromiseOptions } = useExcursoes()
+  const { usuarioPromiseOptions } = useUsuario()
 
-  const { data, count, isLoading } = pacoteResponse
+  const { data, count, isLoading } = vendaResponse
 
   return (
     <>
-      <SectionTop className="contentTop">
-      </SectionTop>
+
+      <Flex>
+        <SectionTop className="contentTop">
+        </SectionTop>
+
+        <SectionTop className="contentTop">
+          <Button
+            leftIcon={<IoIosAdd />}
+            onClick={() => {
+              setModalRegisterComissao(true);
+            }}
+          >
+            Cadastrar Comissão
+          </Button>
+        </SectionTop>
+
+      </Flex>
 
       <Content className="contentMain">
         <Flex width="100%" gap="15px" alignItems="flex-end" flexWrap="wrap">
@@ -50,16 +66,15 @@ const RelatorioPacoteList = ({
             <SelectAsyncPaginate
               name="passageiros"
               placeholder="Selecione"
-              label="Pacotes"
+              label="Vendedor"
               minW="200px"
               isRequired
-              isMulti
               isSearchable
-              value={codigoPacote}
-              noOptionsMessage="Nenhuma Excursão encontrada"
-              promiseOptions={excursaoPromiseOptions}
+              value={codigoUsuario}
+              noOptionsMessage="Nenhum Usuário encontrada"
+              promiseOptions={usuarioPromiseOptions}
               handleChange={(option) => {
-                setPacote(option);
+                setUsuario(option);
               }}
             />
           </Flex>
@@ -96,7 +111,7 @@ const RelatorioPacoteList = ({
             borderRadius="5px"
             variant="outline"
             onClick={() => {
-              setPacote(null);
+              setUsuario(null);
               setDataInicio('')
               setDataFim('')
             }}
@@ -120,12 +135,9 @@ const RelatorioPacoteList = ({
                     <THead padding="0 30px 0 30px">
                       <TD></TD>
                       <TD>Data</TD>
-                      <TD>Destino</TD>
-                      <TD>Fornecedor</TD>
-                      <TD>Conta</TD>
-                      <TD>Pagamento</TD>
+                      <TD>Excursao</TD>
+                      <TD>Reserva</TD>
                       <TD>Valor</TD>
-                      <TD></TD>
                     </THead>
 
                     <TBody>
@@ -156,33 +168,13 @@ const RelatorioPacoteList = ({
                             {formattingDate(item.data)}
                           </TD>
                           <TD>
-                            {item.Pacotes?.nome}
+                            {`${formattingDate((item.Excursao?.dataInicio || ''))} à ${formattingDate(item.Excursao?.dataFim)} - ${item.Excursao?.nome}`}
                           </TD>
                           <TD>
-                            {item.Fornecedor?.nome}
-                          </TD>
-                          <TD>
-                            {item.ContaBancaria?.nome}
-                          </TD>
-                          <TD>
-                            {item.FormaPagamento.nome}
+                            {item.Reservas?.reserva}
                           </TD>
                           <TD style={{ color: item.tipo == 1 ? 'red' : 'green', fontWeight: 'bold' }}>
                             {item.tipo == 1 ? '-' : ''}  {currencyBRLFormat(item.valor)}
-                          </TD>
-                          <TD gap={3}>
-
-                            <ButtonIcon tooltip="Editar">
-                              <MdEdit
-                                size={20}
-                                // color={customTheme.colors.brandSecond.first}
-                                cursor="pointer"
-                                onClick={() => {
-                                  setTransacaoData(item)
-                                  setModalUpdateTransacao(true)
-                                }}
-                              />
-                            </ButtonIcon>
                           </TD>
                         </TR>
                       ))}
@@ -206,21 +198,18 @@ const RelatorioPacoteList = ({
         )}
       </Content>
 
-      {transacaoData && (
-        <SimpleModal
-          title="Transação"
-          size="xl"
-          isOpen={modalUpdateTransacao}
-          handleModal={setModalUpdateTransacao}
-        >
-          <ModalUpdateTransacao
-            handleClose={() => setModalUpdateTransacao(false)}
-            data={transacaoData}
-          />
-        </SimpleModal>
-      )}
+      <SimpleModal
+        title="Comissão"
+        size="xl"
+        isOpen={modalRegisterComissao}
+        handleModal={setModalRegisterComissao}
+      >
+        <ModalRegisterComissao
+          handleClose={() => setModalRegisterComissao(false)}
+        />
+      </SimpleModal>
     </>
   );
 };
 
-export default RelatorioPacoteList;
+export default RelatorioVendaList;

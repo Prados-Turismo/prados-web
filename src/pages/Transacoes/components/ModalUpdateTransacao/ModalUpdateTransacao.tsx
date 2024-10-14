@@ -20,13 +20,13 @@ import FormInputNumber from "../../../../components/FormInputNumber";
 import FormInput from "../../../../components/FormInput";
 import useExcursoes from "../../../../hooks/useExcursao";
 import useReservas from "../../../../hooks/useReservas";
-import { useState } from "react";
 import useFormaPagamento from "../../../../hooks/useFormaPagamento";
 import useTransacao from "../../../../hooks/useTransacao";
 import { ITransacao } from "../../../../models/transacao.model";
-import usePessoas from "../../../../hooks/usePessoas";
 import useContaBancaria from "../../../../hooks/useContaBancaria";
 import useCategoriaTransacao from "../../../../hooks/useCategoriaTransacao";
+import SelectAsyncPaginate from "../../../../components/SelectAsyncPaginate";
+import usePacotes from "../../../../hooks/usePacotes";
 
 const handleSubmitRegisterSchema = z.object({
   tipo: z
@@ -63,6 +63,9 @@ const handleSubmitRegisterSchema = z.object({
   codigoExcursao: z
     .string()
     .optional(),
+  codigoPacote: z
+    .string()
+    .optional(),
   idReserva: z
     .string()
     .optional(),
@@ -94,13 +97,11 @@ const ModalUpdateTransacao = ({
   const { getAllFormaPagamentos } = useFormaPagamento();
   const { getAllProducts } = useProduct();
   const { getAllFornecedores } = useFornecedor();
-  const { getExcursoes } = useExcursoes();
-  const { getAllReservas } = useReservas();
-  const { getAllPessoas } = usePessoas()
+  const { excursaoPromiseOptions } = useExcursoes();
+  const { reservaPromiseOptions } = useReservas();
   const { getAllContaBancaria } = useContaBancaria()
   const { getAllCategoriaTransacao } = useCategoriaTransacao()
-
-  const [codigoExcursao, setCodigoExcursao] = useState<string | undefined>(undefined);
+  const { pacotePromiseOptions } = usePacotes()
 
   const {
     setValue,
@@ -119,6 +120,7 @@ const ModalUpdateTransacao = ({
       codigoFornecedor: data.codigoFornecedor ?? undefined,
       codigoProduto: data?.codigoProduto ?? undefined,
       codigoExcursao: data.codigoExcursao ?? undefined,
+      codigoPacote: data.codigoPacote ?? undefined,
       idReserva: data.Reservas?.id ?? undefined,
       codigoFormaPagamento: data.codigoFormaPagamento,
       observacao: data.observacao || '',
@@ -130,9 +132,6 @@ const ModalUpdateTransacao = ({
 
   const { mutate, isLoading } = updateTransacao(reset, handleClose);
   const { data: dataFormaPagamentos, isLoading: loadingFormaPagamentos } = getAllFormaPagamentos();
-  const { data: dataExcursoes, isLoading: loadingExcursoes } = getExcursoes({ page: 1, size: 100 });
-  const { data: dataClientes, isLoading: loadingClientes } = getAllPessoas();
-  const { data: dataReservas, isLoading: loadingReservas } = getAllReservas();
   const { data: dataFornecedores, isLoading: loadingFornecedores } = getAllFornecedores();
   const { data: dataProdutos, isLoading: loadingProdutos } = getAllProducts();
   const { data: dataContaBancaria, isLoading: isLoadingContaBancaria } = getAllContaBancaria();
@@ -356,19 +355,17 @@ const ModalUpdateTransacao = ({
           </FormControl>
         </Flex>
 
-        <SelectForm
+        <SelectAsyncPaginate
           name="idReserva"
+          placeholder="Selecione"
           label="Reserva"
           minW="200px"
-          isLoading={loadingReservas}
+          isSearchable
+          noOptionsMessage="Nenhuma Reserva encontrada"
+          promiseOptions={reservaPromiseOptions}
           handleChange={(option) => {
             setValue("idReserva", option?.value);
           }}
-          options={dataReservas
-            ?.map((reserva) => ({
-              label: `${reserva?.reserva}`,
-              value: reserva?.id,
-            }))}
           defaultValue={{
             label: `${data.Reservas?.reserva || ''}`,
             value: data.Reservas?.id || ''
@@ -376,25 +373,40 @@ const ModalUpdateTransacao = ({
           errors={errors.idReserva}
         />
 
-        <SelectForm
+        <SelectAsyncPaginate
           name="codigoExcursao"
+          placeholder="Selecione"
           label="Excursão"
           minW="200px"
-          isLoading={loadingExcursoes}
+          isSearchable
+          noOptionsMessage="Nenhuma Excursão encontrada"
+          promiseOptions={excursaoPromiseOptions}
           handleChange={(option) => {
             setValue("codigoExcursao", option?.value);
-            setCodigoExcursao(option?.value);
           }}
-          options={dataExcursoes
-            ?.map((codigoExcursao) => ({
-              label: codigoExcursao?.nome,
-              value: codigoExcursao?.id,
-            }))}
           defaultValue={{
             label: data.Excursao?.nome,
             value: data.Excursao?.id
           }}
           errors={errors.codigoExcursao}
+        />
+
+        <SelectAsyncPaginate
+          name="codigoPacote"
+          placeholder="Selecione"
+          label="Destino"
+          minW="200px"
+          isSearchable
+          noOptionsMessage="Nenhum Destino encontrado"
+          promiseOptions={pacotePromiseOptions}
+          handleChange={(option) => {
+            setValue("codigoPacote", option?.value);
+          }}
+          defaultValue={{
+            label: data.Pacotes?.nome,
+            value: data.Pacotes?.id
+          }}
+          errors={errors.codigoPacote}
         />
 
 

@@ -9,6 +9,7 @@ import {
   IUpdatePacoteArgs,
   IUpdatePacoteResponse,
   IDeletePacoteResponse,
+  IDataPacote,
 } from "../models/pacote.model";
 import { Warning } from "../errors";
 import { keys, queryClient } from "../services/query";
@@ -171,12 +172,39 @@ const deletePacote = (): IDeletePacoteResponse => {
   }
 }
 
+const pacotePromiseOptions = async (search: string, _loadedOptions: any, { page }: any) => {
+
+  const path = 'pacotes/index';
+  const itensPerPage = 20;
+
+  const { data } = await apiPrados.get(path, {
+    params: {
+      page,
+      size: itensPerPage,
+      nome: search,
+      orderBy: 'nome'
+    },
+  });
+
+  return {
+    options: data.rows.map((item: IDataPacote) => ({
+      label: item.nome,
+      value: item.id
+    })),
+    hasMore: data.count > (page * itensPerPage),
+    additional: {
+      page: page + 1,
+    }
+  }
+}
+
 export default function usePacotes() {
   return {
     getPacotes,
     createPacotes,
     updatePacote,
     deletePacote,
-    getAllPacotes
+    getAllPacotes,
+    pacotePromiseOptions
   }
 }

@@ -50,8 +50,8 @@ const TransacoesList = () => {
   const [transacaoData, setTransacaoData] = useState<ITransacao | undefined>();
   const [currentPage, setCurrentPage] = useState(1);
   const registerPerPage = 10;
-  const [dataInicio, setDataInicio] = useState(null || '')
-  const [dataFim, setDataFim] = useState(null || '')
+  const [dataInicio, setDataInicio] = useState('')
+  const [dataFim, setDataFim] = useState('')
   const [nome, setNome] = useState('')
   const [codigoContaBancaria, setContaBancaria] = useState<Array<ISelect> | null>();
   const { getAllContaBancaria } = useContaBancaria()
@@ -301,7 +301,7 @@ const TransacoesList = () => {
                             {item?.CategoriaTransacao?.nome || ''} {item?.CategoriaTransacao?.SubCategoria?.id ? '/' : ''} {item?.CategoriaTransacao?.SubCategoria?.nome || ''}
                           </TD>
                           <TD>
-                            {item?.Reservas?.reserva ? `${item?.Reservas?.reserva}` : '' || ''}
+                            {(item?.Reservas?.reserva ? `${item?.Reservas?.reserva}` : '') || ''}
                           </TD>
                           <TD>
                             {item.vistoAdmin ? "Sim" : "Não"}

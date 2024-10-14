@@ -20,12 +20,12 @@ import FormInputNumber from "../../../../components/FormInputNumber";
 import FormInput from "../../../../components/FormInput";
 import useExcursoes from "../../../../hooks/useExcursao";
 import useReservas from "../../../../hooks/useReservas";
+import { useState } from "react";
 import useFormaPagamento from "../../../../hooks/useFormaPagamento";
 import useTransacao from "../../../../hooks/useTransacao";
+import usePessoas from "../../../../hooks/usePessoas";
 import useContaBancaria from "../../../../hooks/useContaBancaria";
 import useCategoriaTransacao from "../../../../hooks/useCategoriaTransacao";
-import SelectAsyncPaginate from "../../../../components/SelectAsyncPaginate";
-import usePacotes from "../../../../hooks/usePacotes";
 
 const handleSubmitRegisterSchema = z.object({
   tipo: z
@@ -62,9 +62,6 @@ const handleSubmitRegisterSchema = z.object({
   codigoExcursao: z
     .string()
     .optional(),
-  codigoPacote: z
-    .string()
-    .optional(),
   idReserva: z
     .string()
     .optional(),
@@ -92,13 +89,15 @@ const ModalRegisterTransacao = ({
   const { user } = useGlobal();
   const { createTransacao } = useTransacao();
   const { getAllFormaPagamentos } = useFormaPagamento();
-  const { getAllProducts } = useProduct();
+  const { getProducts } = useProduct();
   const { getAllFornecedores } = useFornecedor();
-  const { excursaoPromiseOptions } = useExcursoes();
-  const { reservaPromiseOptions } = useReservas();
+  const { getExcursoes } = useExcursoes();
+  const { getAllReservas } = useReservas();
+  const { getAllPessoas } = usePessoas()
   const { getAllContaBancaria } = useContaBancaria()
   const { getAllCategoriaTransacao } = useCategoriaTransacao()
-  const { pacotePromiseOptions } = usePacotes()
+
+  const [codigoExcursao, setCodigoExcursao] = useState<string | undefined>(undefined);
 
   const {
     setValue,
@@ -112,8 +111,11 @@ const ModalRegisterTransacao = ({
 
   const { mutate, isLoading } = createTransacao(reset, handleClose);
   const { data: dataFormaPagamentos, isLoading: loadingFormaPagamentos } = getAllFormaPagamentos();
+  const { data: dataExcursoes, isLoading: loadingExcursoes } = getExcursoes({ page: 1, size: 100 });
+  const { data: dataClientes, isLoading: loadingClientes } = getAllPessoas();
+  const { data: dataReservas, isLoading: loadingReservas } = getAllReservas();
   const { data: dataFornecedores, isLoading: loadingFornecedores } = getAllFornecedores();
-  const { data: dataProdutos, isLoading: loadingProdutos } = getAllProducts();
+  const { data: dataProdutos, isLoading: loadingProdutos } = getProducts({ page: 1, size: 100 });
   const { data: dataContaBancaria, isLoading: isLoadingContaBancaria } = getAllContaBancaria();
   const { data: dataCategoria, isLoading: isLoadingCategoria } = getAllCategoriaTransacao()
 
@@ -312,44 +314,37 @@ const ModalRegisterTransacao = ({
           </FormControl>
         </Flex>
 
-        <SelectAsyncPaginate
+        <SelectForm
           name="idReserva"
-          placeholder="Selecione"
           label="Reserva"
           minW="200px"
-          isSearchable
-          noOptionsMessage="Nenhuma Reserva encontrada"
-          promiseOptions={reservaPromiseOptions}
+          isLoading={loadingReservas}
           handleChange={(option) => {
             setValue("idReserva", option?.value);
           }}
+          options={dataReservas
+            ?.map((reserva) => ({
+              label: `${reserva?.reserva}`,
+              value: reserva?.id,
+            }))}
           errors={errors.idReserva}
         />
 
-        <SelectAsyncPaginate
+        <SelectForm
           name="codigoExcursao"
-          placeholder="Selecione"
           label="Excursão"
           minW="200px"
-          isSearchable
-          noOptionsMessage="Nenhuma Excursão encontrada"
-          promiseOptions={excursaoPromiseOptions}
+          isLoading={loadingExcursoes}
           handleChange={(option) => {
             setValue("codigoExcursao", option?.value);
+            setCodigoExcursao(option?.value);
           }}
-        />
-
-        <SelectAsyncPaginate
-          name="codigoPacote"
-          placeholder="Selecione"
-          label="Destino"
-          minW="200px"
-          isSearchable
-          noOptionsMessage="Nenhum Destino encontrado"
-          promiseOptions={pacotePromiseOptions}
-          handleChange={(option) => {
-            setValue("codigoPacote", option?.value);
-          }}
+          options={dataExcursoes
+            ?.map((codigoExcursao) => ({
+              label: codigoExcursao?.nome,
+              value: codigoExcursao?.id,
+            }))}
+          errors={errors.codigoExcursao}
         />
 
         <SelectForm

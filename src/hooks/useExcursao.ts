@@ -8,7 +8,8 @@ import {
   ICreateExcursaoResponse,
   IUpdateExcursaoArgs,
   IUpdateExcursaoResponse,
-  IExcursaoListResponse
+  IExcursaoListResponse,
+  IExcursao
 } from "../models/excursao.model";
 import { Warning } from "../errors";
 import { keys, queryClient } from "../services/query";
@@ -255,6 +256,32 @@ const concluirExcursao = (): IUpdateExcursaoResponse => {
   }
 }
 
+const excursaoPromiseOptions = async (search: string, _loadedOptions: any, { page }: any) => {
+
+  const path = 'excursao/index';
+  const itensPerPage = 20;
+
+  const { data } = await apiPrados.get(path, {
+    params: {
+      page,
+      size: itensPerPage,
+      nome: search,
+      orderBy: 'nome'
+    },
+  });
+
+  return {
+    options: data.rows.map((item: IExcursao) => ({
+      label: item.nome,
+      value: item.id
+    })),
+    hasMore: data.count > (page * itensPerPage),
+    additional: {
+      page: page + 1,
+    }
+  }
+}
+
 export default function useExcursoes() {
   return {
     getExcursoes,
@@ -264,6 +291,7 @@ export default function useExcursoes() {
     deleteExcursao,
     publicarExcursao,
     findExcursao,
-    concluirExcursao
+    concluirExcursao,
+    excursaoPromiseOptions
   }
 }

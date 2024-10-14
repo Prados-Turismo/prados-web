@@ -39,6 +39,8 @@ import Auditoria from "../pages/Auditoria";
 import OpcionaisEmbarque from "../pages/Excursoes/pages/OpcionaisEmbarque";
 import Configuracao from "../pages/Configuracao";
 import RelatorioCategorias from "../pages/RelatorioCategorias";
+import RelatorioExcursao from "../pages/RelatorioExcursao";
+import RelatorioPacote from "../pages/RelatorioPacotes";
 
 export const AppRoutes = () => {
   const location = useLocation();
@@ -67,6 +69,7 @@ export const AppRoutes = () => {
         <Route path="/excursoes/:id/quartos" element={<Quartos />} />
         <Route path="/excursoes/:id/onibus" element={<Onibus />} />
         <Route path="/excursoes/:id/passageiros" element={<PassageirosList />} />
+        <Route path="/excursoes/:idExcursao/opcional-embarque/:id" element={<OpcionaisEmbarque />} />
         <Route path="/transacoes" element={<Transacoes />} />
         <Route path="/tipo-quarto" element={<TipoQuarto />} />
         <Route path="/categoria-transacao" element={<CategoriaTransacao />} />
@@ -81,11 +84,12 @@ export const AppRoutes = () => {
         <Route path="/local-embarque" element={<LocalEmbarque />} />
         <Route path="/usuarios" element={<Usuarios />} />
         <Route path="/ranking-clientes" element={<RankingCliente />} />
-        <Route path="/relatorios/clientes" element={<RelatorioClientes />} />
         <Route path="/vendas" element={<Vendas />} />
+        <Route path="/relatorios/clientes" element={<RelatorioClientes />} />
         <Route path="/relatorios/auditoria" element={<Auditoria />} />
         <Route path="/relatorios/categorias" element={<RelatorioCategorias />} />
-        <Route path="/excursoes/:idExcursao/opcional-embarque/:id" element={<OpcionaisEmbarque />} />
+        <Route path="/relatorios/excursoes" element={<RelatorioExcursao />} />
+        <Route path="/relatorios/destinos" element={<RelatorioPacote />} />
         <Route path="/configuracoes" element={<Configuracao />} />
 
 

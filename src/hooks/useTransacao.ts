@@ -10,7 +10,10 @@ import {
   IUpdateTransacaoResponse,
   IDeleteTransacaoResponse,
   ITransacaoCategoriasArgs,
-  ITransacaoCategoriasResponse
+  ITransacaoCategoriasResponse,
+  ITransacaoExcursaoArgs,
+  ITransacaoExcursaoResponse,
+  ITransacaoPacoteArgs
 } from "../models/transacao.model";
 import { Warning } from "../errors";
 import { keys, queryClient } from "../services/query";
@@ -346,6 +349,100 @@ const getTransacoesCategorias = (
   };
 }
 
+const getTransacoesExcursoes = (
+  {
+    page,
+    size,
+    dataInicio,
+    dataFim,
+    codigoExcursao
+  }: ITransacaoExcursaoArgs): ITransacaoExcursaoResponse => {
+
+  const { data, isLoading } = useQuery(
+    [
+      keys.financeiroCategorias,
+      page,
+      dataInicio,
+      dataFim,
+      codigoExcursao
+    ],
+    async () => {
+      const path = 'relatorios/excursoes';
+
+      try {
+        const { data } = await apiPrados.get(path, {
+          params: {
+            page,
+            size,
+            dataInicio: dataInicio || null,
+            dataFim: dataFim || null,
+            codigoExcursao
+          },
+        });
+
+        return data
+      } catch (error: any) {
+        throw new Warning(error.response.data.message, error.response.status);
+      }
+    }
+  )
+
+  return {
+    data: data?.rows || [],
+    count: data?.count || 0,
+    isLoading,
+    receitas: data?.receitas || 0,
+    despesas: data?.despesas || 0
+  };
+}
+
+const getTransacoesPacote = (
+  {
+    page,
+    size,
+    dataInicio,
+    dataFim,
+    codigoPacote
+  }: ITransacaoPacoteArgs): ITransacaoExcursaoResponse => {
+
+  const { data, isLoading } = useQuery(
+    [
+      keys.financeiroCategorias,
+      page,
+      dataInicio,
+      dataFim,
+      codigoPacote
+    ],
+    async () => {
+      const path = 'relatorios/pacotes';
+
+      try {
+        const { data } = await apiPrados.get(path, {
+          params: {
+            page,
+            size,
+            dataInicio: dataInicio || null,
+            dataFim: dataFim || null,
+            codigoPacote
+          },
+        });
+
+        return data
+      } catch (error: any) {
+        throw new Warning(error.response.data.message, error.response.status);
+      }
+    }
+  )
+
+  return {
+    data: data?.rows || [],
+    count: data?.count || 0,
+    isLoading,
+    receitas: data?.receitas || 0,
+    despesas: data?.despesas || 0
+  };
+}
+
 export default function useTransacao() {
   return {
     getTransacoes,
@@ -357,6 +454,8 @@ export default function useTransacao() {
     setVistoTransacao,
     removeVistoTransacao,
     clone,
-    getTransacoesCategorias
+    getTransacoesCategorias,
+    getTransacoesExcursoes,
+    getTransacoesPacote
   }
 }

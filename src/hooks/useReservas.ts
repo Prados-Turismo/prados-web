@@ -273,6 +273,32 @@ const sendTicketMail = (): IDeleteReservaResponse => {
   }
 }
 
+const reservaPromiseOptions = async (search: string, _loadedOptions: any, { page }: any) => {
+
+  const path = 'reserva/index';
+  const itensPerPage = 20;
+
+  const { data } = await apiPrados.get(path, {
+    params: {
+      page,
+      size: itensPerPage,
+      nome: search,
+      orderBy: 'reserva'
+    },
+  });
+
+  return {
+    options: data.rows.map((item: IReserva) => ({
+      label: item.reserva,
+      value: item.id
+    })),
+    hasMore: data.count > (page * itensPerPage),
+    additional: {
+      page: page + 1,
+    }
+  }
+}
+
 export default function useReserva() {
   return {
     getReserva,
@@ -282,6 +308,7 @@ export default function useReserva() {
     deleteReserva,
     findReserva,
     createCreditoCliente,
-    sendTicketMail
+    sendTicketMail,
+    reservaPromiseOptions
   }
 }

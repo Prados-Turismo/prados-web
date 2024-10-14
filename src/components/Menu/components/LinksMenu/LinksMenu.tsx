@@ -191,6 +191,12 @@ const LinksMenu = ({ onClose }: ILinksMenu) => {
               <MenuItem>
                 <Link to="/relatorios/categorias">Categorias</Link>
               </MenuItem>
+              <MenuItem>
+                <Link to="/relatorios/excursoes">Excursões</Link>
+              </MenuItem>
+              <MenuItem>
+                <Link to="/relatorios/destinos">Destinos</Link>
+              </MenuItem>
             </MenuList>
           </Box>
         )}

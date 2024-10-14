@@ -54,8 +54,8 @@ export interface ITransacao {
   Excursao?: {
     id: string
     nome: string
-    dataInicio: Date
-    dataFim: Date
+    dataInicio: string
+    dataFim: string
     observacoes: string | null
     dataCadastro: Date
     ativo: boolean
@@ -140,6 +140,22 @@ export interface ITransacao {
     desconto: number
     plataforma: number
   }
+  Pacotes?: {
+    id: string
+    nome: string
+    valor: number
+    descricao: string
+    ativo: boolean
+    origem: number
+    tipoTransporte: number
+    urlImagem: string | null
+    urlImgEsgotado: string | null
+    idWP: number | null
+    destino: string
+    categoria: number | null
+    codigoDestino: string | null
+    usuarioCadastro: string
+  } | null,
 }
 
 export interface ITransacaoArgs {
@@ -159,6 +175,16 @@ export interface ITransacaoResponse {
 }
 
 export interface ITransacaoCategoriasResponse extends ITransacaoResponse {
+  receitas: number
+  despesas: number
+}
+
+export interface ITransacaoExcursaoResponse extends ITransacaoResponse {
+  receitas: number
+  despesas: number
+}
+
+export interface ITransacaoPacoteResponse extends ITransacaoResponse {
   receitas: number
   despesas: number
 }
@@ -189,6 +215,22 @@ export interface ITransacaoCategoriasArgs {
   dataFim?: string
   codigoCategoria?: string
   codigoSubCategoria?: string
+}
+
+export interface ITransacaoExcursaoArgs {
+  page: number;
+  size: number;
+  dataInicio?: string
+  dataFim?: string
+  codigoExcursao?: string
+}
+
+export interface ITransacaoPacoteArgs {
+  page: number;
+  size: number;
+  dataInicio?: string
+  dataFim?: string
+  codigoPacote?: string
 }
 
 export interface IUpdateTransacaoArgs extends ICreateTransacaoArgs {

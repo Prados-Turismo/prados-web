@@ -14,9 +14,15 @@ import { useNavigate } from "react-router-dom";
 import Favicon from "../components/Favicon";
 
 import {
+  getCompanies,
+  getCompany,
+  getRole,
+  getRoles,
   getUser,
   removeAllCookies,
   setDataCookie,
+  getPermissions,
+  getUseTerm,
 } from "../cookies";
 
 import { useToastStandalone } from "../hooks/useToastStandalone";
@@ -26,7 +32,11 @@ import { queryClient } from "../services/query";
 import { Warning } from "../errors";
 import useError from "../hooks/useError";
 
+import { ICompanyAssociatedStatus } from "../models/companies-associated";
+import { ICompanyInfo } from "../models/company.model";
+import { IRole } from "../models/role.model";
 import { IUser, IUserCompany } from "../models/user.model";
+import { INotificationsData } from "../models/notifications";
 
 interface ISignInCredentials {
   username: string;
@@ -53,14 +63,49 @@ const defaultPermissions = {
 };
 
 interface IGlobalContext {
+  role: IRole | null;
+  setRole: (role: IRole | null) => void;
+
+  roles: IRole[] | [];
+  setRoles: (roles: IRole[] | []) => void;
+
+  company: ICompanyInfo | null;
+  setCompany: Dispatch<SetStateAction<ICompanyInfo | null>>;
+
+  companies: IUserCompany[] | [];
+  setCompanies: (companies: IUserCompany[] | []) => void;
+
   user: IUser | null;
   setUser: Dispatch<SetStateAction<IUser | null>>;
   signIn(args: ISignInCredentials): Promise<void>;
   signOut({ hasLoginRedirect }: { hasLoginRedirect: boolean }): void;
+
   userAccess: IUserAccess;
   setUserAccess: Dispatch<SetStateAction<IUserAccess>>;
+
+  permissions: typeof defaultPermissions;
+  setPermissions: Dispatch<SetStateAction<typeof defaultPermissions>>;
+
+  isBroker: boolean;
+  isPre: boolean;
+  isIssuer: boolean;
+  isPartner: boolean;
+  isCompany: boolean;
   changeProfile: () => void;
   changeCompany: (userCompany: { value: string }) => void;
+
+  companyStatus: ICompanyAssociatedStatus | undefined;
+  setCompanyStatus: Dispatch<
+    SetStateAction<ICompanyAssociatedStatus | undefined>
+  >;
+  isUseTerm: boolean;
+  setIsUseTerm: Dispatch<SetStateAction<boolean>>;
+  notificationNavigateData: INotificationsData | null;
+  setnotificationNavigateData: Dispatch<
+    SetStateAction<INotificationsData | null>
+  >;
+  comparatorCount: number;
+  setComparatorCount: Dispatch<SetStateAction<number>>;
 }
 
 interface IGlobalProvider {
@@ -77,6 +122,32 @@ const GlobalProvider = ({ children }: IGlobalProvider) => {
   const favicon = theme.images.favicon;
 
   const [user, setUser] = useState<IUser | null>(getUser());
+  const [role, setRole] = useState<IRole | null>(getRole());
+  const [roles, setRoles] = useState<IRole[] | []>(getRoles());
+  const [company, setCompany] = useState<ICompanyInfo | null>(getCompany());
+  const [companies, setCompanies] = useState<IUserCompany[] | []>(
+    getCompanies(),
+  );
+  const [isUseTerm, setIsUseTerm] = useState<boolean>(
+    getUseTerm() ? true : false,
+  );
+
+  const [notificationNavigateData, setnotificationNavigateData] =
+    useState<INotificationsData | null>(null);
+
+  const [comparatorCount, setComparatorCount] = useState<number>(
+    localStorage.getItem("@comparatorSelected")
+      ? JSON.parse(localStorage.getItem("@comparatorSelected") || "")?.length
+      : 0,
+  );
+
+  const [companyStatus, setCompanyStatus] = useState<
+    ICompanyAssociatedStatus | undefined
+  >(undefined);
+
+  const [permissions, setPermissions] = useState<typeof defaultPermissions>(
+    getPermissions() || defaultPermissions,
+  );
 
   const [userAccess, setUserAccess] = useState<IUserAccess>({
     userEmail: "",
@@ -126,7 +197,7 @@ const GlobalProvider = ({ children }: IGlobalProvider) => {
         username,
         password,
       });
-
+      
       setDataCookie({
         key: "@prados.token",
         value: loginResponse.data.token
@@ -193,18 +264,46 @@ const GlobalProvider = ({ children }: IGlobalProvider) => {
     },
   });
 
+  const isBroker = Boolean(role?.name === "CORRETOR");
+  const isPre = Boolean(role?.name === "PRE");
+  const isIssuer = Boolean(role?.name === "EMISSOR");
+  const isPartner = Boolean(role?.name === "PARCEIRO");
+  const isCompany = Boolean(role?.name === "EMPRESA");
 
   return (
     <GlobalContext.Provider
       value={{
+        role,
+        setRole,
+        roles,
+        setRoles,
+        company,
+        setCompany,
+        companies,
+        setCompanies,
+        permissions,
+        setPermissions,
         user,
         setUser,
         signIn,
         signOut,
         userAccess,
         setUserAccess,
+        isBroker,
+        isPre,
+        isIssuer,
+        isPartner,
+        isCompany,
         changeProfile,
-        changeCompany
+        changeCompany,
+        companyStatus,
+        setCompanyStatus,
+        isUseTerm,
+        setIsUseTerm,
+        notificationNavigateData,
+        setnotificationNavigateData,
+        comparatorCount,
+        setComparatorCount,
       }}
     >
       <Favicon favicon={favicon} />

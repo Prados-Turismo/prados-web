@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { IRole } from "../models/role.model";
 import { IUser } from "./../models/user.model";
 import { setCookie, parseCookies, destroyCookie } from "nookies";
 
@@ -25,6 +26,20 @@ export const getUser = (): IUser | null => {
   const useData = cookies["@prados.user"];
 
   return useData ? JSON.parse(useData) : null;
+};
+
+export const getRole = (): IRole | null => {
+  const cookies = parseCookies();
+  const roleData = cookies["@fiibo.role"];
+
+  return roleData ? JSON.parse(roleData) : null;
+};
+
+export const getRoles = (): IRole[] | [] => {
+  const cookies = parseCookies();
+  const rolesData = cookies["@fiibo.roles"];
+
+  return rolesData ? JSON.parse(rolesData) : [];
 };
 
 export const getCompany = (): any | null => {

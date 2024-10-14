@@ -87,8 +87,6 @@ const Menu = ({
           </MenuMain>
         )}
       </MenuWithLogo>
-
-      <MenuDropDown onBoardingCompleted={onBoardingCompleted} />
     </>
   );
 };

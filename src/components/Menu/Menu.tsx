@@ -87,6 +87,8 @@ const Menu = ({
           </MenuMain>
         )}
       </MenuWithLogo>
+
+      <MenuDropDown />
     </>
   );
 };

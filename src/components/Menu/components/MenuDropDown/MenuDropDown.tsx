@@ -61,6 +61,9 @@ const MenuDropDown = () => {
                   Sair
                 </Box>
               </MenuItem>
+              <MenuItem>
+                <Link to="/senha">Alterar Senha</Link>
+              </MenuItem>
             </MenuList>
           </Box>
         )}

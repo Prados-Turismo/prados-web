@@ -189,6 +189,11 @@ export interface ITransacaoPacoteResponse extends ITransacaoResponse {
   despesas: number
 }
 
+export interface ITransacaoFornecedorResponse extends ITransacaoResponse {
+  receitas: number
+  despesas: number
+}
+
 export interface ITransacaoVendaResponse extends ITransacaoResponse {
   vendas: number
 }
@@ -243,6 +248,14 @@ export interface ITransacaoVendaArgs {
   dataInicio?: string
   dataFim?: string
   codigoUsuario?: string
+}
+
+export interface ITransacaoFornecedorArgs {
+  page: number;
+  size: number;
+  dataInicio?: string
+  dataFim?: string
+  codigoFornecedor?: string
 }
 
 export interface IUpdateTransacaoArgs extends ICreateTransacaoArgs {

@@ -9,6 +9,7 @@ import {
   ICreateFornecedorArgs,
   ICreateFornecedorResponse,
   IDeleteFornecedorResponse,
+  IFornecedor,
   IFornecedorArgs,
   IFornecedorResponse,
   IUpdateFornecedorArgs,
@@ -187,12 +188,39 @@ const deleteFornecedor = (): IDeleteFornecedorResponse => {
   }
 }
 
+const fornecedorPromiseOptions = async (search: string, _loadedOptions: any, { page }: any) => {
+
+  const path = 'fornecedor/index';
+  const itensPerPage = 20;
+
+  const { data } = await apiPrados.get(path, {
+    params: {
+      page,
+      size: itensPerPage,
+      nome: search,
+      orderBy: 'nome'
+    },
+  });
+
+  return {
+    options: data.rows.map((item: IFornecedor) => ({
+      label: item.nome,
+      value: item.id
+    })),
+    hasMore: data.count > (page * itensPerPage),
+    additional: {
+      page: page + 1,
+    }
+  }
+}
+
 export default function useFornecedor() {
   return {
     getAllFornecedores,
     deleteFornecedor,
     getFornecedores,
     updateFornecedor,
-    createFornecedor
+    createFornecedor,
+    fornecedorPromiseOptions
   };
 }

@@ -26,10 +26,9 @@ export interface IComissaoResponse {
 }
 
 export interface ICreateComissaoArgs {
-  nome: string
-  ativo: boolean
-  saldo: number
-  usuarioCadastro: string
+  periodo: string
+  valor: number
+  usuariosId: string
 }
 
 export interface IUpdateComissaoArgs extends ICreateComissaoArgs {

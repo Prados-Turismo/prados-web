@@ -43,6 +43,7 @@ import RelatorioExcursao from "../pages/RelatorioExcursao";
 import RelatorioPacote from "../pages/RelatorioPacotes";
 import Comissao from "../pages/Comissao";
 import RelatorioVenda from "../pages/RelatorioVendas";
+import RelatorioFornecedor from "../pages/RelatorioFornecedor";
 
 export const AppRoutes = () => {
   const location = useLocation();
@@ -93,6 +94,7 @@ export const AppRoutes = () => {
         <Route path="/relatorios/excursoes" element={<RelatorioExcursao />} />
         <Route path="/relatorios/destinos" element={<RelatorioPacote />} />
         <Route path="/relatorios/vendas" element={<RelatorioVenda />} />
+        <Route path="/relatorios/fornecedores" element={<RelatorioFornecedor />} />
         <Route path="/configuracoes" element={<Configuracao />} />
         <Route path="/comissoes" element={<Comissao />} />
 

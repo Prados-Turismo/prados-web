@@ -15,7 +15,9 @@ import {
   ITransacaoExcursaoResponse,
   ITransacaoPacoteArgs,
   ITransacaoVendaArgs,
-  ITransacaoVendaResponse
+  ITransacaoVendaResponse,
+  ITransacaoFornecedorResponse,
+  ITransacaoFornecedorArgs
 } from "../models/transacao.model";
 import { Warning } from "../errors";
 import { keys, queryClient } from "../services/query";
@@ -362,7 +364,7 @@ const getTransacoesExcursoes = (
 
   const { data, isLoading } = useQuery(
     [
-      keys.financeiroCategorias,
+      keys.financeiroExcursao,
       page,
       dataInicio,
       dataFim,
@@ -409,7 +411,7 @@ const getTransacoesPacote = (
 
   const { data, isLoading } = useQuery(
     [
-      keys.financeiroCategorias,
+      keys.financeiroPacote,
       page,
       dataInicio,
       dataFim,
@@ -456,7 +458,7 @@ const getTransacoesVendas = (
 
   const { data, isLoading } = useQuery(
     [
-      keys.financeiroCategorias,
+      keys.financeiroVendas,
       page,
       dataInicio,
       dataFim,
@@ -491,6 +493,53 @@ const getTransacoesVendas = (
   };
 }
 
+const getTransacoesFornecedores = (
+  {
+    page,
+    size,
+    dataInicio,
+    dataFim,
+    codigoFornecedor
+  }: ITransacaoFornecedorArgs): ITransacaoFornecedorResponse => {
+
+  const { data, isLoading } = useQuery(
+    [
+      keys.financeiroFornecedor,
+      page,
+      dataInicio,
+      dataFim,
+      codigoFornecedor
+    ],
+    async () => {
+      const path = 'relatorios/fornecedores';
+
+      try {
+        const { data } = await apiPrados.get(path, {
+          params: {
+            page,
+            size,
+            dataInicio: dataInicio || null,
+            dataFim: dataFim || null,
+            codigoFornecedor
+          },
+        });
+
+        return data
+      } catch (error: any) {
+        throw new Warning(error.response.data.message, error.response.status);
+      }
+    }
+  )
+
+  return {
+    data: data?.rows || [],
+    count: data?.count || 0,
+    isLoading,
+    receitas: data?.receitas || 0,
+    despesas: data?.despesas || 0
+  };
+}
+
 
 export default function useTransacao() {
   return {
@@ -506,6 +555,7 @@ export default function useTransacao() {
     getTransacoesCategorias,
     getTransacoesExcursoes,
     getTransacoesPacote,
-    getTransacoesVendas
+    getTransacoesVendas,
+    getTransacoesFornecedores
   }
 }

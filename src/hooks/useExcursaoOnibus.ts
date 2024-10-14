@@ -105,7 +105,7 @@ const getAcentos = ({ page, size }: IExcursaoOnibusArgs, idExcursao: string): IE
 
   return {
     data: data || [],
-    count: 63 || 0,
+    count: 63,
     isLoading
   };
 }

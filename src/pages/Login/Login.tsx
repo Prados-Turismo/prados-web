@@ -111,17 +111,7 @@ const Login = () => {
           <Button type="submit" isLoading={loading}>
             Entrar
           </Button>
-
-          <Link to="/primeiro-acesso" className="firstAccess">
-            Primeiro Acesso
-          </Link>
         </Form>
-
-        {/* <span>
-          <Link to="/abrasuaconta" className="getFiibo">
-            Cadastre-se
-          </Link>
-        </span> */}
       </FieldWrap>
     </Centralized>
   );

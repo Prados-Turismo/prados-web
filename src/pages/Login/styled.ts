@@ -37,8 +37,8 @@ export const FieldWrap = chakra(Box, {
 
 export const Logo = chakra(Box, {
   baseStyle: {
-    width: "170px",
-    height: "70px",
+    width: "250px",
+    height: "90px",
     backgroundRepeat: "no-repeat",
     backgroundPosition: "center center",
     textIndent: "-99999px",

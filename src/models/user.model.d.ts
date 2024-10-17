@@ -20,24 +20,19 @@ export interface IUserCognitoData {
 }
 
 export interface IUser {
-  id: string;
-  username: string;
-  email: string;
-  phone: string;
-  person: string;
-  active: boolean;
-  firstAccess: boolean;
-  blocked: boolean;
-  accessCount: number;
-  termsOfUse: boolean;
-  termsOfUseAt: Date;
-  termsOfPrivacy: boolean;
-  termsOfPrivacyAt: Date;
-  createdAt: Date;
-  updatedAt: Date;
-  createdBy: null;
-  updatedBy: null;
-  profiles: IRole[];
+  id: string
+  nome: string
+  username: string
+  password: string
+  dataCadastro: Date
+  usuarioCadastro: string | null
+  tipo: number
+  email: string
+  ativo: boolean
+  comissao: number | null
+  meta: number | null
+  createdAt: Date
+  updatedAt: Date
 }
 
 export interface IUser {

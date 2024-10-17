@@ -91,6 +91,10 @@ interface IGlobalContext {
   isIssuer: boolean;
   isPartner: boolean;
   isCompany: boolean;
+  isAdmin: boolean;
+  isVendedor: boolean;
+  isFuncionario: boolean;
+
   changeProfile: () => void;
   changeCompany: (userCompany: { value: string }) => void;
 
@@ -197,7 +201,7 @@ const GlobalProvider = ({ children }: IGlobalProvider) => {
         username,
         password,
       });
-      
+
       setDataCookie({
         key: "@prados.token",
         value: loginResponse.data.token
@@ -270,6 +274,10 @@ const GlobalProvider = ({ children }: IGlobalProvider) => {
   const isPartner = Boolean(role?.name === "PARCEIRO");
   const isCompany = Boolean(role?.name === "EMPRESA");
 
+  const isAdmin = Boolean(user?.tipo === 1);
+  const isVendedor = Boolean(user?.tipo === 2);
+  const isFuncionario = Boolean(user?.tipo === 3);
+
   return (
     <GlobalContext.Provider
       value={{
@@ -304,6 +312,9 @@ const GlobalProvider = ({ children }: IGlobalProvider) => {
         setnotificationNavigateData,
         comparatorCount,
         setComparatorCount,
+        isAdmin,
+        isVendedor,
+        isFuncionario,
       }}
     >
       <Favicon favicon={favicon} />

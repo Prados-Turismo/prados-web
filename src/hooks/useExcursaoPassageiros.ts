@@ -15,8 +15,7 @@ import { keys, queryClient } from "../services/query";
 
 const getAllPassageiros = ({ page, size, localEmbarque }: IExcursaoPassageiroArgs, idExcursao: string): IExcursaoPassageiroResponse => {
   const { data, isLoading } = useQuery(
-    [
-      keys.excursaoPassageiro,
+    [      
       page,
       localEmbarque
     ],

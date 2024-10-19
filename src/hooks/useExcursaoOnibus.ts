@@ -142,10 +142,9 @@ const getExcursaoOnibus = (idExcursao?: string): IExcursaoOnibusResponse => {
 
 const listExcursaoPassageirosNoChair = (idExcursao: string): IPassageiroExcursaoOnibusResponse => {
   const { data, isLoading } = useQuery(
-    [keys.excursaoOnibus],
+    [],
     async () => {
       const path = `excursao-passageiros/list-passageiros-no-chair/${idExcursao}`;
-
       try {
         const { data } = await apiPrados.get(path);
 

@@ -136,6 +136,7 @@ const createReserva = (
           handleClose()
 
           queryClient.invalidateQueries([keys.reserva])
+          queryClient.invalidateQueries([keys.excursao])
 
           useToastStandalone({
             title: "Cadastro concluído!",
@@ -168,6 +169,7 @@ const updateReserva = (
           reset()
           handleClose()
           queryClient.invalidateQueries([keys.reserva])
+          queryClient.invalidateQueries([keys.excursao])
 
           useToastStandalone({
             title: "Atualizado com sucesso!",

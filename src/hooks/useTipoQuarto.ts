@@ -60,6 +60,7 @@ const getAllTipoQuartos = (): ITipoQuartoResponse => {
 
       try {
         const { data } = await apiPrados.get(path);
+        queryClient.invalidateQueries([keys.excursaoQuarto])
 
         return data
       } catch (error: any) {

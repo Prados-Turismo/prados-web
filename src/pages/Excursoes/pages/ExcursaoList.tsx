@@ -40,8 +40,8 @@ const ExcursaoList = () => {
   const [nome, setNome] = useState('')
   const [excursaoData, setExcursaoData] = useState<IExcursao | undefined>();
   const [currentPage, setCurrentPage] = useState(1);
-  const [dataInicio, setDataInicio] = useState(null || '')
-  const [dataFim, setDataFim] = useState(null || '')
+  const [dataInicio, setDataInicio] = useState('')
+  const [dataFim, setDataFim] = useState('')
   const registerPerPage = 10;
 
   const { data, count, isLoading } = getExcursoes({
